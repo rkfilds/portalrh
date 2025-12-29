@@ -88,6 +88,10 @@
       border-radius: 999px;
       border: 2px solid rgba(12,58,100,.12);
     }
+    .modal-backdrop{
+      zoom: calc(1 / var(--ui-scale, 1));
+      transform-origin: top left;
+    }
   </style>
 
   @RenderSection("Styles", required: false)

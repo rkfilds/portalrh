@@ -316,7 +316,6 @@
       .app-shell{ grid-template-columns: 1fr; }
       .sidebar{ display:none; }
       .content{ padding: .9rem .9rem 0; }
-      #detailCol { display:none; } /* detalhes vira offcanvas no mobile */
     }
 
     .offcanvas-custom{
@@ -338,17 +337,19 @@
 </style>
 }
 
-  <!-- ============ OFFCANVAS DETAILS (MOBILE) ============ -->
-  <div class="offcanvas offcanvas-end offcanvas-custom" tabindex="-1" id="offcanvasDetails">
-    <div class="offcanvas-header border-bottom">
-      <div>
-        <div class="fw-bold">Detalhes da vaga</div>
-        <div class="text-muted small">Editar requisitos, pesos e regras</div>
+  <!-- ============ MODAL: DETALHES DA VAGA ============ -->
+  <div class="modal fade" id="modalVagaDetalhes" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+      <div class="modal-content" style="border-radius: 18px; border: 1px solid var(--lt-border);">
+        <div class="modal-header">
+          <div>
+            <h5 class="modal-title fw-bold">Detalhes da vaga</h5>
+            <div class="text-muted small">Editar requisitos, pesos e regras</div>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body" id="detailHost"></div>
       </div>
-      <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
-    </div>
-    <div class="offcanvas-body" id="mobileDetailBody">
-      <!-- preenchido por JS (clone do detail) -->
     </div>
   </div>
 
@@ -661,13 +662,13 @@
 
         <div class="row g-3 mt-1">
           <!-- LISTA -->
-          <div class="col-12 col-lg-7">
+          <div class="col-12">
             <div class="card-soft p-3">
               <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
                 <div>
                   <p class="mini-title mb-1">Lista</p>
                   <div class="fw-bold">Vagas cadastradas</div>
-                  <div class="text-muted small">Clique em uma vaga para ver detalhes e editar requisitos.</div>
+                  Use o botao Detalhes na lista para editar requisitos (pesos/obrigatorios), definir o match minimo e simular aderencia.
                 </div>
                 <div class="d-flex gap-2">
                   <button class="btn btn-ghost btn-sm" id="btnSeedReset" type="button" title="Restaurar dados de exemplo">
@@ -710,7 +711,7 @@
                       <th style="min-width: 130px;">Área</th>
                       <th style="min-width: 150px;">Requisitos</th>
                       <th style="min-width: 120px;">Match mín.</th>
-                      <th class="text-end" style="min-width: 170px;">Ações</th>
+                      <th class="text-end" style="min-width: 230px;">Ações</th>
                     </tr>
                   </thead>
                   <tbody id="tblVagas"></tbody>
@@ -723,12 +724,6 @@
             </div>
           </div>
 
-          <!-- DETALHES (DESKTOP) -->
-          <div class="col-12 col-lg-5" id="detailCol">
-            <div id="detailHost">
-              <!-- preenchido por JS -->
-            </div>
-          </div>
         </div>
 
         <div style="height: 14px;"></div>
@@ -961,7 +956,7 @@
         const isSel = v.id === state.selectedId;
 
         const tr = document.createElement("tr");
-        tr.style.cursor = "pointer";
+        tr.style.cursor = "default";
         tr.className = isSel ? "table-active" : "";
         tr.innerHTML = `
           <td>
@@ -983,6 +978,9 @@
             <span class="badge-soft"><i class="bi bi-stars me-1"></i>${clamp(parseInt(v.threshold ?? 0,10)||0,0,100)}%</span>
           </td>
           <td class="text-end nowrap">
+            <button class="btn btn-ghost btn-sm me-1" data-act="detail" data-id="${v.id}">
+              <i class="bi bi-layout-text-window me-1"></i>Detalhes
+            </button>
             <button class="btn btn-ghost btn-sm me-1" data-act="edit" data-id="${v.id}">
               <i class="bi bi-pencil me-1"></i>Editar
             </button>
@@ -1002,12 +1000,12 @@
             ev.stopPropagation();
             const act = btn.dataset.act;
             const id = btn.dataset.id;
+            if(act === "detail") openDetailModal(id);
             if(act === "edit") openVagaModal("edit", id);
             if(act === "dup") duplicateVaga(id);
             if(act === "del") deleteVaga(id);
             return;
           }
-          selectVaga(v.id);
         });
 
         tbody.appendChild(tr);
@@ -1023,13 +1021,15 @@
       saveState();
       renderList();
       renderDetail();
-      // mobile: abre detalhes
-      if(window.matchMedia("(max-width: 991.98px)").matches){
-        openMobileDetails();
-      }
     }
 
-    // ========= Detail UI (desktop) + clone for mobile
+    function openDetailModal(id){
+      selectVaga(id);
+      const modal = bootstrap.Modal.getOrCreateInstance($("#modalVagaDetalhes"));
+      modal.show();
+    }
+
+    // ========= Detail UI
     function buildDetailHtml(v){
       if(!v){
         return `
@@ -1039,7 +1039,7 @@
               <div>
                 <div class="fw-bold">Selecione uma vaga</div>
                 <div class="small mt-1">
-                  Clique em uma vaga na lista para editar requisitos (pesos/obrigatórios), definir o match mínimo e simular aderência.
+                  Use o botao Detalhes na lista para editar requisitos (pesos/obrigatorios), definir o match minimo e simular aderencia.
                 </div>
               </div>
             </div>
@@ -1243,9 +1243,6 @@
       // bind detail actions + render req table + bind sliders
       bindDetailActions(v);
       renderReqTable(v);
-
-      // update mobile clone if open later
-      syncMobileDetail();
     }
 
     function bindDetailActions(v){
@@ -1366,131 +1363,7 @@
       });
     }
 
-    function syncMobileDetail(){
-      // No mobile, clonamos o HTML dos detalhes para o offcanvas (para manter 1 arquivo só)
-      const host = $("#detailHost");
-      const target = $("#mobileDetailBody");
-      if(!host || !target) return;
-      target.innerHTML = host.innerHTML;
-
-      // Re-bind actions within mobile offcanvas
-      const v = findVaga(state.selectedId);
-      if(!v) return;
-
-      // bind actions
-      $$("#mobileDetailBody [data-dact]").forEach(btn => {
-        btn.addEventListener("click", () => {
-          const act = btn.dataset.dact;
-          if(act === "editvaga") openVagaModal("edit", v.id);
-          if(act === "duplicate") duplicateVaga(v.id);
-          if(act === "delete") deleteVaga(v.id);
-          if(act === "addreq") openReqModal("new", v.id);
-          if(act === "saveWeights") saveWeightsFromDetail(v.id, true);
-          if(act === "simulate") simulateMatch(v.id, true);
-          if(act === "simClear") clearSimulation(true);
-        });
-      });
-
-      // threshold + weights
-      const r = $("#mobileDetailBody #thresholdRange");
-      const lbl = $("#mobileDetailBody #thresholdLabel");
-      if(r && lbl){
-        r.addEventListener("input", () => {
-          lbl.textContent = clamp(parseInt(r.value,10)||0,0,100) + "%";
-        });
-      }
-
-      ["competencia","experiencia","formacao","localidade"].forEach(k => {
-        const slider = $("#mobileDetailBody #w_" + k);
-        const val = $("#mobileDetailBody #w_" + k + "_val");
-        if(slider && val){
-          slider.addEventListener("input", () => {
-            val.textContent = slider.value;
-            // update sum
-            const sumEl = $("#mobileDetailBody #weightsSum");
-            if(sumEl){
-              let s = 0;
-              ["competencia","experiencia","formacao","localidade"].forEach(kk => {
-                s += (parseInt($("#mobileDetailBody #w_" + kk)?.value || "0",10) || 0);
-              });
-              sumEl.textContent = s;
-            }
-          });
-        }
-      });
-
-      // req search -> rerender req table based on v + query
-      const reqSearch = $("#mobileDetailBody #reqSearch");
-      if(reqSearch){
-        reqSearch.addEventListener("input", () => renderReqTableMobile(v));
-      }
-      renderReqTableMobile(v);
-    }
-
-    function renderReqTableMobile(v){
-      const tbody = $("#mobileDetailBody #tblReq");
-      if(!tbody) return;
-
-      tbody.innerHTML = "";
-      const reqs = (v?.requisitos || []);
-      const q = ($("#mobileDetailBody #reqSearch")?.value || "").trim().toLowerCase();
-      const filtered = !q ? reqs : reqs.filter(r => {
-        const blob = [r.categoria, r.termo, (r.sinonimos||[]).join(" "), r.obs].join(" ").toLowerCase();
-        return blob.includes(q);
-      });
-
-      if(!filtered.length){
-        tbody.innerHTML = `<tr><td colspan="6" class="text-center text-muted py-3">Nenhum requisito.</td></tr>`;
-        return;
-      }
-
-      filtered.forEach(r => {
-        const syn = (r.sinonimos || []).join(", ");
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td class="nowrap">
-            <div class="form-check form-switch m-0">
-              <input class="form-check-input" type="checkbox" ${r.obrigatorio ? "checked" : ""} data-ract="toggle" data-rid="${r.id}">
-            </div>
-          </td>
-          <td>${escapeHtml(r.categoria || "—")}</td>
-          <td>
-            <div class="fw-semibold">${escapeHtml(r.termo || "—")}</div>
-            ${r.obs ? `<div class="text-muted small">${escapeHtml(r.obs)}</div>` : `<div class="text-muted small">—</div>`}
-          </td>
-          <td class="nowrap"><span class="badge-soft">${clamp(parseInt(r.peso ?? 0,10)||0,0,10)}</span></td>
-          <td>${escapeHtml(syn || "—")}</td>
-          <td class="text-end nowrap">
-            <button class="btn btn-ghost btn-sm me-1" data-ract="edit" data-rid="${r.id}">
-              <i class="bi bi-pencil"></i>
-            </button>
-            <button class="btn btn-ghost btn-sm text-danger" data-ract="del" data-rid="${r.id}">
-              <i class="bi bi-trash3"></i>
-            </button>
-          </td>
-        `;
-
-        tr.querySelectorAll("[data-ract]").forEach(el => {
-          el.addEventListener("click", (ev) => {
-            ev.preventDefault();
-            ev.stopPropagation();
-            const act = el.dataset.ract;
-            const rid = el.dataset.rid;
-            if(act === "toggle") toggleReqMandatory(v.id, rid);
-            if(act === "edit") openReqModal("edit", v.id, rid);
-            if(act === "del") deleteReq(v.id, rid);
-          });
-        });
-
-        tbody.appendChild(tr);
-      });
-    }
-
-    function openMobileDetails(){
-      syncMobileDetail();
-      bootstrap.Offcanvas.getOrCreateInstance($("#offcanvasDetails")).show();
-    }
-
+    
     // ========= CRUD: Vagas
     function openVagaModal(mode, id){
       const modal = bootstrap.Modal.getOrCreateInstance($("#modalVaga"));
