@@ -348,9 +348,7 @@
     /* Mobile */
     @@media (max-width: 991.98px){
       .app-shell{ grid-template-columns: 1fr; }
-      .sidebar{ display:none; }
-      #detailCol { display:none; }
-      .content{ padding: .9rem .9rem 0; }
+      .sidebar{ display:none; }.content{ padding: .9rem .9rem 0; }
     }
 
     /* Toast */
@@ -361,20 +359,23 @@
     }
 </style>
 }
-
-  <!-- ============ OFFCANVAS DETAILS (MOBILE) ============ -->
-  <div class="offcanvas offcanvas-end offcanvas-custom" tabindex="-1" id="offcanvasDetails">
-    <div class="offcanvas-header border-bottom">
-      <div>
-        <div class="fw-bold">Detalhes do candidato</div>
-        <div class="text-muted small">Match, histórico e status</div>
+  <!-- ============ MODAL: DETALHES DO CANDIDATO ============ -->
+  <div class="modal fade" id="modalCandDetalhes" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+      <div class="modal-content" style="border-radius: 18px; border: 1px solid var(--lt-border);">
+        <div class="modal-header">
+          <div>
+            <h5 class="modal-title fw-bold">Detalhes do candidato</h5>
+            <div class="text-muted small">Match, historico e status</div>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body" id="detailHost"></div>
       </div>
-      <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
     </div>
-    <div class="offcanvas-body" id="mobileDetailBody"></div>
   </div>
 
-  <!-- ============ MODAL: NOVO/EDITAR CANDIDATO ============ -->
+<!-- ============ MODAL: NOVO/EDITAR CANDIDATO ============ -->
   <div class="modal fade" id="modalCand" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-scrollable">
       <div class="modal-content" style="border-radius: 18px; border: 1px solid var(--lt-border);">
@@ -397,7 +398,7 @@
 
             <div class="col-12 col-md-6">
               <label class="form-label small text-muted">Email *</label>
-              <input class="form-control" id="candEmail" placeholder="ex.: mariana@@email.com">
+              <input class="form-control" id="candEmail" placeholder="ex.: mariana@email.com">
             </div>
 
             <div class="col-12 col-md-4">
@@ -460,6 +461,7 @@
                     </div>
                   </div>
                 </div>
+
               </div>
             </div>
 
@@ -594,13 +596,13 @@
 
         <div class="row g-3 mt-1">
           <!-- LISTA -->
-          <div class="col-12 col-lg-7">
+          <div class="col-12">
             <div class="card-soft p-3">
               <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
                 <div>
                   <p class="mini-title mb-1">Lista</p>
                   <div class="fw-bold">Candidatos cadastrados</div>
-                  <div class="text-muted small">Clique para ver detalhes, editar texto do CV e recalcular match.</div>
+                  <div class="text-muted small">Use o botao Detalhes para ver e editar o candidato.</div>
                 </div>
                 <div class="d-flex gap-2">
                   <button class="btn btn-ghost btn-sm" id="btnSeedReset" type="button" title="Restaurar dados de exemplo">
@@ -644,7 +646,7 @@
                       <th style="min-width: 220px;">Vaga</th>
                       <th style="min-width: 150px;">Status</th>
                       <th style="min-width: 170px;">Match</th>
-                      <th class="text-end" style="min-width: 170px;">Ações</th>
+                      <th class="text-end" style="min-width: 230px;">Ações</th>
                     </tr>
                   </thead>
                   <tbody id="tblCands"></tbody>
@@ -658,9 +660,6 @@
           </div>
 
           <!-- DETALHES (DESKTOP) -->
-          <div class="col-12 col-lg-5" id="detailCol">
-            <div id="detailHost"></div>
-          </div>
         </div>
 
         <div style="height: 14px;"></div>
@@ -977,7 +976,7 @@
         const thr = m.threshold ?? (v ? v.threshold : 0);
 
         const tr = document.createElement("tr");
-        tr.style.cursor = "pointer";
+        tr.style.cursor = "default";
         tr.className = isSel ? "table-active" : "";
         tr.innerHTML = `
           <td>
@@ -1001,6 +1000,9 @@
             ${v ? matchLabel(m.score, thr) : `<span class="text-muted">—</span>`}
           </td>
           <td class="text-end nowrap">
+            <button class="btn btn-ghost btn-sm me-1" data-act="detail" data-id="${c.id}">
+              <i class="bi bi-layout-text-window me-1"></i>Detalhes
+            </button>
             <button class="btn btn-ghost btn-sm me-1" data-act="edit" data-id="${c.id}">
               <i class="bi bi-pencil me-1"></i>Editar
             </button>
@@ -1020,12 +1022,12 @@
             ev.stopPropagation();
             const act = btn.dataset.act;
             const id = btn.dataset.id;
+            if(act === "detail") openDetailModal(id);
             if(act === "edit") openCandModal("edit", id);
             if(act === "recalc") recalcMatch(id);
             if(act === "del") deleteCand(id);
             return;
           }
-          selectCand(c.id);
         });
 
         tbody.appendChild(tr);
@@ -1037,9 +1039,12 @@
       saveCands();
       renderList();
       renderDetail();
-      if(window.matchMedia("(max-width: 991.98px)").matches){
-        openMobileDetails();
-      }
+    }
+
+function openDetailModal(id){
+      selectCand(id);
+      const modal = bootstrap.Modal.getOrCreateInstance($("#modalCandDetalhes"));
+      modal.show();
     }
 
     // ========= Detail UI
@@ -1051,7 +1056,7 @@
               <i class="bi bi-info-circle mt-1"></i>
               <div>
                 <div class="fw-bold">Selecione um candidato</div>
-                <div class="small mt-1">Clique em um candidato na lista para ver match, editar status e texto do CV.</div>
+                <div class="small mt-1">Use o botao Detalhes na lista para ver match, editar status e texto do CV.</div>
               </div>
             </div>
           </div>
@@ -1244,7 +1249,6 @@
       const c = findCand(state.selectedId);
       $("#detailHost").innerHTML = buildDetailHtml(c);
       bindDetailActions(c);
-      syncMobileDetail();
     }
 
     function bindDetailActions(c){
@@ -1263,33 +1267,7 @@
       });
     }
 
-    function syncMobileDetail(){
-      const host = $("#detailHost");
-      const target = $("#mobileDetailBody");
-      if(!host || !target) return;
-      target.innerHTML = host.innerHTML;
-
-      const c = findCand(state.selectedId);
-      if(!c) return;
-
-      $$("#mobileDetailBody [data-dact]").forEach(btn => {
-        btn.addEventListener("click", () => {
-          const act = btn.dataset.dact;
-          if(act === "edit") openCandModal("edit", c.id);
-          if(act === "delete") deleteCand(c.id);
-          if(act === "saveCv") saveCvText(c.id, true);
-          if(act === "recalc") recalcMatch(c.id);
-          if(act === "saveMeta") saveMeta(c.id, true);
-          if(act === "openVaga") toast("Placeholder: aqui abriria a tela de Vagas.");
-        });
-      });
-    }
-
-    function openMobileDetails(){
-      syncMobileDetail();
-      bootstrap.Offcanvas.getOrCreateInstance($("#offcanvasDetails")).show();
-    }
-
+    
     // ========= CRUD: Candidatos
     function openCandModal(mode, id){
       const modal = bootstrap.Modal.getOrCreateInstance($("#modalCand"));
