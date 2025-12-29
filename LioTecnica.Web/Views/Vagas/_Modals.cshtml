@@ -1,0 +1,208 @@
+<!-- ============ MODAL: DETALHES DA VAGA ============ -->
+  <div class="modal fade" id="modalVagaDetalhes" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable">
+      <div class="modal-content" style="border-radius: 18px; border: 1px solid var(--lt-border);">
+        <div class="modal-header">
+          <div>
+            <h5 class="modal-title fw-bold">Detalhes da vaga</h5>
+            <div class="text-muted small">Editar requisitos, pesos e regras</div>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body" id="detailHost"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ MODAL: NOVA/EDITAR VAGA ============ -->
+  <div class="modal fade" id="modalVaga" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+      <div class="modal-content" style="border-radius: 18px; border: 1px solid var(--lt-border);">
+        <div class="modal-header">
+          <div>
+            <h5 class="modal-title fw-bold" id="modalVagaTitle">Nova vaga</h5>
+            <div class="text-muted small">Dados principais da vaga. Requisitos e pesos ficam nos detalhes.</div>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body">
+          <input type="hidden" id="vagaId">
+
+          <div class="row g-2">
+            <div class="col-12 col-md-4">
+              <label class="form-label small text-muted">Código</label>
+              <input class="form-control" id="vagaCodigo" placeholder="Ex.: MKT-JR-001">
+            </div>
+            <div class="col-12 col-md-8">
+              <label class="form-label small text-muted">Título *</label>
+              <input class="form-control" id="vagaTitulo" placeholder="Ex.: Analista de Marketing Jr">
+            </div>
+
+            <div class="col-12 col-md-4">
+              <label class="form-label small text-muted">Área *</label>
+              <select class="form-select" id="vagaArea">
+                <option value="">Selecione...</option>
+                <option>Marketing</option>
+                <option>Qualidade</option>
+                <option>Produção</option>
+                <option>RH</option>
+                <option>TI</option>
+                <option>Compras</option>
+                <option>Logística</option>
+                <option>Financeiro</option>
+              </select>
+            </div>
+
+            <div class="col-12 col-md-4">
+              <label class="form-label small text-muted">Modalidade</label>
+              <select class="form-select" id="vagaModalidade">
+                <option>Presencial</option>
+                <option>Híbrido</option>
+                <option>Remoto</option>
+              </select>
+            </div>
+
+            <div class="col-12 col-md-4">
+              <label class="form-label small text-muted">Status *</label>
+              <select class="form-select" id="vagaStatus">
+                <option value="">Selecione...</option>
+                <option value="aberta">Aberta</option>
+                <option value="pausada">Pausada</option>
+                <option value="fechada">Fechada</option>
+              </select>
+            </div>
+
+            <div class="col-12 col-md-4">
+              <label class="form-label small text-muted">Cidade</label>
+              <input class="form-control" id="vagaCidade" placeholder="Ex.: Embu das Artes">
+            </div>
+            <div class="col-12 col-md-2">
+              <label class="form-label small text-muted">UF</label>
+              <input class="form-control" id="vagaUF" placeholder="SP" maxlength="2">
+            </div>
+
+            <div class="col-12 col-md-3">
+              <label class="form-label small text-muted">Senioridade</label>
+              <select class="form-select" id="vagaSenioridade">
+                <option>Júnior</option>
+                <option>Pleno</option>
+                <option>Sênior</option>
+                <option>Especialista</option>
+                <option>Gestão</option>
+              </select>
+            </div>
+
+            <div class="col-12 col-md-3">
+              <label class="form-label small text-muted">Match mínimo</label>
+              <div class="input-group">
+                <input type="number" class="form-control" id="vagaThreshold" min="0" max="100" value="70">
+                <span class="input-group-text">%</span>
+              </div>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label small text-muted">Descrição</label>
+              <textarea class="form-control" id="vagaDescricao" rows="4" placeholder="Resumo da vaga, responsabilidades, etc."></textarea>
+            </div>
+
+            <div class="col-12">
+              <div class="alert alert-primary mb-0" style="border-radius: 14px; border-color: rgba(16,82,144,.25); background: rgba(173,200,220,.22); color: var(--lt-primary);">
+                <div class="d-flex align-items-start gap-2">
+                  <i class="bi bi-lightbulb mt-1"></i>
+                  <div>
+                    <div class="fw-semibold">Dica (MVP)</div>
+                    <div class="small">
+                      Salve a vaga e, em seguida, use <strong>Detalhes</strong> para cadastrar <strong>Requisitos</strong> com <strong>peso</strong> e marcar itens <strong>obrigatórios</strong>.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div><!-- row -->
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn btn-ghost" type="button" data-bs-dismiss="modal">
+            <i class="bi bi-x-lg me-1"></i>Cancelar
+          </button>
+          <button class="btn btn-brand" type="button" id="btnSaveVaga">
+            <i class="bi bi-check2 me-1"></i>Salvar vaga
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ MODAL: NOVO/EDITAR REQUISITO ============ -->
+  <div class="modal fade" id="modalReq" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+      <div class="modal-content" style="border-radius: 18px; border: 1px solid var(--lt-border);">
+        <div class="modal-header">
+          <div>
+            <h5 class="modal-title fw-bold" id="modalReqTitle">Novo requisito</h5>
+            <div class="text-muted small">Defina palavra-chave, peso e se é obrigatório.</div>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+
+        <div class="modal-body">
+          <input type="hidden" id="reqId">
+          <div class="row g-2">
+            <div class="col-12 col-md-4">
+              <label class="form-label small text-muted">Categoria</label>
+              <select class="form-select" id="reqCategoria">
+                <option>Competência</option>
+                <option>Experiência</option>
+                <option>Formação</option>
+                <option>Ferramenta/Tecnologia</option>
+                <option>Idioma</option>
+                <option>Certificação</option>
+                <option>Localidade</option>
+                <option>Outros</option>
+              </select>
+            </div>
+
+            <div class="col-12 col-md-4">
+              <label class="form-label small text-muted">Peso (0–10)</label>
+              <input type="number" class="form-control" id="reqPeso" min="0" max="10" value="7">
+              <div class="form-text">Sugestão: use 8–10 para itens críticos, 4–7 para desejáveis.</div>
+            </div>
+
+            <div class="col-12 col-md-4">
+              <label class="form-label small text-muted">Obrigatório</label>
+              <div class="form-check form-switch mt-1">
+                <input class="form-check-input" type="checkbox" role="switch" id="reqObrigatorio">
+                <label class="form-check-label" for="reqObrigatorio">Sim</label>
+              </div>
+              <div class="form-text">Se faltar, pode derrubar fortemente o score no match.</div>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label small text-muted">Palavra-chave / termo *</label>
+              <input class="form-control" id="reqTermo" placeholder="Ex.: Power BI">
+            </div>
+
+            <div class="col-12">
+              <label class="form-label small text-muted">Sinônimos (separados por vírgula)</label>
+              <input class="form-control" id="reqSinonimos" placeholder="Ex.: pbi, powerbi, business intelligence">
+            </div>
+
+            <div class="col-12">
+              <label class="form-label small text-muted">Observação (opcional)</label>
+              <textarea class="form-control" id="reqObs" rows="3" placeholder="Ex.: precisa ter aplicado em campanhas de performance."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn btn-ghost" type="button" data-bs-dismiss="modal">
+            <i class="bi bi-x-lg me-1"></i>Cancelar
+          </button>
+          <button class="btn btn-brand" type="button" id="btnSaveReq">
+            <i class="bi bi-check2 me-1"></i>Salvar requisito
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>

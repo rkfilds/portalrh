@@ -1,0 +1,98 @@
+<!-- MODAL: USER (Create/Edit) -->
+  <div class="modal fade" id="modalUser" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content" style="border-radius:18px;border:1px solid var(--lt-border);">
+        <div class="modal-header">
+          <div>
+            <div class="modal-title fw-bold" id="userModalTitle">Novo usuário</div>
+            <div class="text-muted small">Cadastro + perfis + status + MFA (demo).</div>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="userId">
+
+          <div class="row g-2">
+            <div class="col-12 col-md-6">
+              <label class="form-label small">Nome</label>
+              <input class="form-control" id="userName" placeholder="ex.: João Silva">
+            </div>
+            <div class="col-12 col-md-6">
+              <label class="form-label small">Email</label>
+              <input class="form-control" id="userEmail" placeholder="ex.: joao@@empresa.com">
+            </div>
+
+            <div class="col-12 col-md-6">
+              <label class="form-label small">Departamento</label>
+              <input class="form-control" id="userDept" placeholder="ex.: RH">
+            </div>
+
+            <div class="col-6 col-md-3">
+              <label class="form-label small">Status</label>
+              <select class="form-select" id="userStatus">
+                <option value="active">Ativo</option>
+                <option value="invited">Convidado</option>
+                <option value="disabled">Desativado</option>
+              </select>
+            </div>
+
+            <div class="col-6 col-md-3">
+              <label class="form-label small">MFA</label>
+              <select class="form-select" id="userMfa">
+                <option value="false">Desabilitado</option>
+                <option value="true">Habilitado</option>
+              </select>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label small">Perfis (roles)</label>
+              <div class="d-flex flex-wrap gap-2" id="userRolesChips"></div>
+              <div class="text-muted small mt-1">Selecione os perfis abaixo:</div>
+              <div class="row g-2 mt-1" id="userRolesChecks"></div>
+            </div>
+          </div>
+
+          <hr class="my-3 divider">
+
+          <div class="d-flex flex-wrap gap-2 justify-content-end">
+            <button class="btn btn-ghost" type="button" data-bs-dismiss="modal"><i class="bi bi-x-circle me-1"></i>Cancelar</button>
+            <button class="btn btn-brand" type="button" id="btnUserSave"><i class="bi bi-check2-circle me-1"></i>Salvar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ROLE (Create) -->
+  <div class="modal fade" id="modalRole" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="border-radius:18px;border:1px solid var(--lt-border);">
+        <div class="modal-header">
+          <div>
+            <div class="modal-title fw-bold">Novo perfil</div>
+            <div class="text-muted small">Crie um role e depois ajuste permissões.</div>
+          </div>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row g-2">
+            <div class="col-12">
+              <label class="form-label small">Nome</label>
+              <input class="form-control" id="newRoleName" placeholder="ex.: Gestor">
+            </div>
+            <div class="col-12">
+              <label class="form-label small">Descrição</label>
+              <input class="form-control" id="newRoleDesc" placeholder="ex.: Visualiza relatórios e aprova candidatos">
+            </div>
+          </div>
+
+          <hr class="my-3 divider">
+
+          <div class="d-flex flex-wrap gap-2 justify-content-end">
+            <button class="btn btn-ghost" type="button" data-bs-dismiss="modal"><i class="bi bi-x-circle me-1"></i>Cancelar</button>
+            <button class="btn btn-brand" type="button" id="btnCreateRole"><i class="bi bi-plus-circle me-1"></i>Criar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
