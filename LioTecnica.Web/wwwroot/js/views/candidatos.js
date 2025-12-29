@@ -1,4 +1,5 @@
 // ========= Logo (mesmo Data URI usado antes)
+    const seed = window.__seedData || {};
     const LOGO_DATA_URI = "data:image/webp;base64,UklGRngUAABXRUJQVlA4IGwUAAAQYwCdASpbAVsBPlEokUajoqGhIpNoyHAK7AQYJjYQmG9Dtu/6p6QZ4lQd6lPde+Jk3i3kG2EoP+QW0c0h8Oe3jW2C5zE0o9jzZ1x2fX9cZlX0d7rW8r0vQ9p3d2nJ1bqzQfQZxVwTt7mJvU8j1GqF4oJc8Qb+gq+oQyHcQyYc2b9u2fYf0Rj9x9hRZp2Y2xK0yVQ8Hj4p6w8B1K2cKk2mY9m2r8kz3a4m7xG4xg9m5VjzP3E4RjQH8fYkC4mB8g0vR3c5h1D0yE8Qzv7t7gQj0Z9yKk3cWZgVnq3l1kq6rE8oWc4z6oZk8k0b1o9m8p2m+QJ3nJm6GgA=";
 function statusTag(s){
       const map = {
@@ -53,64 +54,24 @@ function statusTag(s){
       }));
     }
 
+    function seedVagasIfEmpty(){
+      if(state.vagas.length) return;
+
+      const vagasSeed = Array.isArray(seed.vagas) ? seed.vagas : [];
+      if(!vagasSeed.length) return;
+
+      localStorage.setItem(VAGAS_KEY, JSON.stringify({ vagas: vagasSeed, selectedId: seed.selectedVagaId || null }));
+      state.vagas = vagasSeed;
+    }
+
     function seedCandsIfEmpty(){
       if(state.candidatos.length) return;
 
-      const v = state.vagas[0] || null;
+      const candsSeed = Array.isArray(seed.candidatos) ? seed.candidatos : [];
+      if(!candsSeed.length) return;
 
-      const c1 = {
-        id: uid(),
-        nome: "Mariana Souza",
-        email: "mariana.souza@@email.com",
-        fone: "(11) 98888-7777",
-        cidade: "Embu das Artes",
-        uf: "SP",
-        fonte: "Email",
-        status: "triagem",
-        vagaId: v?.id || "",
-        obs: "Boa comunicação. Experiência com marketing digital.",
-        cvText: "Experiência com campanhas de performance, google analytics, excel, dashboards e power bi. Rotina com metas e relatórios.",
-        createdAt: new Date(Date.now() - 1000*60*60*24*2).toISOString(),
-        updatedAt: new Date(Date.now() - 1000*60*60*4).toISOString(),
-        lastMatch: null
-      };
-
-      const c2 = {
-        id: uid(),
-        nome: "Carlos Henrique",
-        email: "carlos.h@@email.com",
-        fone: "(11) 97777-1111",
-        cidade: "São Paulo",
-        uf: "SP",
-        fonte: "LinkedIn",
-        status: "novo",
-        vagaId: v?.id || "",
-        obs: "",
-        cvText: "Atuação como analista. Excel avançado. Noções de BI.",
-        createdAt: new Date(Date.now() - 1000*60*60*24*1).toISOString(),
-        updatedAt: new Date(Date.now() - 1000*60*60*24*1).toISOString(),
-        lastMatch: null
-      };
-
-      const c3 = {
-        id: uid(),
-        nome: "Ana Paula Ribeiro",
-        email: "ana.ribeiro@@email.com",
-        fone: "(11) 96666-2222",
-        cidade: "Osasco",
-        uf: "SP",
-        fonte: "Indicação",
-        status: "aprovado",
-        vagaId: v?.id || "",
-        obs: "Perfil excelente. Forte em BI.",
-        cvText: "PowerBI, SQL, modelagem dimensional e analytics. Experiência com indicadores e apresentações para diretoria.",
-        createdAt: new Date(Date.now() - 1000*60*60*24*6).toISOString(),
-        updatedAt: new Date(Date.now() - 1000*60*60*24*2).toISOString(),
-        lastMatch: null
-      };
-
-      state.candidatos = [c1, c2, c3];
-      state.selectedId = c1.id;
+      state.candidatos = candsSeed;
+      state.selectedId = seed.selectedCandidatoId || candsSeed[0]?.id || null;
       saveCands();
     }
 
@@ -829,6 +790,7 @@ function openDetailModal(id){
       wireClock();
 
       state.vagas = loadVagas();
+      seedVagasIfEmpty();
 
       // caso o usuário ainda não tenha aberto a tela de Vagas (sem dados)
       if(!state.vagas.length){

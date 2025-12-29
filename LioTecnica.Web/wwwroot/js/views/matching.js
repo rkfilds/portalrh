@@ -1,4 +1,5 @@
 // ========= Logo (Data URI placeholder)
+    const seed = window.__seedData || {};
     const LOGO_DATA_URI = "data:image/webp;base64,UklGRngUAABXRUJQVlA4IGwUAAAQYwCdASpbAVsBPlEokUajoqGhIpNoyHAK7AQYJjYQmG9Dtu/6p6QZ4lQd6lPde+Jk3i3kG2EoP+QW0c0h8Oe3jW2C5zE0o9jzZ1x2fX9cZlX0d7rW8r0vQ9p3d2nJ1bqzQfQZxVwTt7mJvU8j1GqF4oJc8Qb+gq+oQyHcQyYc2b9u2fYf0Rj9x9hRZp2Y2xK0yVQ8Hj4p6w8B1K2cKk2mY9m2r8kz3a4m7xG4xg9m5VjzP3E4RjQH8fYkC4mB8g0vR3c5h1D0yE8Qzv7t7gQj0Z9yKk3cWZgVnq3l1kq6rE8oWc4z6oZk8k0b1o9m8p2m+QJ3nJm6GgA=";
 // ========= Storage keys
     const VAGAS_KEY = "lt_rh_vagas_v1";
@@ -60,92 +61,22 @@
     function seedIfEmpty(){
       if(state.vagas.length && state.candidatos.length) return;
 
-      if(!state.vagas.length){
-        const vaga = {
-          id: uid(),
-          codigo: "VAG-001",
-          titulo: "Analista de Dados",
-          descricao: "Análise de indicadores, dashboards e apoio ao RH/gestão.",
-          threshold: 65,
-          requisitos: [
-            { id: uid(), termo: "excel", peso: 5, obrigatorio: true, sinonimos: ["planilhas", "vlookup", "tabela dinamica"] },
-            { id: uid(), termo: "power bi", peso: 4, obrigatorio: false, sinonimos: ["pbi", "powerbi"] },
-            { id: uid(), termo: "sql", peso: 4, obrigatorio: false, sinonimos: ["postgres", "query"] },
-            { id: uid(), termo: "indicadores", peso: 3, obrigatorio: false, sinonimos: ["kpi", "dashboards", "relatorios"] },
-            { id: uid(), termo: "comunicacao", peso: 2, obrigatorio: false, sinonimos: ["apresentacoes", "stakeholders"] }
-          ],
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        };
-        // salva no formato esperado
-        localStorage.setItem(VAGAS_KEY, JSON.stringify({ vagas: [vaga] }));
-        state.vagas = [vaga];
+      const vagasSeed = Array.isArray(seed.vagas) ? seed.vagas : [];
+      const candsSeed = Array.isArray(seed.candidatos) ? seed.candidatos : [];
+
+      if(!state.vagas.length && vagasSeed.length){
+        localStorage.setItem(VAGAS_KEY, JSON.stringify({ vagas: vagasSeed, selectedId: seed.selectedVagaId || null }));
+        state.vagas = vagasSeed;
       }
 
-      if(!state.candidatos.length){
-        const v = state.vagas[0];
-        const cands = [
-          {
-            id: uid(),
-            nome: "Mariana Souza",
-            email: "mariana.souza@@email.com",
-            fone: "(11) 98888-7777",
-            cidade: "Embu das Artes",
-            uf: "SP",
-            fonte: "Email",
-            status: "triagem",
-            vagaId: v.id,
-            obs: "",
-            cvText: "Experiência com campanhas de performance, excel avançado, dashboards e power bi. Rotina com indicadores e relatórios.",
-            createdAt: new Date(Date.now()-1000*60*60*24*2).toISOString(),
-            updatedAt: new Date(Date.now()-1000*60*60*6).toISOString(),
-            lastMatch: null
-          },
-          {
-            id: uid(),
-            nome: "Carlos Henrique",
-            email: "carlos.h@@email.com",
-            fone: "(11) 97777-1111",
-            cidade: "São Paulo",
-            uf: "SP",
-            fonte: "LinkedIn",
-            status: "triagem",
-            vagaId: v.id,
-            obs: "",
-            cvText: "Atuação como analista. Excel avançado. Noções de BI e relatórios.",
-            createdAt: new Date(Date.now()-1000*60*60*24*1).toISOString(),
-            updatedAt: new Date(Date.now()-1000*60*60*24*1).toISOString(),
-            lastMatch: null
-          },
-          {
-            id: uid(),
-            nome: "Ana Paula Ribeiro",
-            email: "ana.ribeiro@@email.com",
-            fone: "(11) 96666-2222",
-            cidade: "Osasco",
-            uf: "SP",
-            fonte: "Indicação",
-            status: "pendente",
-            vagaId: v.id,
-            obs: "",
-            cvText: "PowerBI, SQL, modelagem dimensional e analytics. Experiência com indicadores e apresentações para diretoria.",
-            createdAt: new Date(Date.now()-1000*60*60*24*6).toISOString(),
-            updatedAt: new Date(Date.now()-1000*60*60*24*2).toISOString(),
-            lastMatch: null
-          }
-        ];
-        state.candidatos = cands;
+      if(!state.candidatos.length && candsSeed.length){
+        state.candidatos = candsSeed;
+        if(!state.selectedId){
+          state.selectedId = seed.selectedCandidatoId || candsSeed[0]?.id || null;
+        }
         saveCands();
       }
     }
-
-    function distinctVagas(){
-      return state.vagas
-        .map(v => ({ id: v.id, label: `${v.titulo || "—"} (${v.codigo || "—"})` }))
-        .sort((a,b)=>a.label.localeCompare(b.label,"pt-BR"));
-    }
-    function findVaga(id){ return state.vagas.find(v => v.id === id) || null; }
-    function findCand(id){ return state.candidatos.find(c => c.id === id) || null; }
 
     // ========= Matching engine (MVP)
     function calcMatch(cand, vaga){

@@ -1,5 +1,6 @@
 // ========= Logo (embutido em Data URI - auto contido)
     // Observação: o arquivo fornecido veio como WebP (mesmo com nome .png).
+    const seed = window.__seedData || {};
     const LOGO_DATA_URI = "data:image/webp;base64,UklGRngUAABXRUJQVlA4IGwUAAAQYwCdASpbAVsBPlEokUajoqGhIpNoyHAK7AQYJjYQmG9Dtu/6p6QZ4lQd6lPde+Jk3i3kG2EoP+QW0c0h8Oe3jW2C5zE0o9jzZ1x2fX9cZlX0d7rW8r0vQ9p3d2nJ1bqzQfQZxVwTt7mJvU8j1GqF4oJc8Qb+gq+oQyHcQyYc2b9u2fYf0Rj9x9hRZp2Y2xK0yVQ8Hj4p6w8B1K2cKk2mY9m2r8kz3a4m7xG4xg9m5VjzP3E4RjQH8fYkC4mB8g0vR3c5h1D0yE8Qzv7t7gQj0Z9yKk3cWZgVnq3l1kq6rE8oWc4z6oZk8k0b1o9m8p2m+QJ3nJm6GgA=";
 function fmtStatus(s){
       const map = { aberta:"Aberta", pausada:"Pausada", fechada:"Fechada" };
@@ -48,75 +49,11 @@ function fmtStatus(s){
     function seedIfEmpty(){
       if(state.vagas.length) return;
 
-      const v1 = {
-        id: uid(),
-        codigo: "MKT-JR-001",
-        titulo: "Analista de Marketing Jr",
-        area: "Marketing",
-        modalidade: "Híbrido",
-        status: "aberta",
-        cidade: "Embu das Artes",
-        uf: "SP",
-        senioridade: "Júnior",
-        threshold: 70,
-        descricao: "Apoiar campanhas, CRM e análises. Perfil analítico e mão na massa.",
-        createdAt: new Date(Date.now() - 1000*60*60*24*4).toISOString(),
-        updatedAt: new Date(Date.now() - 1000*60*60*6).toISOString(),
-        weights: { competencia: 40, experiencia: 30, formacao: 15, localidade: 15 },
-        requisitos: [
-          { id: uid(), categoria:"Ferramenta/Tecnologia", termo:"Power BI", peso: 9, obrigatorio: true, sinonimos:["pbi","powerbi"], obs:"Dashboards e KPIs" },
-          { id: uid(), categoria:"Competência", termo:"Google Analytics", peso: 7, obrigatorio: false, sinonimos:["ga4","analytics"], obs:"" },
-          { id: uid(), categoria:"Experiência", termo:"Campanhas de performance", peso: 8, obrigatorio: true, sinonimos:["mídia paga","ads"], obs:"Meta/Google Ads" },
-          { id: uid(), categoria:"Competência", termo:"Excel", peso: 6, obrigatorio: false, sinonimos:["planilhas"], obs:"" }
-        ]
-      };
+      const vagasSeed = Array.isArray(seed.vagas) ? seed.vagas : [];
+      if(!vagasSeed.length) return;
 
-      const v2 = {
-        id: uid(),
-        codigo: "QLD-PL-003",
-        titulo: "Supervisor de Qualidade",
-        area: "Qualidade",
-        modalidade: "Presencial",
-        status: "pausada",
-        cidade: "Embu das Artes",
-        uf: "SP",
-        senioridade: "Gestão",
-        threshold: 75,
-        descricao: "Gestão da qualidade, auditorias e controle de processos.",
-        createdAt: new Date(Date.now() - 1000*60*60*24*12).toISOString(),
-        updatedAt: new Date(Date.now() - 1000*60*60*24*2).toISOString(),
-        weights: { competencia: 35, experiencia: 40, formacao: 20, localidade: 5 },
-        requisitos: [
-          { id: uid(), categoria:"Certificação", termo:"BPF", peso: 8, obrigatorio: true, sinonimos:["boas práticas de fabricação"], obs:"" },
-          { id: uid(), categoria:"Experiência", termo:"Auditoria interna", peso: 8, obrigatorio: true, sinonimos:["auditorias"], obs:"" },
-          { id: uid(), categoria:"Formação", termo:"Engenharia de Alimentos", peso: 7, obrigatorio: false, sinonimos:["alimentos"], obs:"" }
-        ]
-      };
-
-      const v3 = {
-        id: uid(),
-        codigo: "TI-PL-010",
-        titulo: "Analista de Dados (BI)",
-        area: "TI",
-        modalidade: "Remoto",
-        status: "aberta",
-        cidade: "",
-        uf: "",
-        senioridade: "Pleno",
-        threshold: 80,
-        descricao: "Modelagem e criação de dashboards. Integrações e rotinas de dados.",
-        createdAt: new Date(Date.now() - 1000*60*60*24*2).toISOString(),
-        updatedAt: new Date(Date.now() - 1000*60*60*24*1).toISOString(),
-        weights: { competencia: 45, experiencia: 35, formacao: 10, localidade: 10 },
-        requisitos: [
-          { id: uid(), categoria:"Ferramenta/Tecnologia", termo:"SQL", peso: 10, obrigatorio: true, sinonimos:["postgres","t-sql"], obs:"" },
-          { id: uid(), categoria:"Ferramenta/Tecnologia", termo:"ETL", peso: 7, obrigatorio: false, sinonimos:["pipelines"], obs:"" },
-          { id: uid(), categoria:"Competência", termo:"Modelagem dimensional", peso: 8, obrigatorio: true, sinonimos:["star schema"], obs:"" }
-        ]
-      };
-
-      state.vagas = [v1, v2, v3];
-      state.selectedId = v1.id;
+      state.vagas = vagasSeed;
+      state.selectedId = seed.selectedVagaId || vagasSeed[0]?.id || null;
       saveState();
     }
 

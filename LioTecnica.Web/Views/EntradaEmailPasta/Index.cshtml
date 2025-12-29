@@ -1,3 +1,4 @@
+@model PageSeedViewModel
 @{
     ViewData["Title"] = "Portal RH • Liotécnica — Entrada (Email/Pasta)";
     ViewData["SidebarSubtitle"] = "Entrada (Email/Pasta)";
@@ -171,5 +172,8 @@
   <!-- Bootstrap JS (CDN) -->
 
 @section Scripts {
+  <script>
+    window.__seedData = @Html.Raw(Model.SeedJson);
+  </script>
 <script src="~/js/views/entrada-email-pasta.js" asp-append-version="true"></script>
 }

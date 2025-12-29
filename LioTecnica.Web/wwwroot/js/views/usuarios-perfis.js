@@ -1,5 +1,6 @@
 // ========= Logo (data URI real do arquivo recebido)
     // Obs: apesar do nome do arquivo ser .png, o conteúdo é WebP (ok).
+    const seed = window.__seedData || {};
     const LOGO_DATA_URI = "data:image/webp;base64,UklGRngUAABXRUJQVlA4IGwUAAAQYwCdASpbAVsBPlEokUajoqGhIpNoyHAKCWdu4XVRGx3dfRl/z/9LIqSxD6o3/BCxQeXQe+KQ8t8JvF8fHhG6w6d2P9/3vC3o3b9n+uWZbQ+oYk7hYp7tqW9j7p1gq5v2yqG0U4jQ4wB3lK2uZ1c9bQ8d2d8u5m2Cw2hKk9wQfV7mQ6s1Gx8hB4yKqHf1eW3bRj+4gQyC7d5o0cQqv0mH0tY0HqGmJt1g3d3BqzR7m6cQ3yGq1mJrJf0d1nUuQ7k1hPq2mQ8s2vZzC0a4k5dQ2w9hYQf4g1jHhM5oZz8rY8p2m+QJ3nJm6GgA=";
 // ========= Storage keys (compatível com outras telas)
     const USERS_KEY = "lt_rh_users_v1";
@@ -55,66 +56,21 @@
       return p;
     }
     function seedIfEmpty(){
+      const rolesSeed = Array.isArray(seed.roles) ? seed.roles : [];
+      const usersSeed = Array.isArray(seed.users) ? seed.users : [];
+
       const rolesRaw = loadJson(ROLES_KEY, null);
-      if(!rolesRaw || !Array.isArray(rolesRaw.roles) || !rolesRaw.roles.length){
-        const adminPerms = emptyPerms();
-        for(const m of MODULES){
-          adminPerms[m.key] = { view:true, create:true, edit:true, delete:true, export:true, admin:true };
-        }
-
-        const recruiterPerms = emptyPerms();
-        // Recrutador: vagas/candidatos/triagem/matching/entrada
-        ["vagas","candidatos","triagem","matching","entrada"].forEach(k => {
-          recruiterPerms[k] = { view:true, create:true, edit:true, delete:false, export:true, admin:false };
-        });
-        recruiterPerms["relatorios"] = { view:true, create:false, edit:false, delete:false, export:true, admin:false };
-        recruiterPerms["dashboard"] = { view:true, create:false, edit:false, delete:false, export:false, admin:false };
-        recruiterPerms["usuarios"] = { view:false, create:false, edit:false, delete:false, export:false, admin:false };
-        recruiterPerms["config"] = { view:false, create:false, edit:false, delete:false, export:false, admin:false };
-
-        const managerPerms = emptyPerms();
-        ["dashboard","relatorios","vagas","candidatos","matching"].forEach(k => {
-          managerPerms[k] = { view:true, create:false, edit:false, delete:false, export:true, admin:false };
-        });
-        managerPerms["triagem"] = { view:true, create:false, edit:true, delete:false, export:false, admin:false };
-
-        const roles = [
-          { id: uid(), name:"Admin RH", desc:"Acesso total (admin).", perms: adminPerms, builtIn:true, createdAt:new Date().toISOString(), updatedAt:new Date().toISOString() },
-          { id: uid(), name:"Recrutador", desc:"Opera vagas, triagem e matching.", perms: recruiterPerms, builtIn:false, createdAt:new Date().toISOString(), updatedAt:new Date().toISOString() },
-          { id: uid(), name:"Gestor", desc:"Acompanha funil e aprovações.", perms: managerPerms, builtIn:false, createdAt:new Date().toISOString(), updatedAt:new Date().toISOString() },
-        ];
-        localStorage.setItem(ROLES_KEY, JSON.stringify({ roles }));
+      if((!rolesRaw || !Array.isArray(rolesRaw.roles) || !rolesRaw.roles.length) && rolesSeed.length){
+        localStorage.setItem(ROLES_KEY, JSON.stringify({ roles: rolesSeed }));
       }
 
       const usersRaw = loadJson(USERS_KEY, null);
-      if(!usersRaw || !Array.isArray(usersRaw.users) || !usersRaw.users.length){
-        const roles = loadJson(ROLES_KEY, { roles: [] }).roles || [];
-        const roleAdmin = roles.find(r => r.name==="Admin RH")?.id;
-        const roleRec = roles.find(r => r.name==="Recrutador")?.id;
-        const roleGest = roles.find(r => r.name==="Gestor")?.id;
-
-        const now = new Date();
-        const mk = (name,email,dept,status,rolesIds,mfa,lastLoginDays) => ({
-          id: uid(),
-          name, email, dept,
-          status, // active | invited | disabled
-          roleIds: rolesIds.filter(Boolean),
-          mfaEnabled: !!mfa,
-          createdAt: new Date(now.getTime() - 1000*60*60*24*(12+Math.floor(Math.random()*10))).toISOString(),
-          updatedAt: new Date(now.getTime() - 1000*60*60*24*(Math.floor(Math.random()*6))).toISOString(),
-          lastLoginAt: lastLoginDays==null ? null : new Date(now.getTime() - 1000*60*60*24*lastLoginDays).toISOString()
-        });
-
-        const users = [
-          mk("Fernanda Lima","fernanda.lima@@liotecnica.com.br","RH","active",[roleAdmin],true,1),
-          mk("Marcos Azevedo","marcos.azevedo@@liotecnica.com.br","RH","active",[roleRec],false,3),
-          mk("Ana Ribeiro","ana.ribeiro@@liotecnica.com.br","Gestão","invited",[roleGest],false,null),
-        ];
-        localStorage.setItem(USERS_KEY, JSON.stringify({ users }));
+      if((!usersRaw || !Array.isArray(usersRaw.users) || !usersRaw.users.length) && usersSeed.length){
+        localStorage.setItem(USERS_KEY, JSON.stringify({ users: usersSeed }));
       }
     }
 
-    function loadAll(){
+function loadAll(){
       state.roles = (loadJson(ROLES_KEY, { roles: [] }).roles || []);
       state.users = (loadJson(USERS_KEY, { users: [] }).users || []);
       if(!state.selectedRoleId) state.selectedRoleId = state.roles[0]?.id || null;

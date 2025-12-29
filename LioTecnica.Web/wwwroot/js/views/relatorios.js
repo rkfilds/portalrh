@@ -1,4 +1,5 @@
 // ========= Logo (Data URI placeholder)
+    const seed = window.__seedData || {};
     const LOGO_DATA_URI = "data:image/webp;base64,UklGRngUAABXRUJQVlA4IGwUAAAQYwCdASpbAVsBPlEokUajoqGhIpNoyHAK7AQYJjYQmG9Dtu/6p6QZ4lQd6lPde+Jk3i3kG2EoP+QW0c0h8Oe3jW2C5zE0o9jzZ1x2fX9cZlX0d7rW8r0vQ9p3d2nJ1bqzQfQZxVwTt7mJvU8j1GqF4oJc8Qb+gq+oQyHcQyYc2b9u2fYf0Rj9x9hRZp2Y2xK0yVQ8Hj4p6w8B1K2cKk2mY9m2r8kz3a4m7xG4xg9m5VjzP3E4RjQH8fYkC4mB8g0vR3c5h1D0yE8Qzv7t7gQj0Z9yKk3cWZgVnq3l1kq6rE8oWc4z6oZk8k0b1o9m8p2m+QJ3nJm6GgA=";
 // ========= Storage keys (compatível com telas anteriores)
     const VAGAS_KEY = "lt_rh_vagas_v1";
@@ -25,37 +26,27 @@
 
     // ========= Seed (mínimo para não quebrar a tela)
     function seedIfEmpty(){
+      const vagasSeed = Array.isArray(seed.vagas) ? seed.vagas : [];
+      const candsSeed = Array.isArray(seed.candidatos) ? seed.candidatos : [];
+      const inboxSeed = Array.isArray(seed.inbox) ? seed.inbox : [];
+
       const vagasRaw = loadJson(VAGAS_KEY, null);
-      if(!vagasRaw || !Array.isArray(vagasRaw.vagas) || !vagasRaw.vagas.length){
-        const vaga = {
-          id: uid(),
-          codigo: "VAG-001",
-          titulo: "Analista de Dados",
-          descricao: "Análise de indicadores, dashboards e apoio ao RH/gestão.",
-          threshold: 65,
-          requisitos: [
-            { id: uid(), termo: "excel", peso: 5, obrigatorio: true, sinonimos: ["planilhas","vlookup","tabela dinamica"] },
-            { id: uid(), termo: "power bi", peso: 4, obrigatorio: false, sinonimos: ["pbi","powerbi"] },
-            { id: uid(), termo: "sql", peso: 4, obrigatorio: false, sinonimos: ["postgres","query"] }
-          ],
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        };
-        localStorage.setItem(VAGAS_KEY, JSON.stringify({ vagas: [vaga] }));
+      if((!vagasRaw || !Array.isArray(vagasRaw.vagas) || !vagasRaw.vagas.length) && vagasSeed.length){
+        localStorage.setItem(VAGAS_KEY, JSON.stringify({ vagas: vagasSeed, selectedId: seed.selectedVagaId || null }));
       }
 
       const candRaw = loadJson(CANDS_KEY, null);
-      if(!candRaw || !Array.isArray(candRaw.candidatos)){
-        localStorage.setItem(CANDS_KEY, JSON.stringify({ candidatos: [], selectedId: null }));
+      if((!candRaw || !Array.isArray(candRaw.candidatos) || !candRaw.candidatos.length) && candsSeed.length){
+        localStorage.setItem(CANDS_KEY, JSON.stringify({ candidatos: candsSeed, selectedId: seed.selectedCandidatoId || null }));
       }
 
       const inboxRaw = loadJson(INBOX_KEY, null);
-      if(!inboxRaw || !Array.isArray(inboxRaw.inbox)){
-        localStorage.setItem(INBOX_KEY, JSON.stringify({ inbox: [], selectedId: null, savedAt: new Date().toISOString() }));
+      if((!inboxRaw || !Array.isArray(inboxRaw.inbox) || !inboxRaw.inbox.length) && inboxSeed.length){
+        localStorage.setItem(INBOX_KEY, JSON.stringify({ inbox: inboxSeed, selectedId: seed.selectedInboxId || inboxSeed[0]?.id || null, savedAt: new Date().toISOString() }));
       }
     }
 
-    function loadAll(){
+function loadAll(){
       state.vagas = (loadJson(VAGAS_KEY, { vagas: [] }).vagas || []);
       state.candidatos = (loadJson(CANDS_KEY, { candidatos: [] }).candidatos || []);
       state.inbox = (loadJson(INBOX_KEY, { inbox: [] }).inbox || []);
@@ -64,43 +55,7 @@
     function findVaga(id){ return state.vagas.find(v => v.id === id) || null; }
 
     // ========= Relatórios (catálogo)
-    const REPORTS = [
-      {
-        id:"r1",
-        icon:"bar-chart",
-        title:"Entrada por Origem",
-        desc:"Quantidade de itens recebidos por Email/Pasta/Upload no período.",
-        scope:"entrada"
-      },
-      {
-        id:"r2",
-        icon:"exclamation-triangle",
-        title:"Falhas de Processamento",
-        desc:"Principais causas de falha (PDF protegido, parser, arquivo vazio).",
-        scope:"entrada"
-      },
-      {
-        id:"r3",
-        icon:"people",
-        title:"Pipeline RH (Status do Candidato)",
-        desc:"Distribuição por status: triagem, matching, aprovado, reprovado.",
-        scope:"candidatos"
-      },
-      {
-        id:"r4",
-        icon:"briefcase",
-        title:"Funil por Vaga",
-        desc:"Candidatos por vaga: recebidos → triados → match ≥ threshold.",
-        scope:"vagas"
-      },
-      {
-        id:"r5",
-        icon:"stars",
-        title:"Ranking de Matching",
-        desc:"Top candidatos por percentual de match (demo).",
-        scope:"matching"
-      }
-    ];
+    const REPORTS = Array.isArray(seed.reports) ? seed.reports : [];
 
     // ========= Filters / period
     function periodStart(period){

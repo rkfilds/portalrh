@@ -1,4 +1,5 @@
 // ========= Logo (Data URI placeholder)
+    const seed = window.__seedData || {};
     const LOGO_DATA_URI = "data:image/webp;base64,UklGRngUAABXRUJQVlA4IGwUAAAQYwCdASpbAVsBPlEokUajoqGhIpNoyHAK7AQYJjYQmG9Dtu/6p6QZ4lQd6lPde+Jk3i3kG2EoP+QW0c0h8Oe3jW2C5zE0o9jzZ1x2fX9cZlX0d7rW8r0vQ9p3d2nJ1bqzQfQZxVwTt7mJvU8j1GqF4oJc8Qb+gq+oQyHcQyYc2b9u2fYf0Rj9x9hRZp2Y2xK0yVQ8Hj4p6w8B1K2cKk2mY9m2r8kz3a4m7xG4xg9m5VjzP3E4RjQH8fYkC4mB8g0vR3c5h1D0yE8Qzv7t7gQj0Z9yKk3cWZgVnq3l1kq6rE8oWc4z6oZk8k0b1o9m8p2m+QJ3nJm6GgA=";
 // ========= Storage keys (compatível com telas anteriores)
     const VAGAS_KEY = "lt_rh_vagas_v1";
@@ -26,93 +27,27 @@
 
     // ========= Seed (se vazio)
     function seedIfEmpty(){
-      // Vagas
+      const vagasSeed = Array.isArray(seed.vagas) ? seed.vagas : [];
+      const candsSeed = Array.isArray(seed.candidatos) ? seed.candidatos : [];
+      const inboxSeed = Array.isArray(seed.inbox) ? seed.inbox : [];
+
       const vagasRaw = loadJson(VAGAS_KEY, null);
-      if(!vagasRaw || !Array.isArray(vagasRaw.vagas) || !vagasRaw.vagas.length){
-        const vaga = {
-          id: uid(),
-          codigo: "VAG-001",
-          titulo: "Analista de Dados",
-          descricao: "Análise de indicadores, dashboards e apoio ao RH/gestão.",
-          threshold: 65,
-          requisitos: [
-            { id: uid(), termo: "excel", peso: 5, obrigatorio: true, sinonimos: ["planilhas", "vlookup", "tabela dinamica"] },
-            { id: uid(), termo: "power bi", peso: 4, obrigatorio: false, sinonimos: ["pbi", "powerbi"] },
-            { id: uid(), termo: "sql", peso: 4, obrigatorio: false, sinonimos: ["postgres", "query"] },
-            { id: uid(), termo: "indicadores", peso: 3, obrigatorio: false, sinonimos: ["kpi", "dashboards", "relatorios"] }
-          ],
-          createdAt: new Date().toISOString(),
-          updatedAt: new Date().toISOString()
-        };
-        localStorage.setItem(VAGAS_KEY, JSON.stringify({ vagas: [vaga] }));
+      if((!vagasRaw || !Array.isArray(vagasRaw.vagas) || !vagasRaw.vagas.length) && vagasSeed.length){
+        localStorage.setItem(VAGAS_KEY, JSON.stringify({ vagas: vagasSeed, selectedId: seed.selectedVagaId || null }));
       }
 
-      // Candidatos (se não existir)
       const candRaw = loadJson(CANDS_KEY, null);
-      if(!candRaw || !Array.isArray(candRaw.candidatos)){
-        localStorage.setItem(CANDS_KEY, JSON.stringify({ candidatos: [], selectedId: null }));
+      if((!candRaw || !Array.isArray(candRaw.candidatos) || !candRaw.candidatos.length) && candsSeed.length){
+        localStorage.setItem(CANDS_KEY, JSON.stringify({ candidatos: candsSeed, selectedId: seed.selectedCandidatoId || null }));
       }
 
-      // Inbox
       const inboxRaw = loadJson(INBOX_KEY, null);
-      if(!inboxRaw || !Array.isArray(inboxRaw.inbox) || !inboxRaw.inbox.length){
-        const vagas = loadJson(VAGAS_KEY, { vagas: [] }).vagas || [];
-        const vagaId = vagas[0]?.id || null;
-
-        const now = Date.now();
-        const seed = [
-          {
-            id: uid(),
-            origem: "email",
-            status: "novo",
-            recebidoEm: new Date(now - 1000*60*30).toISOString(),
-            remetente: "mariana.souza@@email.com",
-            assunto: "Currículo • Analista de Dados",
-            destinatario: "rh@@liotecnica.com.br",
-            vagaId,
-            anexos: [
-              { nome: "Mariana_Souza_CV.pdf", tipo: "pdf", tamanhoKB: 284, hash: "demo-1" }
-            ],
-            processamento: { pct: 0, etapa: "Aguardando", log: [], tentativas: 0, ultimoErro: null },
-            previewText: "Experiência com excel avançado, dashboards e power bi..."
-          },
-          {
-            id: uid(),
-            origem: "pasta",
-            status: "processando",
-            recebidoEm: new Date(now - 1000*60*12).toISOString(),
-            remetente: "watcher@@server",
-            assunto: "Novo arquivo em pasta monitorada",
-            destinatario: "FS: \\\\RH\\Curriculos\\Entrada",
-            vagaId,
-            anexos: [
-              { nome: "Ana_Ribeiro.docx", tipo: "docx", tamanhoKB: 512, hash: "demo-2" }
-            ],
-            processamento: { pct: 55, etapa: "Extraindo texto", log: ["Arquivo detectado", "Upload ok", "Extraindo texto..."], tentativas: 1, ultimoErro: null },
-            previewText: "PowerBI, SQL, modelagem dimensional e analytics..."
-          },
-          {
-            id: uid(),
-            origem: "email",
-            status: "falha",
-            recebidoEm: new Date(now - 1000*60*90).toISOString(),
-            remetente: "carlos.h@@email.com",
-            assunto: "CV atualizado (PDF protegido)",
-            destinatario: "rh@@liotecnica.com.br",
-            vagaId,
-            anexos: [
-              { nome: "CarlosH_CV.pdf", tipo: "pdf", tamanhoKB: 190, hash: "demo-3" }
-            ],
-            processamento: { pct: 100, etapa: "Falha", log: ["Anexo encontrado", "Tentativa de leitura", "PDF com senha"], tentativas: 2, ultimoErro: "PDF protegido por senha" },
-            previewText: ""
-          }
-        ];
-
-        localStorage.setItem(INBOX_KEY, JSON.stringify({ inbox: seed, selectedId: seed[0].id, savedAt: new Date().toISOString() }));
+      if((!inboxRaw || !Array.isArray(inboxRaw.inbox) || !inboxRaw.inbox.length) && inboxSeed.length){
+        localStorage.setItem(INBOX_KEY, JSON.stringify({ inbox: inboxSeed, selectedId: seed.selectedInboxId || inboxSeed[0]?.id || null, savedAt: new Date().toISOString() }));
       }
     }
 
-    function loadAll(){
+function loadAll(){
       state.vagas = (loadJson(VAGAS_KEY, { vagas: [] }).vagas || []);
       const c = loadJson(CANDS_KEY, { candidatos: [], selectedId: null });
       state.candidatos = c.candidatos || [];

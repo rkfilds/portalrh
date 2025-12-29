@@ -1,11 +1,6 @@
+const seed = window.__seedData || {};
 // ========= Top matches (mock)
-    const mockRows = [
-      { vaga: "Analista de Marketing Jr", cand: "Camila R.", origem: "Email", match: 92, etapa: "Triagem" },
-      { vaga: "Engenheiro de Processos", cand: "Rafael S.", origem: "Pasta", match: 88, etapa: "Em análise" },
-      { vaga: "Supervisor de Qualidade", cand: "Patrícia M.", origem: "Email", match: 84, etapa: "Entrevista" },
-      { vaga: "Assistente de RH", cand: "Daniel A.", origem: "Pasta", match: 81, etapa: "Triagem" },
-      { vaga: "Engenheiro de Processos", cand: "Bruno T.", origem: "Email", match: 78, etapa: "Recebido" }
-    ];
+    const mockRows = Array.isArray(seed.dashboardRows) ? seed.dashboardRows : [];
 
     function badgeEtapa(etapa){
       const map = {
@@ -71,7 +66,7 @@
         return d.toLocaleDateString("pt-BR", { day:"2-digit", month:"2-digit" });
       });
 
-      const data = [8,12,10,14,18,20,16,22,25,19,21,28,24,30];
+      const data = Array.isArray(seed.dashboardSeries) && seed.dashboardSeries.length ? seed.dashboardSeries : [8,12,10,14,18,20,16,22,25,19,21,28,24,30];
 
       new Chart(ctx, {
         type: "line",

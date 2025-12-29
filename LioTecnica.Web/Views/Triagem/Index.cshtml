@@ -1,3 +1,4 @@
+@model PageSeedViewModel
 @{
     ViewData["Title"] = "Portal RH • Liotécnica — Triagem";
     ViewData["SidebarSubtitle"] = "Triagem • Pipeline";
@@ -138,5 +139,8 @@
   <!-- Bootstrap JS (CDN) -->
 
 @section Scripts {
+  <script>
+    window.__seedData = @Html.Raw(Model.SeedJson);
+  </script>
 <script src="~/js/views/triagem.js" asp-append-version="true"></script>
 }
