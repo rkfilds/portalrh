@@ -15,10 +15,7 @@
             <div class="col-12 col-md-4">
               <label class="form-label small text-muted">Categoria</label>
               <select class="form-select" id="reqCategoria">
-                @foreach (var opt in EnumOptionsHelper.GetOptions<RequisitoCategoria>())
-                {
-                  <option value="@opt.Code">@opt.Text</option>
-                }
+                <option value="">Selecionar categoria</option>
               </select>
             </div>
 

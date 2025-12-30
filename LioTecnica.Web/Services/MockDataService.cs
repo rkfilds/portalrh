@@ -1336,6 +1336,100 @@ public static class MockDataService
             }
         };
 
+        var requisitoCategorias = new List<RequisitoCategoriaSeed>
+        {
+            new()
+            {
+                Id = "cat-001",
+                Codigo = "CAT-COMP",
+                Nome = "Competencia",
+                Status = "ativo",
+                Descricao = "Competencias comportamentais e tecnicas.",
+                CreatedAt = Iso(now.AddDays(-200)),
+                UpdatedAt = Iso(now.AddDays(-12))
+            },
+            new()
+            {
+                Id = "cat-002",
+                Codigo = "CAT-EXP",
+                Nome = "Experiencia",
+                Status = "ativo",
+                Descricao = "Vivencias anteriores no cargo/area.",
+                CreatedAt = Iso(now.AddDays(-198)),
+                UpdatedAt = Iso(now.AddDays(-11))
+            },
+            new()
+            {
+                Id = "cat-003",
+                Codigo = "CAT-FORM",
+                Nome = "Formacao",
+                Status = "ativo",
+                Descricao = "Formacao academica e cursos.",
+                CreatedAt = Iso(now.AddDays(-195)),
+                UpdatedAt = Iso(now.AddDays(-10))
+            },
+            new()
+            {
+                Id = "cat-004",
+                Codigo = "CAT-FERR",
+                Nome = "Ferramenta/Tecnologia",
+                Status = "ativo",
+                Descricao = "Ferramentas, sistemas e tecnologias.",
+                CreatedAt = Iso(now.AddDays(-193)),
+                UpdatedAt = Iso(now.AddDays(-9))
+            },
+            new()
+            {
+                Id = "cat-005",
+                Codigo = "CAT-CERT",
+                Nome = "Certificacao",
+                Status = "ativo",
+                Descricao = "Certificacoes tecnicas e reguladoras.",
+                CreatedAt = Iso(now.AddDays(-190)),
+                UpdatedAt = Iso(now.AddDays(-8))
+            },
+            new()
+            {
+                Id = "cat-006",
+                Codigo = "CAT-GEST",
+                Nome = "Gestao",
+                Status = "ativo",
+                Descricao = "Lideranca e gestao de equipes.",
+                CreatedAt = Iso(now.AddDays(-188)),
+                UpdatedAt = Iso(now.AddDays(-7))
+            },
+            new()
+            {
+                Id = "cat-007",
+                Codigo = "CAT-IDI",
+                Nome = "Idioma",
+                Status = "inativo",
+                Descricao = "Idiomas e fluencia exigida.",
+                CreatedAt = Iso(now.AddDays(-186)),
+                UpdatedAt = Iso(now.AddDays(-6))
+            },
+            new()
+            {
+                Id = "cat-008",
+                Codigo = "CAT-LOC",
+                Nome = "Localidade",
+                Status = "inativo",
+                Descricao = "Preferencias ou restricoes de local.",
+                CreatedAt = Iso(now.AddDays(-184)),
+                UpdatedAt = Iso(now.AddDays(-5))
+            },
+            new()
+            {
+                Id = "cat-009",
+                Codigo = "CAT-OUT",
+                Nome = "Outros",
+                Status = "inativo",
+                Descricao = "Requisitos adicionais e especificos.",
+                CreatedAt = Iso(now.AddDays(-182)),
+                UpdatedAt = Iso(now.AddDays(-4))
+            }
+        };
+
         var candidatos = new List<CandidatoSeed>
         {
             new()
@@ -1634,7 +1728,8 @@ public static class MockDataService
             Reports = reports,
             Departamentos = departamentos,
             Gestores = gestores,
-            Areas = areas
+            Areas = areas,
+            RequisitoCategorias = requisitoCategorias
         };
     }
 

@@ -24,4 +24,6 @@ public sealed class SeedBundle
     public IReadOnlyList<GestorSeed> Gestores { get; init; } = Array.Empty<GestorSeed>();
 
     public IReadOnlyList<AreaSeed> Areas { get; init; } = Array.Empty<AreaSeed>();
+
+    public IReadOnlyList<RequisitoCategoriaSeed> RequisitoCategorias { get; init; } = Array.Empty<RequisitoCategoriaSeed>();
 }

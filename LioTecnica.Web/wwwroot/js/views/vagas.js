@@ -9,10 +9,10 @@ function enumFirstCode(key, fallback){
 
     const AREA_ALL = enumFirstCode("vagaAreaFilter", "all");
     const AREAS_STORE_KEY = "lt_rh_areas_v1";
+    const REQ_CATEGORIAS_STORE_KEY = "lt_rh_req_categorias_v1";
     const DEFAULT_MODALIDADE = enumFirstCode("vagaModalidade", "Presencial");
     const DEFAULT_STATUS = enumFirstCode("vagaStatus", "aberta");
     const DEFAULT_SENIORIDADE = enumFirstCode("vagaSenioridade", "Junior");
-    const DEFAULT_CATEGORIA = enumFirstCode("requisitoCategoria", "Competencia");
     const DEFAULT_DEPARTAMENTO = enumFirstCode("vagaDepartamento", "");
     const DEFAULT_AREA_TIME = enumFirstCode("vagaAreaTime", "");
     const DEFAULT_TIPO_CONTRATACAO = enumFirstCode("vagaTipoContratacao", "");
@@ -106,6 +106,46 @@ function enumFirstCode(key, fallback){
       const areas = listAreas();
       areas.forEach(a => select.appendChild(buildOption(a, a, a === selected)));
       if(selected && !areas.includes(selected)){
+        select.appendChild(buildOption(selected, selected, true));
+      }
+      if(selected) select.value = selected;
+    }
+
+    function loadReqCategorias(){
+      try{
+        const raw = localStorage.getItem(REQ_CATEGORIAS_STORE_KEY);
+        if(!raw) return Array.isArray(seed.requisitoCategorias) ? seed.requisitoCategorias : [];
+        const data = JSON.parse(raw);
+        if(data && Array.isArray(data.categorias)) return data.categorias;
+        return Array.isArray(seed.requisitoCategorias) ? seed.requisitoCategorias : [];
+      }catch{
+        return Array.isArray(seed.requisitoCategorias) ? seed.requisitoCategorias : [];
+      }
+    }
+
+    function listReqCategorias(){
+      const list = loadReqCategorias().map(c => c.nome).filter(Boolean);
+      const fromVagas = state.vagas
+        .flatMap(v => (v.requisitos || []).map(r => r.categoria))
+        .filter(Boolean);
+      const set = new Set([...list, ...fromVagas]);
+      return Array.from(set).sort((a,b)=>a.localeCompare(b,"pt-BR"));
+    }
+
+    function getDefaultCategoria(){
+      const list = listReqCategorias();
+      if(list.includes("Competencia")) return "Competencia";
+      return list.length ? list[0] : "Competencia";
+    }
+
+    function renderReqCategoriaOptions(selected){
+      const select = $("#reqCategoria");
+      if(!select) return;
+      select.replaceChildren();
+      select.appendChild(buildOption("", "Selecionar categoria", !selected));
+      const list = listReqCategorias();
+      list.forEach(c => select.appendChild(buildOption(c, c, c === selected)));
+      if(selected && !list.includes(selected)){
         select.appendChild(buildOption(selected, selected, true));
       }
       if(selected) select.value = selected;
@@ -1223,14 +1263,18 @@ function fmtStatus(s){
         if(!r) return;
 
         $("#reqId").value = r.id;
-        $("#reqCategoria").value = r.categoria || DEFAULT_CATEGORIA;
+        const selected = r.categoria || getDefaultCategoria();
+        renderReqCategoriaOptions(selected);
+        $("#reqCategoria").value = selected;
         $("#reqPeso").value = clamp(parseInt(r.peso ?? 0,10)||0, 0, 10);
         $("#reqObrigatorio").checked = !!r.obrigatorio;
         $("#reqTermo").value = r.termo || "";
         $("#reqSinonimos").value = (r.sinonimos || []).join(", ");
         $("#reqObs").value = r.obs || "";
       }else{
-        $("#reqCategoria").value = DEFAULT_CATEGORIA;
+        const selected = getDefaultCategoria();
+        renderReqCategoriaOptions(selected);
+        $("#reqCategoria").value = selected;
         $("#reqPeso").value = 7;
         $("#reqObrigatorio").checked = false;
         $("#reqTermo").value = "";
@@ -1250,7 +1294,7 @@ function fmtStatus(s){
       if(!v) return;
 
       const rid = $("#reqId").value || null;
-      const categoria = ($("#reqCategoria").value || "").trim();
+      const categoria = ($("#reqCategoria").value || "").trim() || getDefaultCategoria();
       const peso = clamp(parseInt($("#reqPeso").value,10)||0, 0, 10);
       const obrigatorio = !!$("#reqObrigatorio").checked;
       const termo = ($("#reqTermo").value || "").trim();
@@ -1507,7 +1551,7 @@ function simulateMatch(vagaId, fromMobile=false){
                 weights: v.weights || { competencia:40, experiencia:30, formacao:15, localidade:15 },
                 requisitos: Array.isArray(v.requisitos) ? v.requisitos.map(r => ({
                   id: r.id || uid(),
-                  categoria: r.categoria || DEFAULT_CATEGORIA,
+                  categoria: r.categoria || getDefaultCategoria(),
                   termo: r.termo || "",
                   peso: clamp(parseInt(r.peso ?? 0,10)||0,0,10),
                   obrigatorio: !!r.obrigatorio,
