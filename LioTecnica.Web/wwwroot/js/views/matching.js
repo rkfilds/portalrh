@@ -7,6 +7,8 @@ function enumFirstCode(key, fallback){
     }
 
     const VAGA_ALL = enumFirstCode("vagaFilter", "all");
+    const STATUS_ALL = enumFirstCode("candidatoStatusFilter", "all");
+    const SORT_DEFAULT = enumFirstCode("matchingSort", "score_desc");
     const EMPTY_TEXT = "—";
     const BULLET = "-";
     function setText(root, role, value, fallback = EMPTY_TEXT){
@@ -59,7 +61,7 @@ function enumFirstCode(key, fallback){
       candidatos: [],
       matchCache: {}, // { "<candId>|<vagaId>": {score, pass, hits[], missMandatory[], at} }
       selectedId: null,
-      filters: { q:"", vagaId:"all", status:"all", sort:"score_desc" }
+      filters: { q:"", vagaId:VAGA_ALL, status:STATUS_ALL, sort:SORT_DEFAULT }
     };
 
     function findVaga(id){
@@ -288,7 +290,6 @@ function renderVagaFilter(){
       if(state.selectedId && !visibleIds.has(state.selectedId)){
         state.selectedId = null;
         saveCands();
-        renderDetail(null);
       }
       if(!state.selectedId && filtered[0]){
         state.selectedId = filtered[0].id;
@@ -307,8 +308,6 @@ function renderVagaFilter(){
         });
       }
 
-      renderDetail(state.selectedId ? findCand(state.selectedId) : null);
-      syncMobileDetail();
     }
 
     function buildListItem(c){
@@ -355,10 +354,8 @@ function renderVagaFilter(){
         state.selectedId = item.dataset.id;
         saveCands();
         renderList();
-        if(window.matchMedia("(max-width: 991.98px)").matches){
-          syncMobileDetail();
-          bootstrap.Offcanvas.getOrCreateInstance($("#offcanvasDetails")).show();
-        }
+        const selected = findCand(state.selectedId);
+        openDetailModal(selected);
       });
 
       return item;
@@ -401,8 +398,8 @@ function renderVagaFilter(){
     }
 
     // ========= Detail
-    function renderDetail(c){
-      const host = $("#detailHost");
+    function renderDetail(c, host){
+      if(!host) return;
       host.replaceChildren();
 
       if(!c){
@@ -474,66 +471,52 @@ function renderVagaFilter(){
 
       host.appendChild(root);
 
-      // bind actions
-      $("#btnRecalcOne").addEventListener("click", () => {
+      const bind = (id, fn) => {
+        const el = root.querySelector("#" + id);
+        if(el) el.addEventListener("click", fn);
+      };
+
+      const get = (id) => root.querySelector("#" + id);
+
+      bind("btnRecalcOne", () => {
         clearCacheFor(c.id, v.id);
         calcMatch(c, v);
         toast("Recalculado.");
         renderList();
+        renderDetail(c, host);
       });
-      $("#btnClearCacheOne").addEventListener("click", () => {
+      bind("btnClearCacheOne", () => {
         clearCacheFor(c.id, v.id);
         toast("Cache limpo (candidato/vaga).");
         renderList();
+        renderDetail(c, host);
       });
-      $("#btnSaveCvText").addEventListener("click", () => {
-        const txt = $("#cvTextArea").value || "";
+      bind("btnSaveCvText", () => {
+        const txt = (get("cvTextArea")?.value || "");
         c.cvText = txt;
         c.updatedAt = new Date().toISOString();
         saveCands();
         clearCacheFor(c.id, v.id);
         toast("Texto do CV salvo. Recalcule para atualizar o score.");
         renderList();
-        renderDetail(c);
+        renderDetail(c, host);
       });
-      $("#btnClearCacheVaga").addEventListener("click", () => {
+      bind("btnClearCacheVaga", () => {
         clearCacheForVaga(v.id);
         toast("Cache limpo (vaga).");
         renderList();
+        renderDetail(c, host);
       });
     }
 
-    function syncMobileDetail(){
-      const mobile = $("#mobileDetailBody");
-      const detail = $("#detailHost");
-      if(!mobile || !detail) return;
-
-      mobile.replaceChildren();
-      const content = detail.firstElementChild;
-      if(content) mobile.appendChild(content.cloneNode(true));
-
-      const c = findCand(state.selectedId);
-      const v = (c && (state.filters.vagaId === "all" ? findVaga(c.vagaId) : findVaga(state.filters.vagaId))) || null;
-      if(!c || !v) return;
-
-      const bind = (id, fn) => {
-        const el = $("#"+id, $("#mobileDetailBody"));
-        if(el) el.addEventListener("click", fn);
-      };
-
-      bind("btnRecalcOne", () => { clearCacheFor(c.id, v.id); calcMatch(c, v); toast("Recalculado."); renderList(); });
-      bind("btnClearCacheOne", () => { clearCacheFor(c.id, v.id); toast("Cache limpo."); renderList(); });
-      bind("btnSaveCvText", () => {
-        const ta = $("#cvTextArea", $("#mobileDetailBody"));
-        c.cvText = (ta ? ta.value : (c.cvText||""));
-        c.updatedAt = new Date().toISOString();
-        saveCands();
-        clearCacheFor(c.id, v.id);
-        toast("Texto do CV salvo. Recalcule para atualizar o score.");
-        renderList();
-        renderDetail(c);
-      });
-      bind("btnClearCacheVaga", () => { clearCacheForVaga(v.id); toast("Cache limpo (vaga)."); renderList(); });
+    function openDetailModal(c){
+      const host = $("#detailModalBody");
+      if(!host) return;
+      renderDetail(c, host);
+      const modalEl = $("#modalMatchingDetail");
+      if(modalEl && window.bootstrap){
+        bootstrap.Modal.getOrCreateInstance(modalEl).show();
+      }
     }
 
     // ========= Cache mgmt
@@ -624,12 +607,23 @@ function renderVagaFilter(){
       tick();
       setInterval(tick, 1000*15);
     }
+    function resetFiltersUI(){
+      state.filters = { q:"", vagaId: VAGA_ALL, status: STATUS_ALL, sort: SORT_DEFAULT };
+      const search = $("#fSearch");
+      if(search) search.value = "";
+      const fVaga = $("#fVaga");
+      if(fVaga) fVaga.value = VAGA_ALL;
+      const fStatus = $("#fStatus");
+      if(fStatus) fStatus.value = STATUS_ALL;
+      const fSort = $("#fSort");
+      if(fSort) fSort.value = SORT_DEFAULT;
+    }
     function wireFilters(){
       const apply = () => {
         state.filters.q = ($("#fSearch").value || "").trim();
-        state.filters.vagaId = $("#fVaga").value || "all";
-        state.filters.status = $("#fStatus").value || "all";
-        state.filters.sort = $("#fSort").value || "score_desc";
+        state.filters.vagaId = $("#fVaga").value || VAGA_ALL;
+        state.filters.status = $("#fStatus").value || STATUS_ALL;
+        state.filters.sort = $("#fSort").value || SORT_DEFAULT;
         renderList();
       };
       $("#fSearch").addEventListener("input", apply);
@@ -701,6 +695,7 @@ function renderVagaFilter(){
       }
 
       renderVagaFilter();
+      resetFiltersUI();
 
       // default selection
       state.selectedId = state.candidatos[0]?.id || null;

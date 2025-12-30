@@ -13,6 +13,12 @@ public static class MockDataService
     private const string CandAnaId = "a8631d35-98bc-4402-9ec2-8f3397bdc862";
     private const string CandBrunoId = "e6375c65-3b1b-42c8-85d7-a87e6f070223";
     private const string CandDanielaId = "ddddb8d5-7756-4e04-ab5a-f06375ad3773";
+    private const string CandRafaelId = "2dfb1f64-0f3e-4f5c-8fb6-1f2d9c0dbf1a";
+    private const string CandPatriciaId = "9e4a5d7e-2b4a-4a2b-9e02-8f9a4e2b7c15";
+    private const string CandCamilaId = "c0d6f2a5-77f8-4bf4-9f6f-6a8e7f6c5e11";
+    private const string CandTiagoId = "b1c9a1d4-6c28-4a0a-9ac1-3d7a1f3b8a22";
+    private const string CandSofiaId = "6f6aa1d1-1f4b-4c7c-9a7b-4b3c1f2d5e33";
+    private const string CandLucasId = "8a0c5e6b-2f4e-4e6f-8b2e-1a3f5c7d9e44";
 
     private const string InboxMarianaId = "ea04cfa6-0179-4126-892f-262a47956f44";
     private const string InboxAnaId = "7e1f58ff-7e74-48c2-8a1c-2a8ba7fef998";
@@ -189,6 +195,108 @@ public static class MockDataService
                 CvText = "Power BI, SQL e reporting.",
                 CreatedAt = Iso(now.AddDays(-3)),
                 UpdatedAt = Iso(now.AddDays(-3)),
+                LastMatch = null
+            },
+            new()
+            {
+                Id = CandRafaelId,
+                Nome = "Rafael Santos",
+                Email = "rafael.santos@@email.com",
+                Fone = "(11) 93333-4040",
+                Cidade = "Embu das Artes",
+                Uf = "SP",
+                Fonte = "Email",
+                Status = "triagem",
+                VagaId = VagaQualidadeId,
+                Obs = "Experiencia com auditorias internas.",
+                CvText = "BPF, auditoria interna e controle de qualidade em processos.",
+                CreatedAt = Iso(now.AddDays(-8)),
+                UpdatedAt = Iso(now.AddDays(-2)),
+                LastMatch = null
+            },
+            new()
+            {
+                Id = CandPatriciaId,
+                Nome = "Patricia Mendes",
+                Email = "patricia.mendes@@email.com",
+                Fone = "(11) 92222-5555",
+                Cidade = "Taboao da Serra",
+                Uf = "SP",
+                Fonte = "LinkedIn",
+                Status = "aprovado",
+                VagaId = VagaQualidadeId,
+                Obs = "Certificacoes e experiencia em qualidade.",
+                CvText = "BPF, auditorias, engenharia de alimentos e processos.",
+                CreatedAt = Iso(now.AddDays(-9)),
+                UpdatedAt = Iso(now.AddDays(-1)),
+                LastMatch = null
+            },
+            new()
+            {
+                Id = CandCamilaId,
+                Nome = "Camila Rocha",
+                Email = "camila.rocha@@email.com",
+                Fone = "(11) 98888-3322",
+                Cidade = "Osasco",
+                Uf = "SP",
+                Fonte = "Indicacao",
+                Status = "triagem",
+                VagaId = VagaMarketingId,
+                Obs = "Boa aderencia em marketing digital.",
+                CvText = "Campanhas, analytics e excel. Nocoes de power bi.",
+                CreatedAt = Iso(now.AddDays(-7)),
+                UpdatedAt = Iso(now.AddDays(-3)),
+                LastMatch = null
+            },
+            new()
+            {
+                Id = CandTiagoId,
+                Nome = "Tiago Almeida",
+                Email = "tiago.almeida@@email.com",
+                Fone = "(11) 97777-4433",
+                Cidade = "Sao Paulo",
+                Uf = "SP",
+                Fonte = "Pasta",
+                Status = "pendente",
+                VagaId = VagaBiId,
+                Obs = "",
+                CvText = "SQL, ETL e modelagem. Experiencia com dados.",
+                CreatedAt = Iso(now.AddDays(-4)),
+                UpdatedAt = Iso(now.AddDays(-2)),
+                LastMatch = null
+            },
+            new()
+            {
+                Id = CandSofiaId,
+                Nome = "Sofia Lima",
+                Email = "sofia.lima@@email.com",
+                Fone = "(11) 96666-7788",
+                Cidade = "Sao Paulo",
+                Uf = "SP",
+                Fonte = "Email",
+                Status = "novo",
+                VagaId = VagaBiId,
+                Obs = "",
+                CvText = "Dashboards, BI e relatorios.",
+                CreatedAt = Iso(now.AddDays(-1)),
+                UpdatedAt = Iso(now.AddDays(-1)),
+                LastMatch = null
+            },
+            new()
+            {
+                Id = CandLucasId,
+                Nome = "Lucas Freitas",
+                Email = "lucas.freitas@@email.com",
+                Fone = "(11) 95555-8899",
+                Cidade = "Embu das Artes",
+                Uf = "SP",
+                Fonte = "LinkedIn",
+                Status = "aprovado",
+                VagaId = VagaMarketingId,
+                Obs = "Experiencia em campanhas e analise de dados.",
+                CvText = "GA4, campanhas de performance e excel.",
+                CreatedAt = Iso(now.AddDays(-10)),
+                UpdatedAt = Iso(now.AddDays(-5)),
                 LastMatch = null
             }
         };

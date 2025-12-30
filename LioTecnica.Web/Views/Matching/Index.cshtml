@@ -9,9 +9,6 @@
 <!-- MOBILE SIDEBAR OFFCANVAS -->
   
 
-  <!-- MOBILE DETAILS OFFCANVAS -->
-  @await Html.PartialAsync("_OffcanvasDetails")
-
   <!-- TOAST -->
   @await Html.PartialAsync("_Toast")
 
@@ -111,17 +108,17 @@
           @{
   var kpis = new[]
   {
-    new { ColClass = "col-6 col-lg-3", ValueId = "kpiTotal", Value = "0", Label = "Candidatos filtrados" },
-    new { ColClass = "col-6 col-lg-3", ValueId = "kpiInside", Value = "0", Label = "Dentro do mÃ­nimo" },
-    new { ColClass = "col-6 col-lg-3", ValueId = "kpiMandatoryFail", Value = "0", Label = "Falha obrigatÃ³ria" },
-    new { ColClass = "col-6 col-lg-3", ValueId = "kpiAvg", Value = "0%", Label = "MÃ©dia de match" }
+    new { ColClass = "col-6 col-lg-3", ValueId = "kpiTotal", Value = "0", Label = "Candidatos filtrados", Icon = "bi-people" },
+    new { ColClass = "col-6 col-lg-3", ValueId = "kpiInside", Value = "0", Label = "Dentro do mÃ­nimo", Icon = "bi-check2-circle" },
+    new { ColClass = "col-6 col-lg-3", ValueId = "kpiMandatoryFail", Value = "0", Label = "Falha obrigatÃ³ria", Icon = "bi-exclamation-triangle" },
+    new { ColClass = "col-6 col-lg-3", ValueId = "kpiAvg", Value = "0%", Label = "MÃ©dia de match", Icon = "bi-stars" }
   };
 }
 @await Html.PartialAsync("_KpiSimpleRow", kpis)
         </div>
 
         <!-- Split -->
-        <div class="split">
+        <div class="split" style="grid-template-columns: 1fr;">
           <!-- Left: Candidates -->
           <div class="list-panel">
             <div class="card-soft p-3">
@@ -133,12 +130,12 @@
                 <span class="pill"><i class="bi bi-stars"></i><span id="listCount">0</span></span>
               </div>
 
-              <div class="d-grid gap-2" id="candList"></div>
+            <div class="matching-grid" id="candList"></div>
             </div>
           </div>
 
           <!-- Right: Details -->
-          <div class="detail-panel" id="detailHost">
+          <div class="detail-panel d-none" id="detailHost">
             <div class="empty">
               <div class="d-flex align-items-start gap-2">
                 <i class="bi bi-info-circle mt-1"></i>
@@ -339,6 +336,19 @@
           </div>
         </div>
       </template>
+
+      <!-- Modal: detalhes do candidato -->
+      <div class="modal fade" id="modalMatchingDetail" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+          <div class="modal-content">
+            <div class="modal-header">
+              <div class="fw-bold">Detalhes do candidato</div>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+            </div>
+            <div class="modal-body" id="detailModalBody"></div>
+          </div>
+        </div>
+      </div>
 
             @section Footer {
         @{
