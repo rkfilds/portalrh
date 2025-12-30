@@ -3,6 +3,7 @@ const STORE_KEY = "lt_rh_gestores_v1";
 const VAGAS_STORE_KEY = "lt_rh_vagas_v1";
 const AREAS_STORE_KEY = "lt_rh_areas_v1";
 const UNIDADES_STORE_KEY = "lt_rh_unidades_v1";
+const CARGOS_STORE_KEY = "lt_rh_cargos_v1";
 const EMPTY_TEXT = "-";
 
 const state = {
@@ -79,6 +80,18 @@ function loadUnidades(){
   }
 }
 
+function loadCargos(){
+  try{
+    const raw = localStorage.getItem(CARGOS_STORE_KEY);
+    if(!raw) return Array.isArray(seed.cargos) ? seed.cargos : [];
+    const data = JSON.parse(raw);
+    if(data && Array.isArray(data.cargos)) return data.cargos;
+    return Array.isArray(seed.cargos) ? seed.cargos : [];
+  }catch{
+    return Array.isArray(seed.cargos) ? seed.cargos : [];
+  }
+}
+
 function getAreaOptions(){
   const areas = loadAreas();
   const set = new Set(areas.map(a => a.nome).filter(Boolean));
@@ -88,6 +101,12 @@ function getAreaOptions(){
 function getUnidadeOptions(){
   const unidades = loadUnidades();
   const set = new Set(unidades.map(u => u.nome).filter(Boolean));
+  return Array.from(set).sort((a,b)=>a.localeCompare(b, "pt-BR"));
+}
+
+function getCargoOptions(){
+  const cargos = loadCargos();
+  const set = new Set(cargos.map(c => c.nome).filter(Boolean));
   return Array.from(set).sort((a,b)=>a.localeCompare(b, "pt-BR"));
 }
 
@@ -261,6 +280,21 @@ function fillUnidadeSelect(selected){
   }
 }
 
+function fillCargoSelect(selected){
+  const select = $("#gestorCargo");
+  if(!select) return;
+  select.replaceChildren();
+  select.appendChild(buildOption("", "Selecionar cargo"));
+  const list = getCargoOptions();
+  list.forEach(c => select.appendChild(buildOption(c, c, c === selected)));
+  if(selected && !list.includes(selected)){
+    select.appendChild(buildOption(selected, selected, true));
+  }
+  if(selected){
+    select.value = selected;
+  }
+}
+
 function openGestorModal(mode, id){
   const modal = bootstrap.Modal.getOrCreateInstance($("#modalGestor"));
   const isEdit = mode === "edit";
@@ -271,7 +305,7 @@ function openGestorModal(mode, id){
     if(!g) return;
     $("#gestorId").value = g.id || "";
     $("#gestorNome").value = g.nome || "";
-    $("#gestorCargo").value = g.cargo || "";
+    fillCargoSelect(g.cargo || "");
     fillAreaSelect(g.area || "");
     fillUnidadeSelect(g.unidade || "");
     $("#gestorStatus").value = g.status || "ativo";
@@ -282,7 +316,7 @@ function openGestorModal(mode, id){
   }else{
     $("#gestorId").value = "";
     $("#gestorNome").value = "";
-    $("#gestorCargo").value = "";
+    fillCargoSelect("");
     fillAreaSelect("");
     fillUnidadeSelect("");
     $("#gestorStatus").value = "ativo";

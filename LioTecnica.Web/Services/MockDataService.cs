@@ -1378,6 +1378,274 @@ public static class MockDataService
             }
         };
 
+        var seniorGerencia = EnumOptionsHelper.GetCode(VagaSenioridade.Gerencia);
+        var seniorCoordenacao = EnumOptionsHelper.GetCode(VagaSenioridade.Coordenacao);
+        var seniorPleno = EnumOptionsHelper.GetCode(VagaSenioridade.Pleno);
+
+        var cargos = new List<CargoSeed>
+        {
+            new()
+            {
+                Id = "car-001",
+                Codigo = "CAR-PRD-GER",
+                Nome = "Gerente de Producao",
+                Area = "Producao",
+                Senioridade = seniorGerencia,
+                Tipo = "Lideranca",
+                Status = "ativo",
+                Descricao = "Responsavel por performance e turnos.",
+                CreatedAt = Iso(now.AddDays(-300)),
+                UpdatedAt = Iso(now.AddDays(-18))
+            },
+            new()
+            {
+                Id = "car-002",
+                Codigo = "CAR-QLD-GER",
+                Nome = "Gerente de Qualidade",
+                Area = "Qualidade",
+                Senioridade = seniorGerencia,
+                Tipo = "Lideranca",
+                Status = "ativo",
+                Descricao = "Auditorias, certificacoes e compliance.",
+                CreatedAt = Iso(now.AddDays(-290)),
+                UpdatedAt = Iso(now.AddDays(-16))
+            },
+            new()
+            {
+                Id = "car-003",
+                Codigo = "CAR-PD-HEAD",
+                Nome = "Head de P&D",
+                Area = "Pesquisa e Desenvolvimento",
+                Senioridade = seniorGerencia,
+                Tipo = "Lideranca",
+                Status = "ativo",
+                Descricao = "Inovacao e novos produtos.",
+                CreatedAt = Iso(now.AddDays(-285)),
+                UpdatedAt = Iso(now.AddDays(-22))
+            },
+            new()
+            {
+                Id = "car-004",
+                Codigo = "CAR-OPE-COO",
+                Nome = "Coordenador de Operacoes",
+                Area = "Operacoes",
+                Senioridade = seniorCoordenacao,
+                Tipo = "Lideranca",
+                Status = "ativo",
+                Descricao = "PCP, indicadores e eficiencia.",
+                CreatedAt = Iso(now.AddDays(-280)),
+                UpdatedAt = Iso(now.AddDays(-15))
+            },
+            new()
+            {
+                Id = "car-005",
+                Codigo = "CAR-CMP-GER",
+                Nome = "Gerente de Compras",
+                Area = "Compras",
+                Senioridade = seniorGerencia,
+                Tipo = "Lideranca",
+                Status = "ativo",
+                Descricao = "Negociacao estrategica de insumos.",
+                CreatedAt = Iso(now.AddDays(-275)),
+                UpdatedAt = Iso(now.AddDays(-17))
+            },
+            new()
+            {
+                Id = "car-006",
+                Codigo = "CAR-LOG-SUP",
+                Nome = "Supervisor de Logistica",
+                Area = "Logistica",
+                Senioridade = seniorPleno,
+                Tipo = "Operacional",
+                Status = "ativo",
+                Descricao = "Expedicao, transporte e roteiros.",
+                CreatedAt = Iso(now.AddDays(-270)),
+                UpdatedAt = Iso(now.AddDays(-12))
+            },
+            new()
+            {
+                Id = "car-007",
+                Codigo = "CAR-MNT-SUP",
+                Nome = "Supervisor de Manutencao",
+                Area = "Manutencao",
+                Senioridade = seniorPleno,
+                Tipo = "Operacional",
+                Status = "ativo",
+                Descricao = "Preventiva, corretiva e confiabilidade.",
+                CreatedAt = Iso(now.AddDays(-268)),
+                UpdatedAt = Iso(now.AddDays(-20))
+            },
+            new()
+            {
+                Id = "car-008",
+                Codigo = "CAR-FIN-GER",
+                Nome = "Gerente Financeira",
+                Area = "Financeiro",
+                Senioridade = seniorGerencia,
+                Tipo = "Administrativo",
+                Status = "ativo",
+                Descricao = "Fluxo de caixa e controles.",
+                CreatedAt = Iso(now.AddDays(-265)),
+                UpdatedAt = Iso(now.AddDays(-14))
+            },
+            new()
+            {
+                Id = "car-009",
+                Codigo = "CAR-RH-COO",
+                Nome = "Coordenadora de RH",
+                Area = "RH",
+                Senioridade = seniorCoordenacao,
+                Tipo = "Administrativo",
+                Status = "ativo",
+                Descricao = "Recrutamento, clima e treinamento.",
+                CreatedAt = Iso(now.AddDays(-262)),
+                UpdatedAt = Iso(now.AddDays(-19))
+            },
+            new()
+            {
+                Id = "car-010",
+                Codigo = "CAR-COM-GER",
+                Nome = "Gerente Comercial",
+                Area = "Comercial",
+                Senioridade = seniorGerencia,
+                Tipo = "Lideranca",
+                Status = "ativo",
+                Descricao = "Metas, pipeline e relacionamento.",
+                CreatedAt = Iso(now.AddDays(-260)),
+                UpdatedAt = Iso(now.AddDays(-13))
+            },
+            new()
+            {
+                Id = "car-011",
+                Codigo = "CAR-MKT-GER",
+                Nome = "Gerente de Marketing",
+                Area = "Marketing",
+                Senioridade = seniorGerencia,
+                Tipo = "Lideranca",
+                Status = "ativo",
+                Descricao = "Campanhas, marca e performance.",
+                CreatedAt = Iso(now.AddDays(-258)),
+                UpdatedAt = Iso(now.AddDays(-11))
+            },
+            new()
+            {
+                Id = "car-012",
+                Codigo = "CAR-TI-COO",
+                Nome = "Coordenador de TI",
+                Area = "TI",
+                Senioridade = seniorCoordenacao,
+                Tipo = "Tecnologia",
+                Status = "ativo",
+                Descricao = "Infra e suporte critico.",
+                CreatedAt = Iso(now.AddDays(-256)),
+                UpdatedAt = Iso(now.AddDays(-9))
+            },
+            new()
+            {
+                Id = "car-013",
+                Codigo = "CAR-SST-COO",
+                Nome = "Coordenadora de SST",
+                Area = "Seguranca do Trabalho",
+                Senioridade = seniorCoordenacao,
+                Tipo = "Compliance",
+                Status = "ativo",
+                Descricao = "Treinamentos, NR e auditorias.",
+                CreatedAt = Iso(now.AddDays(-254)),
+                UpdatedAt = Iso(now.AddDays(-18))
+            },
+            new()
+            {
+                Id = "car-014",
+                Codigo = "CAR-ENG-GER",
+                Nome = "Gerente de Engenharia",
+                Area = "Engenharia de Processos",
+                Senioridade = seniorGerencia,
+                Tipo = "Lideranca",
+                Status = "ativo",
+                Descricao = "Projetos e melhoria continua.",
+                CreatedAt = Iso(now.AddDays(-252)),
+                UpdatedAt = Iso(now.AddDays(-15))
+            },
+            new()
+            {
+                Id = "car-015",
+                Codigo = "CAR-PCI-COO",
+                Nome = "Coordenador de Planejamento",
+                Area = "Planejamento Industrial",
+                Senioridade = seniorCoordenacao,
+                Tipo = "Operacional",
+                Status = "inativo",
+                Descricao = "Sequenciamento e capacidade.",
+                CreatedAt = Iso(now.AddDays(-250)),
+                UpdatedAt = Iso(now.AddDays(-60))
+            },
+            new()
+            {
+                Id = "car-016",
+                Codigo = "CAR-SUP-GER",
+                Nome = "Gerente de Supply Chain",
+                Area = "Supply Chain",
+                Senioridade = seniorGerencia,
+                Tipo = "Lideranca",
+                Status = "ativo",
+                Descricao = "Compras, estoque e distribuicao.",
+                CreatedAt = Iso(now.AddDays(-248)),
+                UpdatedAt = Iso(now.AddDays(-19))
+            },
+            new()
+            {
+                Id = "car-017",
+                Codigo = "CAR-GQ-GER",
+                Nome = "Gerente de Garantia",
+                Area = "Garantia da Qualidade",
+                Senioridade = seniorGerencia,
+                Tipo = "Lideranca",
+                Status = "ativo",
+                Descricao = "Sistema de qualidade e auditorias.",
+                CreatedAt = Iso(now.AddDays(-246)),
+                UpdatedAt = Iso(now.AddDays(-17))
+            },
+            new()
+            {
+                Id = "car-018",
+                Codigo = "CAR-FAC-SUP",
+                Nome = "Supervisor de Facilities",
+                Area = "Facilities",
+                Senioridade = seniorPleno,
+                Tipo = "Operacional",
+                Status = "inativo",
+                Descricao = "Servicos gerais e manutencao predial.",
+                CreatedAt = Iso(now.AddDays(-244)),
+                UpdatedAt = Iso(now.AddDays(-80))
+            },
+            new()
+            {
+                Id = "car-019",
+                Codigo = "CAR-CAC-COO",
+                Nome = "Coordenadora de Atendimento",
+                Area = "Atendimento ao Cliente",
+                Senioridade = seniorCoordenacao,
+                Tipo = "Administrativo",
+                Status = "inativo",
+                Descricao = "SLA e relacionamento com clientes.",
+                CreatedAt = Iso(now.AddDays(-242)),
+                UpdatedAt = Iso(now.AddDays(-70))
+            },
+            new()
+            {
+                Id = "car-020",
+                Codigo = "CAR-SUS-COO",
+                Nome = "Coordenador de Sustentabilidade",
+                Area = "Sustentabilidade",
+                Senioridade = seniorCoordenacao,
+                Tipo = "ESG",
+                Status = "inativo",
+                Descricao = "Projetos ESG e eficiencia energetica.",
+                CreatedAt = Iso(now.AddDays(-240)),
+                UpdatedAt = Iso(now.AddDays(-90))
+            }
+        };
+
         var areas = new List<AreaSeed>
         {
             new()
@@ -1987,7 +2255,8 @@ public static class MockDataService
             Gestores = gestores,
             Areas = areas,
             RequisitoCategorias = requisitoCategorias,
-            Unidades = unidades
+            Unidades = unidades,
+            Cargos = cargos
         };
     }
 

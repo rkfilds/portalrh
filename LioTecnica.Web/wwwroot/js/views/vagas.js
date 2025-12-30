@@ -1395,7 +1395,7 @@ function fmtStatus(s){
       saveState();
       renderList();
       renderDetail();
-      toast("Pesos e match mÃ­nimo salvos.");
+      toast("Pesos e match mí­nimo salvos.");
     }
 
     // ========= Simulador (keyword match)

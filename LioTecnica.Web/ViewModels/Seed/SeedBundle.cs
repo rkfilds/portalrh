@@ -28,4 +28,6 @@ public sealed class SeedBundle
     public IReadOnlyList<RequisitoCategoriaSeed> RequisitoCategorias { get; init; } = Array.Empty<RequisitoCategoriaSeed>();
 
     public IReadOnlyList<UnidadeSeed> Unidades { get; init; } = Array.Empty<UnidadeSeed>();
+
+    public IReadOnlyList<CargoSeed> Cargos { get; init; } = Array.Empty<CargoSeed>();
 }
