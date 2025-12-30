@@ -7,7 +7,7 @@
 <style>
 
     :root {
-        --fc-time-label-width: 180px;
+        --fc-time-label-width: 50px;
     }
 
     #calendarHost {
@@ -61,44 +61,27 @@
         width: 100% !important;
     }
 
-    /* =========================================================
-       ✅ COLUNA DOS HORÁRIOS (SLOT LABEL) - min-width DE VERDADE
-       (o FC define por <colgroup>, então precisamos atingir os <col>)
-       ========================================================= */
-
-    /* 1) força a largura no <col> “shrink” (lado esquerdo do scrollgrid) */
-    #calendarHost .fc col.fc-scrollgrid-shrink {
+    /* ✅ a largura real vem do COLGROUP (1ª coluna) */
+    #calendarHost .fc .fc-timegrid-slots table colgroup col:first-child,
+    #calendarHost .fc .fc-timegrid-cols table colgroup col:first-child,
+    #calendarHost .fc .fc-col-header table colgroup col:first-child,
+    #calendarHost .fc .fc-scrollgrid table colgroup col:first-child {
         width: var(--fc-time-label-width) !important;
     }
 
-    /* 2) força a largura no <col> específico do slot label (quando existir) */
-    #calendarHost .fc col.fc-timegrid-slot-label {
-        width: var(--fc-time-label-width) !important;
-    }
-
-    /* 3) reforço nas células do slot label (onde o texto aparece) */
+    /* reforço (visual) nas células */
     #calendarHost .fc th.fc-timegrid-slot-label,
-    #calendarHost .fc td.fc-timegrid-slot-label {
-        min-width: var(--fc-time-label-width) !important;
+    #calendarHost .fc td.fc-timegrid-slot-label,
+    #calendarHost .fc th.fc-timegrid-axis,
+    #calendarHost .fc td.fc-timegrid-axis {
         width: var(--fc-time-label-width) !important;
         max-width: var(--fc-time-label-width) !important;
-        box-sizing: border-box;
-    }
-
-    /* 4) cushion do texto do horário */
-    #calendarHost .fc .fc-timegrid-slot-label-cushion,
-    #calendarHost .fc .fc-timegrid-slot-label-frame {
-        box-sizing: border-box;
+        white-space: nowrap;
     }
 
     #calendarHost .fc .fc-timegrid-slot-label-cushion {
         white-space: nowrap;
-        padding: 0 .5rem; /* respiro */
-    }
-
-    /* (opcional) se você também quer “fixar” o axis do timegrid (raro precisar) */
-    #calendarHost .fc col.fc-timegrid-axis {
-        width: var(--fc-time-label-width) !important;
+        padding: 0 .5rem;
     }
 
     /* =========================================================
@@ -166,6 +149,32 @@
     }
 
 
+
+    #calendarHost {
+        border-radius: 14px;
+        border: 1px solid rgba(16,82,144,.14);
+        background: rgba(255,255,255,.55); 
+        padding: 6px;
+        overflow: hidden; /* corta eventos no raio */
+        box-sizing: border-box;
+    }
+
+        #calendarHost .fc .fc-scrollgrid {
+            border: 0 !important; /* a borda agora é do #calendarHost */
+            border-radius: 0 !important;
+            overflow: visible !important;
+        }
+
+        /* mantém as bordas internas do grid */
+        #calendarHost .fc-theme-standard td,
+        #calendarHost .fc-theme-standard th {
+            border-color: rgba(16,82,144,.14);
+        }
+
+        /* opcional: garante que nada pinte por trás do wrapper */
+        #calendarHost .fc {
+            background: transparent;
+        }
 
     /* Lista lateral */
     .side-list {
@@ -1109,7 +1118,7 @@
             slotMaxTime: "23:00:00",
             expandRows: true,
             height: "auto",
-
+            slotLabelWidth: 180,
             headerToolbar: false, // usamos toolbar custom no card
 
             // fonte (filtrada)

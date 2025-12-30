@@ -320,19 +320,6 @@ const AREAS_STORE_KEY = "lt_rh_areas_v1";
       if(drawer) drawer.addEventListener("show.bs.offcanvas", renderQuickAreaOptions);
     }
 
-    // ========= Clock
-    function wireClock(){
-      const tick = () => {
-        const d = new Date();
-        $("#nowLabel").textContent = d.toLocaleString("pt-BR", {
-          weekday:"short", day:"2-digit", month:"2-digit",
-          hour:"2-digit", minute:"2-digit"
-        });
-      };
-      tick();
-      setInterval(tick, 1000 * 15);
-    }
-
     // ========= Init
     (function init(){
       renderVagaFilterOptions();
@@ -340,7 +327,6 @@ const AREAS_STORE_KEY = "lt_rh_areas_v1";
       wireMenus();
       wireFilters();
       wireQuickActions();
-      wireClock();
       wireOpenVagasModal();
       wireKpiAccessibility();
       updateDashboardKpis();
