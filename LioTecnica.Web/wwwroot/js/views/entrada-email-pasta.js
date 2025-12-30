@@ -602,9 +602,11 @@ function loadAll(){
       $("#logoMobile").src = LOGO_DATA_URI;
     }
     function wireClock(){
+      const label = $("#nowLabel");
+      if(!label) return;
       const tick = () => {
         const d = new Date();
-        $("#nowLabel").textContent = d.toLocaleString("pt-BR", { weekday:"short", day:"2-digit", month:"2-digit", hour:"2-digit", minute:"2-digit" });
+        label.textContent = d.toLocaleString("pt-BR", { weekday:"short", day:"2-digit", month:"2-digit", hour:"2-digit", minute:"2-digit" });
       };
       tick();
       setInterval(tick, 1000*15);
