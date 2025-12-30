@@ -20,4 +20,6 @@ public sealed class SeedBundle
     public IReadOnlyList<ReportSeed> Reports { get; init; } = Array.Empty<ReportSeed>();
 
     public IReadOnlyList<DepartamentoSeed> Departamentos { get; init; } = Array.Empty<DepartamentoSeed>();
+
+    public IReadOnlyList<GestorSeed> Gestores { get; init; } = Array.Empty<GestorSeed>();
 }

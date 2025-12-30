@@ -828,6 +828,310 @@ public static class MockDataService
             }
         };
 
+        var gestores = new List<GestorSeed>
+        {
+            new()
+            {
+                Id = "gst-001",
+                Nome = "Marcos Silva",
+                Cargo = "Gerente de Producao",
+                Area = "Producao",
+                Email = "marcos.silva@@liotecnica.com.br",
+                Telefone = "(11) 91111-1001",
+                Unidade = "Embu das Artes - SP",
+                Headcount = 120,
+                Status = "ativo",
+                Observacao = "Gestao de turnos e metas diarias.",
+                CreatedAt = Iso(now.AddDays(-200)),
+                UpdatedAt = Iso(now.AddDays(-10))
+            },
+            new()
+            {
+                Id = "gst-002",
+                Nome = "Patricia Menezes",
+                Cargo = "Gerente de Qualidade",
+                Area = "Qualidade",
+                Email = "patricia.menezes@@liotecnica.com.br",
+                Telefone = "(11) 91111-1002",
+                Unidade = "Embu das Artes - SP",
+                Headcount = 38,
+                Status = "ativo",
+                Observacao = "Auditorias, certificacoes e sistema de qualidade.",
+                CreatedAt = Iso(now.AddDays(-180)),
+                UpdatedAt = Iso(now.AddDays(-8))
+            },
+            new()
+            {
+                Id = "gst-003",
+                Nome = "Luciana Prado",
+                Cargo = "Head de P&D",
+                Area = "Pesquisa e Desenvolvimento",
+                Email = "luciana.prado@@liotecnica.com.br",
+                Telefone = "(11) 91111-1003",
+                Unidade = "Sao Paulo - SP",
+                Headcount = 22,
+                Status = "ativo",
+                Observacao = "Novos produtos e inovacao.",
+                CreatedAt = Iso(now.AddDays(-170)),
+                UpdatedAt = Iso(now.AddDays(-11))
+            },
+            new()
+            {
+                Id = "gst-004",
+                Nome = "Renato Dias",
+                Cargo = "Coordenador de Operacoes",
+                Area = "Operacoes",
+                Email = "renato.dias@@liotecnica.com.br",
+                Telefone = "(11) 91111-1004",
+                Unidade = "Embu das Artes - SP",
+                Headcount = 64,
+                Status = "ativo",
+                Observacao = "PCP e melhoria continua.",
+                CreatedAt = Iso(now.AddDays(-160)),
+                UpdatedAt = Iso(now.AddDays(-12))
+            },
+            new()
+            {
+                Id = "gst-005",
+                Nome = "Bianca Souza",
+                Cargo = "Gerente de Compras",
+                Area = "Compras",
+                Email = "bianca.souza@@liotecnica.com.br",
+                Telefone = "(11) 91111-1005",
+                Unidade = "Sao Paulo - SP",
+                Headcount = 18,
+                Status = "ativo",
+                Observacao = "Insumos estrategicos e contratos.",
+                CreatedAt = Iso(now.AddDays(-155)),
+                UpdatedAt = Iso(now.AddDays(-7))
+            },
+            new()
+            {
+                Id = "gst-006",
+                Nome = "Carlos Nunes",
+                Cargo = "Supervisor de Logistica",
+                Area = "Logistica",
+                Email = "carlos.nunes@@liotecnica.com.br",
+                Telefone = "(11) 91111-1006",
+                Unidade = "Taboao da Serra - SP",
+                Headcount = 52,
+                Status = "ativo",
+                Observacao = "Estoque e expedicao.",
+                CreatedAt = Iso(now.AddDays(-150)),
+                UpdatedAt = Iso(now.AddDays(-6))
+            },
+            new()
+            {
+                Id = "gst-007",
+                Nome = "Andre Lima",
+                Cargo = "Supervisor de Manutencao",
+                Area = "Manutencao",
+                Email = "andre.lima@@liotecnica.com.br",
+                Telefone = "(11) 91111-1007",
+                Unidade = "Embu das Artes - SP",
+                Headcount = 28,
+                Status = "ativo",
+                Observacao = "Preventiva e corretiva.",
+                CreatedAt = Iso(now.AddDays(-148)),
+                UpdatedAt = Iso(now.AddDays(-9))
+            },
+            new()
+            {
+                Id = "gst-008",
+                Nome = "Fernanda Moreira",
+                Cargo = "Gerente Financeira",
+                Area = "Financeiro",
+                Email = "fernanda.moreira@@liotecnica.com.br",
+                Telefone = "(11) 91111-1008",
+                Unidade = "Sao Paulo - SP",
+                Headcount = 16,
+                Status = "ativo",
+                Observacao = "Fluxo de caixa e controles.",
+                CreatedAt = Iso(now.AddDays(-165)),
+                UpdatedAt = Iso(now.AddDays(-14))
+            },
+            new()
+            {
+                Id = "gst-009",
+                Nome = "Juliana Costa",
+                Cargo = "Coordenadora de RH",
+                Area = "RH",
+                Email = "juliana.costa@@liotecnica.com.br",
+                Telefone = "(11) 91111-1009",
+                Unidade = "Sao Paulo - SP",
+                Headcount = 12,
+                Status = "ativo",
+                Observacao = "Recrutamento e desenvolvimento.",
+                CreatedAt = Iso(now.AddDays(-140)),
+                UpdatedAt = Iso(now.AddDays(-5))
+            },
+            new()
+            {
+                Id = "gst-010",
+                Nome = "Rodrigo Alves",
+                Cargo = "Gerente Comercial",
+                Area = "Comercial",
+                Email = "rodrigo.alves@@liotecnica.com.br",
+                Telefone = "(11) 91111-1010",
+                Unidade = "Sao Paulo - SP",
+                Headcount = 26,
+                Status = "ativo",
+                Observacao = "Contas chave e metas comerciais.",
+                CreatedAt = Iso(now.AddDays(-142)),
+                UpdatedAt = Iso(now.AddDays(-12))
+            },
+            new()
+            {
+                Id = "gst-011",
+                Nome = "Camila Rocha",
+                Cargo = "Gerente de Marketing",
+                Area = "Marketing",
+                Email = "camila.rocha@@liotecnica.com.br",
+                Telefone = "(11) 91111-1011",
+                Unidade = "Sao Paulo - SP",
+                Headcount = 14,
+                Status = "ativo",
+                Observacao = "Campanhas e comunicacao institucional.",
+                CreatedAt = Iso(now.AddDays(-138)),
+                UpdatedAt = Iso(now.AddDays(-9))
+            },
+            new()
+            {
+                Id = "gst-012",
+                Nome = "Eduardo Reis",
+                Cargo = "Coordenador de TI",
+                Area = "TI",
+                Email = "eduardo.reis@@liotecnica.com.br",
+                Telefone = "(11) 91111-1012",
+                Unidade = "Sao Paulo - SP",
+                Headcount = 19,
+                Status = "ativo",
+                Observacao = "Infraestrutura e suporte.",
+                CreatedAt = Iso(now.AddDays(-145)),
+                UpdatedAt = Iso(now.AddDays(-6))
+            },
+            new()
+            {
+                Id = "gst-013",
+                Nome = "Tatiana Gomes",
+                Cargo = "Coordenadora de SST",
+                Area = "Seguranca do Trabalho",
+                Email = "tatiana.gomes@@liotecnica.com.br",
+                Telefone = "(11) 91111-1013",
+                Unidade = "Embu das Artes - SP",
+                Headcount = 9,
+                Status = "ativo",
+                Observacao = "Treinamentos e conformidade NR.",
+                CreatedAt = Iso(now.AddDays(-150)),
+                UpdatedAt = Iso(now.AddDays(-18))
+            },
+            new()
+            {
+                Id = "gst-014",
+                Nome = "Diego Carvalho",
+                Cargo = "Gerente de Engenharia",
+                Area = "Engenharia de Processos",
+                Email = "diego.carvalho@@liotecnica.com.br",
+                Telefone = "(11) 91111-1014",
+                Unidade = "Embu das Artes - SP",
+                Headcount = 11,
+                Status = "ativo",
+                Observacao = "Melhoria continua e layout.",
+                CreatedAt = Iso(now.AddDays(-152)),
+                UpdatedAt = Iso(now.AddDays(-15))
+            },
+            new()
+            {
+                Id = "gst-015",
+                Nome = "Bruno Martins",
+                Cargo = "Coordenador de Planejamento",
+                Area = "Planejamento Industrial",
+                Email = "bruno.martins@@liotecnica.com.br",
+                Telefone = "(11) 91111-1015",
+                Unidade = "Cotia - SP",
+                Headcount = 10,
+                Status = "inativo",
+                Observacao = "Sequenciamento e capacidade.",
+                CreatedAt = Iso(now.AddDays(-160)),
+                UpdatedAt = Iso(now.AddDays(-60))
+            },
+            new()
+            {
+                Id = "gst-016",
+                Nome = "Carla Mendes",
+                Cargo = "Gerente de Supply Chain",
+                Area = "Supply Chain",
+                Email = "carla.mendes@@liotecnica.com.br",
+                Telefone = "(11) 91111-1016",
+                Unidade = "Sao Paulo - SP",
+                Headcount = 17,
+                Status = "ativo",
+                Observacao = "Compras, estoque e distribuicao.",
+                CreatedAt = Iso(now.AddDays(-149)),
+                UpdatedAt = Iso(now.AddDays(-19))
+            },
+            new()
+            {
+                Id = "gst-017",
+                Nome = "Silvia Araujo",
+                Cargo = "Gerente de Garantia",
+                Area = "Garantia da Qualidade",
+                Email = "silvia.araujo@@liotecnica.com.br",
+                Telefone = "(11) 91111-1017",
+                Unidade = "Embu das Artes - SP",
+                Headcount = 8,
+                Status = "ativo",
+                Observacao = "Sistema de qualidade.",
+                CreatedAt = Iso(now.AddDays(-155)),
+                UpdatedAt = Iso(now.AddDays(-17))
+            },
+            new()
+            {
+                Id = "gst-018",
+                Nome = "Roberto Dias",
+                Cargo = "Supervisor de Facilities",
+                Area = "Facilities",
+                Email = "roberto.dias@@liotecnica.com.br",
+                Telefone = "(11) 91111-1018",
+                Unidade = "Embu das Artes - SP",
+                Headcount = 6,
+                Status = "inativo",
+                Observacao = "Servicos gerais e manutencao predial.",
+                CreatedAt = Iso(now.AddDays(-170)),
+                UpdatedAt = Iso(now.AddDays(-80))
+            },
+            new()
+            {
+                Id = "gst-019",
+                Nome = "Mariana Lopes",
+                Cargo = "Coordenadora de Atendimento",
+                Area = "Atendimento ao Cliente",
+                Email = "mariana.lopes@@liotecnica.com.br",
+                Telefone = "(11) 91111-1019",
+                Unidade = "Sao Paulo - SP",
+                Headcount = 15,
+                Status = "inativo",
+                Observacao = "SLA e relacionamento.",
+                CreatedAt = Iso(now.AddDays(-165)),
+                UpdatedAt = Iso(now.AddDays(-70))
+            },
+            new()
+            {
+                Id = "gst-020",
+                Nome = "Paulo Henrique",
+                Cargo = "Coordenador de Sustentabilidade",
+                Area = "Sustentabilidade",
+                Email = "paulo.henrique@@liotecnica.com.br",
+                Telefone = "(11) 91111-1020",
+                Unidade = "Sao Paulo - SP",
+                Headcount = 5,
+                Status = "inativo",
+                Observacao = "ESG e eficiencia energetica.",
+                CreatedAt = Iso(now.AddDays(-175)),
+                UpdatedAt = Iso(now.AddDays(-90))
+            }
+        };
+
         var candidatos = new List<CandidatoSeed>
         {
             new()
@@ -1124,7 +1428,8 @@ public static class MockDataService
             DashboardRows = dashboardRows,
             DashboardSeries = dashboardSeries,
             Reports = reports,
-            Departamentos = departamentos
+            Departamentos = departamentos,
+            Gestores = gestores
         };
     }
 
