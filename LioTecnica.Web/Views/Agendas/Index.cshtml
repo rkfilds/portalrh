@@ -5,102 +5,11 @@
 }
 
 <style>
+
     :root {
-        --lt-brand: #105290;
-        --lt-accent: #006E63;
-        --lt-bg: #F6FBFF;
-        --lt-card: rgba(255,255,255,.78);
-        --lt-border: rgba(16,82,144,.16);
-        --lt-text: #0b1b2b;
-        --lt-muted: #6b7b8a;
-        --lt-radius: 16px;
+        --fc-time-label-width: 180px;
     }
 
-    .card-soft {
-        background: var(--lt-card);
-        border: 1px solid var(--lt-border);
-        border-radius: var(--lt-radius);
-        box-shadow: 0 12px 32px rgba(0,0,0,.05);
-        backdrop-filter: blur(8px);
-    }
-
-    .mini-title {
-        text-transform: uppercase;
-        letter-spacing: .08em;
-        font-size: .72rem;
-        color: var(--lt-muted);
-        margin: 0;
-    }
-
-    .badge-soft {
-        display: inline-flex;
-        align-items: center;
-        gap: .45rem;
-        padding: .35rem .55rem;
-        border-radius: 999px;
-        background: rgba(16,82,144,.10);
-        border: 1px solid rgba(16,82,144,.16);
-        color: var(--lt-text);
-        font-size: .825rem;
-        white-space: nowrap;
-    }
-
-    .pill {
-        display: inline-flex;
-        align-items: center;
-        gap: .45rem;
-        padding: .38rem .6rem;
-        border-radius: 999px;
-        background: rgba(255,255,255,.55);
-        border: 1px solid var(--lt-border);
-        color: var(--lt-text);
-        font-size: .82rem;
-        white-space: nowrap;
-    }
-
-    .mono {
-        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
-    }
-
-    .btn-ghost {
-        background: rgba(255,255,255,.55);
-        border: 1px solid var(--lt-border);
-        color: var(--lt-text);
-    }
-
-        .btn-ghost:hover {
-            background: rgba(255,255,255,.9);
-        }
-
-    .btn-brand {
-        background: var(--lt-brand);
-        border-color: var(--lt-brand);
-        color: #fff;
-    }
-
-        .btn-brand:hover {
-            filter: brightness(.96);
-            color: #fff;
-        }
-
-    .searchbox {
-        min-width: 320px;
-    }
-
-        .searchbox i {
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--lt-muted);
-        }
-
-        .searchbox input {
-            padding-left: 38px;
-            border-color: var(--lt-border);
-            background: rgba(255,255,255,.65);
-        }
-    /* FullCalendar “encaixado” no card (ALINHA colunas + OCUPA 100% largura) */
     #calendarHost {
         min-height: 640px;
         width: 100%;
@@ -134,7 +43,7 @@
     #calendarHost .fc table {
         border-collapse: separate !important;
         border-spacing: 0 !important;
-        padding: 15px;
+        /* NÃO use padding aqui (isso quebra o layout interno do FullCalendar) */
     }
 
     /* ✅ estica o “scrollgrid” e as tabelas que definem as colunas */
@@ -144,15 +53,57 @@
     #calendarHost .fc .fc-timegrid-cols table,
     #calendarHost .fc .fc-timegrid-slots table {
         width: 100% !important;
-        table-layout: fixed; /* distribui igualmente e mantém alinhamento */
+        table-layout: fixed;
     }
 
-    /* (alguns layouts usam esse TD líquido como base de largura) */
+    
     #calendarHost .fc .fc-scrollgrid-section-liquid > td {
         width: 100% !important;
     }
 
-    /* Bordas e grid */
+    /* =========================================================
+       ✅ COLUNA DOS HORÁRIOS (SLOT LABEL) - min-width DE VERDADE
+       (o FC define por <colgroup>, então precisamos atingir os <col>)
+       ========================================================= */
+
+    /* 1) força a largura no <col> “shrink” (lado esquerdo do scrollgrid) */
+    #calendarHost .fc col.fc-scrollgrid-shrink {
+        width: var(--fc-time-label-width) !important;
+    }
+
+    /* 2) força a largura no <col> específico do slot label (quando existir) */
+    #calendarHost .fc col.fc-timegrid-slot-label {
+        width: var(--fc-time-label-width) !important;
+    }
+
+    /* 3) reforço nas células do slot label (onde o texto aparece) */
+    #calendarHost .fc th.fc-timegrid-slot-label,
+    #calendarHost .fc td.fc-timegrid-slot-label {
+        min-width: var(--fc-time-label-width) !important;
+        width: var(--fc-time-label-width) !important;
+        max-width: var(--fc-time-label-width) !important;
+        box-sizing: border-box;
+    }
+
+    /* 4) cushion do texto do horário */
+    #calendarHost .fc .fc-timegrid-slot-label-cushion,
+    #calendarHost .fc .fc-timegrid-slot-label-frame {
+        box-sizing: border-box;
+    }
+
+    #calendarHost .fc .fc-timegrid-slot-label-cushion {
+        white-space: nowrap;
+        padding: 0 .5rem; /* respiro */
+    }
+
+    /* (opcional) se você também quer “fixar” o axis do timegrid (raro precisar) */
+    #calendarHost .fc col.fc-timegrid-axis {
+        width: var(--fc-time-label-width) !important;
+    }
+
+    /* =========================================================
+       Bordas e grid
+       ========================================================= */
     #calendarHost .fc .fc-scrollgrid,
     #calendarHost .fc .fc-timegrid,
     #calendarHost .fc .fc-timegrid-body,
@@ -194,7 +145,7 @@
         border-color: var(--lt-accent);
     }
 
-    /* === FIX: body (colunas) ocupar 100% como o cabeçalho === */
+    /* === body 100% largura === */
     #calendarHost .fc .fc-scroller-harness,
     #calendarHost .fc .fc-scroller-harness-liquid,
     #calendarHost .fc .fc-scroller-harness-liquid > .fc-scroller,
@@ -205,34 +156,15 @@
         width: 100% !important;
     }
 
-    /* em layout flex, sem min-width:0 o filho não “estica” corretamente */
-    #calendarHost .fc .fc-timegrid-body {
+    #calendarHost .fc .fc-timegrid-body,
+    #calendarHost .fc .fc-timegrid-cols {
         min-width: 0 !important;
     }
 
     #calendarHost .fc .fc-timegrid-cols {
         flex: 1 1 auto !important;
-        min-width: 0 !important;
     }
 
-    /* =========================================================
-       FIX DEFINITIVO: sincronizar a largura da coluna "axis"
-       (dia inteiro / horários) entre header e timegrid
-       ========================================================= */
-    #calendarHost .fc .fc-timegrid-axis,
-    #calendarHost .fc .fc-timegrid-axis-frame,
-    #calendarHost .fc .fc-timegrid-axis-cushion {
-        width: 78px !important;
-        min-width: 78px !important;
-        max-width: 78px !important;
-        box-sizing: border-box;
-    }
-
-    #calendarHost .fc .fc-timegrid-axis-cushion {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
 
 
     /* Lista lateral */
@@ -298,31 +230,6 @@
             color: var(--lt-text);
             font-size: .75rem;
             white-space: nowrap;
-        }
-
-    .kpi {
-        border: 1px solid var(--lt-border);
-        background: rgba(255,255,255,.55);
-        border-radius: 16px;
-        padding: .85rem .9rem;
-        height: 100%;
-    }
-
-        .kpi .label {
-            color: var(--lt-muted);
-            font-size: .82rem;
-        }
-
-        .kpi .value {
-            font-size: 1.35rem;
-            font-weight: 900;
-            letter-spacing: -.02em;
-            color: var(--lt-text);
-        }
-
-        .kpi .hint {
-            color: var(--lt-muted);
-            font-size: .8rem;
         }
 </style>
 
@@ -1198,8 +1105,8 @@
             selectMirror: true,
             eventResizableFromStart: true,
 
-            slotMinTime: "07:00:00",
-            slotMaxTime: "21:00:00",
+            slotMinTime: "06:30:00",
+            slotMaxTime: "23:00:00",
             expandRows: true,
             height: "auto",
 
