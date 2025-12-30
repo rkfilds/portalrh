@@ -1,5 +1,6 @@
 ﻿const seed = window.__seedData || {};
 const EMPTY_TEXT = "-";
+const AREAS_STORE_KEY = "lt_rh_areas_v1";
 
     function setText(root, role, value){
       if(!root) return;
@@ -19,7 +20,33 @@ const EMPTY_TEXT = "-";
       return Number.isNaN(d.getTime()) ? EMPTY_TEXT : d.toLocaleDateString("pt-BR", { day:"2-digit", month:"2-digit", year:"numeric" });
     }
 
-// ========= Top matches (mock)
+    function loadAreas(){
+      try{
+        const raw = localStorage.getItem(AREAS_STORE_KEY);
+        if(!raw) return Array.isArray(seed.areas) ? seed.areas : [];
+        const data = JSON.parse(raw);
+        if(data && Array.isArray(data.areas)) return data.areas;
+        return Array.isArray(seed.areas) ? seed.areas : [];
+      }catch{
+        return Array.isArray(seed.areas) ? seed.areas : [];
+      }
+    }
+
+    function getAreaOptions(){
+      const areas = loadAreas();
+      const set = new Set(areas.map(a => a.nome).filter(Boolean));
+      return Array.from(set).sort((a,b)=>a.localeCompare(b, "pt-BR"));
+    }
+
+    function renderQuickAreaOptions(){
+      const sel = $("#quickArea");
+      if(!sel) return;
+      sel.replaceChildren();
+      sel.appendChild(buildOption("", "Selecionar area"));
+      getAreaOptions().forEach(a => sel.appendChild(buildOption(a, a)));
+    }
+
+// ========= Top matches
     const mockRows = Array.isArray(seed.dashboardRows) ? seed.dashboardRows : [];
 
     function enumFirstCode(key, fallback){
@@ -287,8 +314,10 @@ const EMPTY_TEXT = "-";
     function wireQuickActions(){
       $("#btnMockCreateVaga").addEventListener("click", () => {
         // mock feedback
-        alert("Vaga salva (mock). No backend: POST /vagas + requisitos.");
+        alert("Vaga salva. No backend: POST /vagas + requisitos.");
       });
+      const drawer = $("#drawerQuick");
+      if(drawer) drawer.addEventListener("show.bs.offcanvas", renderQuickAreaOptions);
     }
 
     // ========= Clock
@@ -307,6 +336,7 @@ const EMPTY_TEXT = "-";
     // ========= Init
     (function init(){
       renderVagaFilterOptions();
+      renderQuickAreaOptions();
       wireMenus();
       wireFilters();
       wireQuickActions();

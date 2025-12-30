@@ -9,9 +9,8 @@
 
     <div class="offcanvas-body">
       <div class="card-soft p-3 mb-3">
-        <div class="fw-semibold mb-2"><i class="bi bi-plus-circle me-2"></i>Criar vaga (mock)</div>
+        <div class="fw-semibold mb-2"><i class="bi bi-plus-circle me-2"></i>Criar vaga</div>
         @{
-        var areaOptions = EnumOptionsHelper.GetOptions<VagaArea>();
         var statusOptions = EnumOptionsHelper.GetOptions<VagaStatus>();
       }
       <div class="row g-2">
@@ -20,12 +19,9 @@
             <input class="form-control" placeholder="Ex.: Analista de Marketing Jr">
           </div>
           <div class="col-6">
-            <label class="form-label small text-muted">Ãrea</label>
-            <select class="form-select">
-              @foreach (var opt in areaOptions)
-              {
-                <option value="@opt.Code">@opt.Text</option>
-              }
+            <label class="form-label small text-muted">Area</label>
+            <select class="form-select" id="quickArea">
+              <option value="">Selecionar area</option>
             </select>
           </div>
           <div class="col-6">
@@ -44,7 +40,7 @@
         </div>
         <div class="d-grid mt-3">
           <button class="btn btn-brand" type="button" id="btnMockCreateVaga">
-            <i class="bi bi-check2 me-1"></i>Salvar (mock)
+            <i class="bi bi-check2 me-1"></i>Salvar
           </button>
         </div>
       </div>

@@ -1132,6 +1132,210 @@ public static class MockDataService
             }
         };
 
+        var areas = new List<AreaSeed>
+        {
+            new()
+            {
+                Id = "area-001",
+                Codigo = "AREA-PRD",
+                Nome = "Producao",
+                Status = "ativo",
+                Descricao = "Operacao de linhas e metas diarias.",
+                CreatedAt = Iso(now.AddDays(-220)),
+                UpdatedAt = Iso(now.AddDays(-12))
+            },
+            new()
+            {
+                Id = "area-002",
+                Codigo = "AREA-QLD",
+                Nome = "Qualidade",
+                Status = "ativo",
+                Descricao = "Auditorias, controles e conformidade.",
+                CreatedAt = Iso(now.AddDays(-215)),
+                UpdatedAt = Iso(now.AddDays(-14))
+            },
+            new()
+            {
+                Id = "area-003",
+                Codigo = "AREA-PD",
+                Nome = "Pesquisa e Desenvolvimento",
+                Status = "ativo",
+                Descricao = "Novos produtos e melhoria continua.",
+                CreatedAt = Iso(now.AddDays(-210)),
+                UpdatedAt = Iso(now.AddDays(-16))
+            },
+            new()
+            {
+                Id = "area-004",
+                Codigo = "AREA-OPE",
+                Nome = "Operacoes",
+                Status = "ativo",
+                Descricao = "PCP, performance e suporte a producao.",
+                CreatedAt = Iso(now.AddDays(-205)),
+                UpdatedAt = Iso(now.AddDays(-20))
+            },
+            new()
+            {
+                Id = "area-005",
+                Codigo = "AREA-CMP",
+                Nome = "Compras",
+                Status = "ativo",
+                Descricao = "Negociacoes e fornecimento de insumos.",
+                CreatedAt = Iso(now.AddDays(-200)),
+                UpdatedAt = Iso(now.AddDays(-18))
+            },
+            new()
+            {
+                Id = "area-006",
+                Codigo = "AREA-LOG",
+                Nome = "Logistica",
+                Status = "ativo",
+                Descricao = "Estoque, expedicao e roteiros.",
+                CreatedAt = Iso(now.AddDays(-198)),
+                UpdatedAt = Iso(now.AddDays(-15))
+            },
+            new()
+            {
+                Id = "area-007",
+                Codigo = "AREA-MNT",
+                Nome = "Manutencao",
+                Status = "ativo",
+                Descricao = "Preventiva, corretiva e confiabilidade.",
+                CreatedAt = Iso(now.AddDays(-195)),
+                UpdatedAt = Iso(now.AddDays(-13))
+            },
+            new()
+            {
+                Id = "area-008",
+                Codigo = "AREA-FIN",
+                Nome = "Financeiro",
+                Status = "ativo",
+                Descricao = "Fluxo de caixa e controles.",
+                CreatedAt = Iso(now.AddDays(-192)),
+                UpdatedAt = Iso(now.AddDays(-19))
+            },
+            new()
+            {
+                Id = "area-009",
+                Codigo = "AREA-RH",
+                Nome = "RH",
+                Status = "ativo",
+                Descricao = "Recrutamento, treinamento e clima.",
+                CreatedAt = Iso(now.AddDays(-190)),
+                UpdatedAt = Iso(now.AddDays(-10))
+            },
+            new()
+            {
+                Id = "area-010",
+                Codigo = "AREA-COM",
+                Nome = "Comercial",
+                Status = "ativo",
+                Descricao = "Relacao com clientes e metas de vendas.",
+                CreatedAt = Iso(now.AddDays(-185)),
+                UpdatedAt = Iso(now.AddDays(-17))
+            },
+            new()
+            {
+                Id = "area-011",
+                Codigo = "AREA-MKT",
+                Nome = "Marketing",
+                Status = "ativo",
+                Descricao = "Marca, campanhas e comunicacao.",
+                CreatedAt = Iso(now.AddDays(-182)),
+                UpdatedAt = Iso(now.AddDays(-12))
+            },
+            new()
+            {
+                Id = "area-012",
+                Codigo = "AREA-TI",
+                Nome = "TI",
+                Status = "ativo",
+                Descricao = "Infraestrutura, suporte e dados.",
+                CreatedAt = Iso(now.AddDays(-180)),
+                UpdatedAt = Iso(now.AddDays(-11))
+            },
+            new()
+            {
+                Id = "area-013",
+                Codigo = "AREA-SST",
+                Nome = "Seguranca do Trabalho",
+                Status = "ativo",
+                Descricao = "Treinamentos, NR e prevencao.",
+                CreatedAt = Iso(now.AddDays(-178)),
+                UpdatedAt = Iso(now.AddDays(-21))
+            },
+            new()
+            {
+                Id = "area-014",
+                Codigo = "AREA-ENG",
+                Nome = "Engenharia de Processos",
+                Status = "ativo",
+                Descricao = "Melhoria continua e eficiencia.",
+                CreatedAt = Iso(now.AddDays(-175)),
+                UpdatedAt = Iso(now.AddDays(-22))
+            },
+            new()
+            {
+                Id = "area-015",
+                Codigo = "AREA-PCI",
+                Nome = "Planejamento Industrial",
+                Status = "inativo",
+                Descricao = "Capacidade e sequenciamento.",
+                CreatedAt = Iso(now.AddDays(-170)),
+                UpdatedAt = Iso(now.AddDays(-60))
+            },
+            new()
+            {
+                Id = "area-016",
+                Codigo = "AREA-SUP",
+                Nome = "Supply Chain",
+                Status = "ativo",
+                Descricao = "Integracao compras, estoque e distribuicao.",
+                CreatedAt = Iso(now.AddDays(-168)),
+                UpdatedAt = Iso(now.AddDays(-19))
+            },
+            new()
+            {
+                Id = "area-017",
+                Codigo = "AREA-GQ",
+                Nome = "Garantia da Qualidade",
+                Status = "ativo",
+                Descricao = "Sistema de qualidade e auditorias.",
+                CreatedAt = Iso(now.AddDays(-165)),
+                UpdatedAt = Iso(now.AddDays(-17))
+            },
+            new()
+            {
+                Id = "area-018",
+                Codigo = "AREA-FAC",
+                Nome = "Facilities",
+                Status = "inativo",
+                Descricao = "Servicos gerais e manutencao predial.",
+                CreatedAt = Iso(now.AddDays(-160)),
+                UpdatedAt = Iso(now.AddDays(-70))
+            },
+            new()
+            {
+                Id = "area-019",
+                Codigo = "AREA-CAC",
+                Nome = "Atendimento ao Cliente",
+                Status = "inativo",
+                Descricao = "Suporte e relacionamento com clientes.",
+                CreatedAt = Iso(now.AddDays(-155)),
+                UpdatedAt = Iso(now.AddDays(-65))
+            },
+            new()
+            {
+                Id = "area-020",
+                Codigo = "AREA-SUS",
+                Nome = "Sustentabilidade",
+                Status = "inativo",
+                Descricao = "ESG, residuos e eficiencia energetica.",
+                CreatedAt = Iso(now.AddDays(-150)),
+                UpdatedAt = Iso(now.AddDays(-75))
+            }
+        };
+
         var candidatos = new List<CandidatoSeed>
         {
             new()
@@ -1429,7 +1633,8 @@ public static class MockDataService
             DashboardSeries = dashboardSeries,
             Reports = reports,
             Departamentos = departamentos,
-            Gestores = gestores
+            Gestores = gestores,
+            Areas = areas
         };
     }
 

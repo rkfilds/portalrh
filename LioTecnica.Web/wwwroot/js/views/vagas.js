@@ -8,6 +8,7 @@ function enumFirstCode(key, fallback){
     }
 
     const AREA_ALL = enumFirstCode("vagaAreaFilter", "all");
+    const AREAS_STORE_KEY = "lt_rh_areas_v1";
     const DEFAULT_MODALIDADE = enumFirstCode("vagaModalidade", "Presencial");
     const DEFAULT_STATUS = enumFirstCode("vagaStatus", "aberta");
     const DEFAULT_SENIORIDADE = enumFirstCode("vagaSenioridade", "Junior");
@@ -76,6 +77,38 @@ function enumFirstCode(key, fallback){
 
     function joinTags(list){
       return (Array.isArray(list) ? list : []).join("; ");
+    }
+
+    function loadAreas(){
+      try{
+        const raw = localStorage.getItem(AREAS_STORE_KEY);
+        if(!raw) return Array.isArray(seed.areas) ? seed.areas : [];
+        const data = JSON.parse(raw);
+        if(data && Array.isArray(data.areas)) return data.areas;
+        return Array.isArray(seed.areas) ? seed.areas : [];
+      }catch{
+        return Array.isArray(seed.areas) ? seed.areas : [];
+      }
+    }
+
+    function listAreas(){
+      const list = loadAreas().map(a => a.nome).filter(Boolean);
+      const fromVagas = state.vagas.map(v => v.area).filter(Boolean);
+      const set = new Set([...list, ...fromVagas]);
+      return Array.from(set).sort((a,b)=>a.localeCompare(b,"pt-BR"));
+    }
+
+    function fillVagaAreaSelect(selected){
+      const select = $("#vagaArea");
+      if(!select) return;
+      select.replaceChildren();
+      select.appendChild(buildOption("", "Selecionar area", !selected));
+      const areas = listAreas();
+      areas.forEach(a => select.appendChild(buildOption(a, a, a === selected)));
+      if(selected && !areas.includes(selected)){
+        select.appendChild(buildOption(selected, selected, true));
+      }
+      if(selected) select.value = selected;
     }
 function fmtStatus(s){
       const map = {
@@ -165,8 +198,7 @@ function fmtStatus(s){
     }
 
     function distinctAreas(){
-      const set = new Set(state.vagas.map(v => v.area).filter(Boolean));
-      return Array.from(set).sort((a,b)=>a.localeCompare(b,"pt-BR"));
+      return listAreas();
     }
 
     function renderAreaFilter(){
@@ -752,6 +784,7 @@ function fmtStatus(s){
         $("#vagaId").value = v.id;
         $("#vagaCodigo").value = v.codigo || "";
         $("#vagaTitulo").value = v.titulo || "";
+        fillVagaAreaSelect(v.area || "");
         $("#vagaArea").value = v.area || "";
         $("#vagaModalidade").value = v.modalidade || DEFAULT_MODALIDADE;
         $("#vagaStatus").value = v.status || DEFAULT_STATUS;
@@ -844,6 +877,7 @@ function fmtStatus(s){
         $("#vagaId").value = "";
         $("#vagaCodigo").value = "";
         $("#vagaTitulo").value = "";
+        fillVagaAreaSelect("");
         $("#vagaArea").value = "";
         $("#vagaModalidade").value = DEFAULT_MODALIDADE;
         $("#vagaStatus").value = DEFAULT_STATUS;

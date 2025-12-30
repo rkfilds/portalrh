@@ -718,6 +718,12 @@
   zoom: calc(1 / var(--ui-scale, 1));
   transform-origin: top left;
 }
+.offcanvas-backdrop{
+  zoom: calc(1 / var(--ui-scale, 1));
+  transform-origin: top left;
+  width: 100vw;
+  height: 100vh;
+}
 .main{
   height: calc(100vh / var(--ui-scale, 1));
   display: flex;

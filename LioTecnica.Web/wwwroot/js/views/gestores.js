@@ -1,6 +1,7 @@
 const seed = window.__seedData || {};
 const STORE_KEY = "lt_rh_gestores_v1";
 const VAGAS_STORE_KEY = "lt_rh_vagas_v1";
+const AREAS_STORE_KEY = "lt_rh_areas_v1";
 const EMPTY_TEXT = "-";
 
 const state = {
@@ -53,9 +54,21 @@ function loadVagas(){
   }
 }
 
+function loadAreas(){
+  try{
+    const raw = localStorage.getItem(AREAS_STORE_KEY);
+    if(!raw) return Array.isArray(seed.areas) ? seed.areas : [];
+    const data = JSON.parse(raw);
+    if(data && Array.isArray(data.areas)) return data.areas;
+    return Array.isArray(seed.areas) ? seed.areas : [];
+  }catch{
+    return Array.isArray(seed.areas) ? seed.areas : [];
+  }
+}
+
 function getAreaOptions(){
-  const vagas = loadVagas();
-  const set = new Set(vagas.map(v => v.area).filter(Boolean));
+  const areas = loadAreas();
+  const set = new Set(areas.map(a => a.nome).filter(Boolean));
   return Array.from(set).sort((a,b)=>a.localeCompare(b, "pt-BR"));
 }
 
