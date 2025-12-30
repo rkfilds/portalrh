@@ -32,14 +32,15 @@ function enumFirstCode(key, fallback){
 
     function buildStatusTag(s){
       const map = {
-        novo:      { label:"Novo", cls:"" },
-        triagem:   { label:"Em triagem", cls:"warn" },
-        aprovado:  { label:"Aprovado", cls:"ok" },
-        reprovado: { label:"Reprovado", cls:"bad" },
-        pendente:  { label:"Pendente", cls:"warn" }
+        novo:      { cls:"" },
+        triagem:   { cls:"warn" },
+        aprovado:  { cls:"ok" },
+        reprovado: { cls:"bad" },
+        pendente:  { cls:"warn" }
       };
-      const it = map[s] || { label: s, cls:"" };
-      return buildTag("bi-dot", it.label, it.cls);
+      const it = map[s] || { cls:"" };
+      const labelText = getEnumText("candidatoStatus", s, s);
+      return buildTag("bi-dot", labelText, it.cls);
     }
 
     function formatDecisionReason(code){

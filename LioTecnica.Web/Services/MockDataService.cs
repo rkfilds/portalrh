@@ -1,3 +1,5 @@
+using LioTecnica.Web.Enums;
+using LioTecnica.Web.Helpers;
 using LioTecnica.Web.ViewModels.Seed;
 
 namespace LioTecnica.Web.Services;
@@ -1430,6 +1432,17 @@ public static class MockDataService
             }
         };
 
+        var fonteEmail = EnumOptionsHelper.GetCode(CandidatoFonte.Email);
+        var fontePasta = EnumOptionsHelper.GetCode(CandidatoFonte.Pasta);
+        var fonteLinkedIn = EnumOptionsHelper.GetCode(CandidatoFonte.LinkedIn);
+        var fonteIndicacao = EnumOptionsHelper.GetCode(CandidatoFonte.Indicacao);
+
+        var statusNovo = EnumOptionsHelper.GetCode(CandidatoStatus.Novo);
+        var statusTriagem = EnumOptionsHelper.GetCode(CandidatoStatus.Triagem);
+        var statusPendente = EnumOptionsHelper.GetCode(CandidatoStatus.Pendente);
+        var statusAprovado = EnumOptionsHelper.GetCode(CandidatoStatus.Aprovado);
+        var statusReprovado = EnumOptionsHelper.GetCode(CandidatoStatus.Reprovado);
+
         var candidatos = new List<CandidatoSeed>
         {
             new()
@@ -1440,8 +1453,8 @@ public static class MockDataService
                 Fone = "(11) 98888-7777",
                 Cidade = "Embu das Artes",
                 Uf = "SP",
-                Fonte = "Email",
-                Status = "triagem",
+                Fonte = fonteEmail,
+                Status = statusTriagem,
                 VagaId = VagaMarketingId,
                 Obs = "Boa comunicacao. Experiencia com marketing digital.",
                 CvText = "Experiencia com campanhas de performance, excel avancado, dashboards e power bi.",
@@ -1457,8 +1470,8 @@ public static class MockDataService
                 Fone = "(11) 97777-1111",
                 Cidade = "Sao Paulo",
                 Uf = "SP",
-                Fonte = "LinkedIn",
-                Status = "pendente",
+                Fonte = fonteLinkedIn,
+                Status = statusPendente,
                 VagaId = VagaMarketingId,
                 Obs = "",
                 CvText = "Atuacao como analista. Excel avancado. Nocoes de BI.",
@@ -1474,8 +1487,8 @@ public static class MockDataService
                 Fone = "(11) 96666-2222",
                 Cidade = "Osasco",
                 Uf = "SP",
-                Fonte = "Indicacao",
-                Status = "aprovado",
+                Fonte = fonteIndicacao,
+                Status = statusAprovado,
                 VagaId = VagaMarketingId,
                 Obs = "Perfil excelente. Forte em BI.",
                 CvText = "PowerBI, SQL, modelagem dimensional e analytics.",
@@ -1491,8 +1504,8 @@ public static class MockDataService
                 Fone = "(11) 95555-1212",
                 Cidade = "Taboao da Serra",
                 Uf = "SP",
-                Fonte = "Email",
-                Status = "reprovado",
+                Fonte = fonteEmail,
+                Status = statusReprovado,
                 VagaId = VagaMarketingId,
                 Obs = "Sem requisito obrigatorio.",
                 CvText = "Experiencia generalista em apoio administrativo.",
@@ -1508,8 +1521,8 @@ public static class MockDataService
                 Fone = "(11) 94444-3030",
                 Cidade = "Embu das Artes",
                 Uf = "SP",
-                Fonte = "Pasta",
-                Status = "novo",
+                Fonte = fontePasta,
+                Status = statusNovo,
                 VagaId = VagaBiId,
                 Obs = "",
                 CvText = "Power BI, SQL e reporting.",
@@ -1525,8 +1538,8 @@ public static class MockDataService
                 Fone = "(11) 93333-4040",
                 Cidade = "Embu das Artes",
                 Uf = "SP",
-                Fonte = "Email",
-                Status = "triagem",
+                Fonte = fonteEmail,
+                Status = statusTriagem,
                 VagaId = VagaQualidadeId,
                 Obs = "Experiencia com auditorias internas.",
                 CvText = "BPF, auditoria interna e controle de qualidade em processos.",
@@ -1542,8 +1555,8 @@ public static class MockDataService
                 Fone = "(11) 92222-5555",
                 Cidade = "Taboao da Serra",
                 Uf = "SP",
-                Fonte = "LinkedIn",
-                Status = "aprovado",
+                Fonte = fonteLinkedIn,
+                Status = statusAprovado,
                 VagaId = VagaQualidadeId,
                 Obs = "Certificacoes e experiencia em qualidade.",
                 CvText = "BPF, auditorias, engenharia de alimentos e processos.",
@@ -1559,8 +1572,8 @@ public static class MockDataService
                 Fone = "(11) 98888-3322",
                 Cidade = "Osasco",
                 Uf = "SP",
-                Fonte = "Indicacao",
-                Status = "triagem",
+                Fonte = fonteIndicacao,
+                Status = statusTriagem,
                 VagaId = VagaMarketingId,
                 Obs = "Boa aderencia em marketing digital.",
                 CvText = "Campanhas, analytics e excel. Nocoes de power bi.",
@@ -1576,8 +1589,8 @@ public static class MockDataService
                 Fone = "(11) 97777-4433",
                 Cidade = "Sao Paulo",
                 Uf = "SP",
-                Fonte = "Pasta",
-                Status = "pendente",
+                Fonte = fontePasta,
+                Status = statusPendente,
                 VagaId = VagaBiId,
                 Obs = "",
                 CvText = "SQL, ETL e modelagem. Experiencia com dados.",
@@ -1593,8 +1606,8 @@ public static class MockDataService
                 Fone = "(11) 96666-7788",
                 Cidade = "Sao Paulo",
                 Uf = "SP",
-                Fonte = "Email",
-                Status = "novo",
+                Fonte = fonteEmail,
+                Status = statusNovo,
                 VagaId = VagaBiId,
                 Obs = "",
                 CvText = "Dashboards, BI e relatorios.",
@@ -1610,8 +1623,8 @@ public static class MockDataService
                 Fone = "(11) 95555-8899",
                 Cidade = "Embu das Artes",
                 Uf = "SP",
-                Fonte = "LinkedIn",
-                Status = "aprovado",
+                Fonte = fonteLinkedIn,
+                Status = statusAprovado,
                 VagaId = VagaMarketingId,
                 Obs = "Experiencia em campanhas e analise de dados.",
                 CvText = "GA4, campanhas de performance e excel.",

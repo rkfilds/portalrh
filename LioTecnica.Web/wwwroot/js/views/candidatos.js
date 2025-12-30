@@ -22,13 +22,14 @@
 
     function buildStatusTag(s){
       const map = {
-        novo:      { label:"Novo", cls:"" },
-        triagem:   { label:"Em triagem", cls:"warn" },
-        aprovado:  { label:"Aprovado", cls:"ok" },
-        reprovado: { label:"Reprovado", cls:"bad" },
-        pendente:  { label:"Pendente", cls:"warn" }
+        novo:      { cls:"" },
+        triagem:   { cls:"warn" },
+        aprovado:  { cls:"ok" },
+        reprovado: { cls:"bad" },
+        pendente:  { cls:"warn" }
       };
-      const it = map[s] || { label: s, cls:"" };
+      const it = map[s] || { cls:"" };
+      const labelText = getEnumText("candidatoStatus", s, s);
       const tag = cloneTemplate("tpl-cand-status-tag");
       if(!tag) return document.createElement("span");
       tag.classList.toggle("ok", it.cls === "ok");
@@ -37,7 +38,7 @@
       const icon = tag.querySelector('[data-role="icon"]');
       if(icon) icon.className = "bi bi-dot";
       const text = tag.querySelector('[data-role="text"]');
-      if(text) text.textContent = it.label || "";
+      if(text) text.textContent = labelText || "";
       return tag;
     }
 
@@ -376,7 +377,7 @@ function openDetailModal(id){
       setText(root, "detail-location", hasLoc ? locParts.join(" - ") : EMPTY_TEXT);
       toggleRole(root, "detail-location-icon", hasLoc);
       toggleRole(root, "detail-location-sep", hasLoc);
-      setText(root, "detail-source", c.fonte);
+      setText(root, "detail-source", getEnumText("candidatoFonte", c.fonte, c.fonte));
 
       const statusHost = root.querySelector('[data-role="detail-status-host"]');
       if(statusHost) statusHost.replaceChildren(buildStatusTag(c.status));
