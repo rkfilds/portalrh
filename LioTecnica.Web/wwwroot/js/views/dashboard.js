@@ -77,7 +77,7 @@ const EMPTY_TEXT = "-";
             </td>
             <td>
               <div class="fw-semibold">${x.cand}</div>
-              <div class="text-muted small">CV: PDF â€¢ 2 pÃ¡ginas</div>
+              <div class="text-muted small">CV: PDF â€¢ 2 páginas</div>
             </td>
             <td>
               <span class="badge-soft"><i class="bi ${x.origem === "Email" ? "bi-envelope" : "bi-folder2"} me-1"></i>${x.origem}</span>
@@ -87,7 +87,7 @@ const EMPTY_TEXT = "-";
                 <div class="progress flex-grow-1"><div class="progress-bar" style="width:${x.match}%"></div></div>
                 <div class="fw-bold" style="min-width:44px;text-align:right;">${x.match}%</div>
               </div>
-              <div class="text-muted small mt-1">Encontrou: 9 termos â€¢ Faltou: 1 obrigatÃ³rio</div>
+              <div class="text-muted small mt-1">Encontrou: 9 termos â€¢ Faltou: 1 obrigatório</div>
             </td>
             <td>${badgeEtapa(x.etapa)}</td>
             <td class="text-end">
@@ -110,6 +110,14 @@ const EMPTY_TEXT = "-";
     function getOpenVagas(){
       const vagas = Array.isArray(seed.vagas) ? seed.vagas : [];
       return vagas.filter(v => String(v.status || "").toLowerCase() === "aberta");
+    }
+
+    function goToVagaDetail(vagaId){
+      if(!vagaId) return;
+      const url = new URL("/Vagas", window.location.origin);
+      url.searchParams.set("vagaId", vagaId);
+      url.searchParams.set("open", "detail");
+      window.location.href = url.toString();
     }
 
     function renderOpenVagasModal(){
@@ -139,6 +147,8 @@ const EMPTY_TEXT = "-";
           setText(tr, "vaga-modalidade", v.modalidade || EMPTY_TEXT);
           setText(tr, "vaga-local", formatLocal(v));
           setText(tr, "vaga-updated", formatDate(v.updatedAt));
+          const btn = tr.querySelector('[data-act="open-vaga"]');
+          if(btn) btn.addEventListener("click", () => goToVagaDetail(v.id));
           tbody.appendChild(tr);
         });
     }
@@ -211,11 +221,11 @@ const EMPTY_TEXT = "-";
       candidatos: { title: "Candidatos", sub: "Base de currí­culos e histórico por candidato." },
       triagem: { title: "Triagem", sub: "Aprovar/reprovar e mover etapas com auditoria." },
       matching: { title: "Matching", sub: "Ajustes de palavras-chave, pesos e critÃ©rios obrigatórios." },
-      entrada: { title: "Entrada (Email/Pasta)", sub: "Monitoramento de anexos e ingestÃ£o automática." },
+      entrada: { title: "Entrada (Email/Pasta)", sub: "Monitoramento de anexos e ingestão automática." },
       rm: { title: "RM Labore", sub: "Integração (fase 2): sincronizar vagas e requisitos." },
       relatorios: { title: "Relatórios", sub: "KPIs, produtividade do RH e exportações." },
       usuarios: { title: "Usuários & Perfis", sub: "Perfis (Admin/RH/Gestor) e permissões." },
-      config: { title: "ConfiguraÃ§Ãµes", sub: "Parâmetros do sistema, retention LGPD e integrações." }
+      config: { title: "Configurações", sub: "Parâmetros do sistema, retention LGPD e integrações." }
     };
 
     function setActiveMenu(key){

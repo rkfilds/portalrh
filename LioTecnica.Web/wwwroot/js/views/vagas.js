@@ -1,5 +1,5 @@
 ﻿// ========= Logo (embutido em Data URI - auto contido)
-    // ObservaÃ§Ã£o: o arquivo fornecido veio como WebP (mesmo com nome .png).
+    // Observação: o arquivo fornecido veio como WebP (mesmo com nome .png).
     const seed = window.__seedData || {};
     const LOGO_DATA_URI = "data:image/webp;base64,UklGRngUAABXRUJQVlA4IGwUAAAQYwCdASpbAVsBPlEokUajoqGhIpNoyHAK7AQYJjYQmG9Dtu/6p6QZ4lQd6lPde+Jk3i3kG2EoP+QW0c0h8Oe3jW2C5zE0o9jzZ1x2fX9cZlX0d7rW8r0vQ9p3d2nJ1bqzQfQZxVwTt7mJvU8j1GqF4oJc8Qb+gq+oQyHcQyYc2b9u2fYf0Rj9x9hRZp2Y2xK0yVQ8Hj4p6w8B1K2cKk2mY9m2r8kz3a4m7xG4xg9m5VjzP3E4RjQH8fYkC4mB8g0vR3c5h1D0yE8Qzv7t7gQj0Z9yKk3cWZgVnq3l1kq6rE8oWc4z6oZk8k0b1o9m8p2m+QJ3nJm6GgA=";
 function enumFirstCode(key, fallback){
@@ -1050,13 +1050,13 @@ function fmtStatus(s){
         }
       };
 
-      // validaÃ§Ã£o mÃ­nima
+      // validação mínima
       if(!titulo){
         toast("Informe o tÃ­tulo da vaga.");
         return;
       }
       if(!area){
-        toast("Selecione a Ã¡rea da vaga.");
+        toast("Selecione a área da vaga.");
         return;
       }
       if(!status){
@@ -1157,7 +1157,7 @@ function fmtStatus(s){
       const copy = JSON.parse(JSON.stringify(v));
       copy.id = uid();
       copy.codigo = (v.codigo ? v.codigo + "-COPY" : "");
-      copy.titulo = (v.titulo ? v.titulo + " (CÃ³pia)" : "CÃ³pia");
+      copy.titulo = (v.titulo ? v.titulo + " (Cópia)" : "Cópia");
       copy.createdAt = now;
       copy.updatedAt = now;
       // novos ids de requisitos
@@ -1204,7 +1204,7 @@ function fmtStatus(s){
         $("#reqObs").value = "";
       }
 
-      // guarda vaga atual no dataset do botÃ£o salvar
+      // guarda vaga atual no dataset do botão salvar
       $("#btnSaveReq").dataset.vagaId = vagaId;
 
       modal.show();
@@ -1292,7 +1292,7 @@ function fmtStatus(s){
       saveState();
       renderList();
       renderDetail();
-      toast(r.obrigatorio ? "Requisito marcado como obrigatÃ³rio." : "Requisito marcado como nÃ£o obrigatÃ³rio.");
+      toast(r.obrigatorio ? "Requisito marcado como obrigatório." : "Requisito marcado como não obrigatório.");
     }
 
     // ========= Pesos/Threshold
@@ -1424,7 +1424,7 @@ function simulateMatch(vagaId, fromMobile=false){
       a.click();
       a.remove();
       URL.revokeObjectURL(url);
-      toast("ExportaÃ§Ã£o iniciada.");
+      toast("Exportação iniciada.");
     }
 
     function importJson(){
@@ -1439,8 +1439,8 @@ function simulateMatch(vagaId, fromMobile=false){
         reader.onload = () => {
           try{
             const data = JSON.parse(reader.result);
-            if(!data || !Array.isArray(data.vagas)) throw new Error("Formato invÃ¡lido.");
-            // validaÃ§Ã£o simples
+            if(!data || !Array.isArray(data.vagas)) throw new Error("Formato inválido.");
+            // validação simples
             state.vagas = data.vagas.map(v => {
               const meta = v.meta || {};
               const jornada = v.jornada || {};
@@ -1615,7 +1615,7 @@ function simulateMatch(vagaId, fromMobile=false){
             updateKpis();
             renderList();
             renderDetail();
-            toast("ImportaÃ§Ã£o concluÃ­da.");
+            toast("Importação concluí­da.");
           }catch(e){
             console.error(e);
             alert("Falha ao importar JSON. Verifique o arquivo.");
@@ -1705,6 +1705,32 @@ function simulateMatch(vagaId, fromMobile=false){
       $("#logoMobile").src = LOGO_DATA_URI;
     }
 
+    function openDetailFromQuery(){
+      const params = new URLSearchParams(window.location.search);
+      const vagaId = params.get("vagaId");
+      const open = params.get("open");
+      if(!vagaId) return;
+      let v = findVaga(vagaId);
+      if(!v){
+        const seedVaga = Array.isArray(seed.vagas) ? seed.vagas.find(x => x.id === vagaId) : null;
+        if(seedVaga){
+          state.vagas.unshift(seedVaga);
+          saveState();
+          renderAreaFilter();
+          updateKpis();
+          renderList();
+          renderDetail();
+          v = seedVaga;
+        }
+      }
+      if(!v) return;
+      if(open === "detail"){
+        openDetailModal(vagaId);
+      }else{
+        selectVaga(vagaId);
+      }
+    }
+
     (function init(){
       initLogo();
       wireClock();
@@ -1720,8 +1746,9 @@ function simulateMatch(vagaId, fromMobile=false){
 
       wireFilters();
       wireButtons();
+      openDetailFromQuery();
 
-      // garantir que haja seleÃ§Ã£o
+      // garantir que haja seleção
       if(!state.selectedId && state.vagas.length){
         state.selectedId = state.vagas[0].id;
         saveState();

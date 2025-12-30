@@ -1,6 +1,6 @@
 ﻿@model PageSeedViewModel
 @{
-    ViewData["Title"] = "Portal RH â€¢ LiotÃ©cnica â€” Matching";
+    ViewData["Title"] = "Portal RH â€¢ Liotécnica â€” Matching";
     ViewData["SidebarSubtitle"] = "Matching";
 }
 
@@ -13,7 +13,7 @@
   @await Html.PartialAsync("_Toast")
 
       @section Topbar {
-@await Html.PartialAsync("_TopbarBrand", "Tela: Matching (pontua??o por requisitos)")
+@await Html.PartialAsync("_TopbarBrand", "Tela: Matching (pontuação por requisitos)")
 
           <div class="d-flex align-items-center gap-2">
             <button class="btn btn-ghost" type="button" id="btnSeedReset" title="Restaurar demo">
@@ -41,7 +41,7 @@
         <div class="page-title">
           <div>
             <h4>Matching</h4>
-            <div class="subtitle">PontuaÃ§Ã£o automÃ¡tica por palavras-chave + pesos + requisitos obrigatÃ³rios (MVP).</div>
+            <div class="subtitle">Pontuação automática por palavras-chave + pesos + requisitos obrigatórios (MVP).</div>
           </div>
           <div class="d-flex align-items-center gap-2 flex-wrap justify-content-end">
             <span class="badge-soft"><i class="bi bi-clock me-1"></i><span id="nowLabel">â€”</span></span>
@@ -110,7 +110,7 @@
   {
     new { ColClass = "col-6 col-lg-3", ValueId = "kpiTotal", Value = "0", Label = "Candidatos filtrados", Icon = "bi-people" },
     new { ColClass = "col-6 col-lg-3", ValueId = "kpiInside", Value = "0", Label = "Dentro do mÃ­nimo", Icon = "bi-check2-circle" },
-    new { ColClass = "col-6 col-lg-3", ValueId = "kpiMandatoryFail", Value = "0", Label = "Falha obrigatÃ³ria", Icon = "bi-exclamation-triangle" },
+    new { ColClass = "col-6 col-lg-3", ValueId = "kpiMandatoryFail", Value = "0", Label = "Falha obrigatória", Icon = "bi-exclamation-triangle" },
     new { ColClass = "col-6 col-lg-3", ValueId = "kpiAvg", Value = "0%", Label = "MÃ©dia de match", Icon = "bi-stars" }
   };
 }
@@ -141,7 +141,7 @@
                 <i class="bi bi-info-circle mt-1"></i>
                 <div>
                   <div class="fw-bold">Selecione um candidato</div>
-                  <div class="small mt-1">A tela exibirÃ¡ score, requisitos encontrados/faltando e explicaÃ§Ã£o do cÃ¡lculo.</div>
+                  <div class="small mt-1">A tela exibirá¡ score, requisitos encontrados/faltando e explicação do cálculo.</div>
                 </div>
               </div>
             </div>

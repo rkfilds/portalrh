@@ -57,7 +57,7 @@ function enumFirstCode(key, fallback){
       }catch{ return fallback; }
     }
 
-    // ========= Seed (mÃ­nimo para nÃ£o quebrar a tela)
+    // ========= Seed (mínimo para não quebrar a tela)
     function seedIfEmpty(){
       const vagasSeed = Array.isArray(seed.vagas) ? seed.vagas : [];
       const candsSeed = Array.isArray(seed.candidatos) ? seed.candidatos : [];
@@ -87,7 +87,7 @@ function loadAll(){
 
     function findVaga(id){ return state.vagas.find(v => v.id === id) || null; }
 
-    // ========= RelatÃ³rios (catÃ¡logo)
+    // ========= Relatórios (catálogo)
     const REPORTS = Array.isArray(seed.reports) ? seed.reports : [];
 
     // ========= Filters / period
@@ -130,7 +130,7 @@ function loadAll(){
       });
     }
 
-    // ========= Render catÃ¡logo de relatÃ³rios
+    // ========= Render catálogo de relatórios
     function renderReportCatalog(){
       const host = $("#reportList");
       host.replaceChildren();
@@ -181,7 +181,7 @@ function loadAll(){
       const cands = state.candidatos.length;
       const inbox = state.inbox.filter(x => ["novo","processando"].includes(x.status)).length;
 
-      // conversÃ£o simples (processado â†’ candidato) (demo)
+      // conversão simples (processado â†’ candidato) (demo)
       const processed = state.inbox.filter(x => x.status === "processado" && inPeriod(x.recebidoEm)).length;
       const conv = processed ? Math.round((cands / processed) * 100) : 0;
 
@@ -528,7 +528,7 @@ function loadAll(){
     function renderReport(){
       const r = REPORTS.find(x => x.id === state.reportId);
       $("#reportTitle").textContent = r ? r.title : "â€”";
-      $("#reportDesc").textContent = r ? r.desc : "Selecione um relatÃ³rio no catÃ¡logo.";
+      $("#reportDesc").textContent = r ? r.desc : "Selecione um relatório no catálogo.";
 
       const data = buildReportData();
 
@@ -541,16 +541,16 @@ function loadAll(){
       // hint
       const p = state.filters.period;
       const pl = p==="7d"?"7 dias":p==="30d"?"30 dias":p==="90d"?"90 dias":"YTD";
-      $("#resultHint").textContent = `PerÃ­odo: ${pl} â€¢ Vaga: ${state.filters.vaga==="all"?"todas":"filtrada"} â€¢ Origem/Status: conforme filtros.`;
+      $("#resultHint").textContent = `Perí­odo: ${pl} â€¢ Vaga: ${state.filters.vaga==="all"?"todas":"filtrada"} â€¢ Origem/Status: conforme filtros.`;
     }
 
-    // ========= CSV export do relatÃ³rio atual
+    // ========= CSV export do relatório atual
     function exportCurrentCsv(){
       const data = buildReportData();
       const headers = data.headers || [];
       const rows = data.rows || [];
 
-      // remove HTML dos cells para CSV bÃ¡sico
+      // remove HTML dos cells para CSV básico
       const cellText = (cell) => {
         if(cell == null) return "";
         if(cell instanceof Node) return (cell.textContent || "").trim();

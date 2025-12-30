@@ -180,6 +180,7 @@
                   <th style="min-width: 150px;">Modalidade</th>
                   <th style="min-width: 160px;">Local</th>
                   <th class="text-end" style="min-width: 140px;">Atualizado</th>
+                  <th class="text-end" style="min-width: 120px;">Acoes</th>
                 </tr>
               </thead>
               <tbody id="tblVagasAbertas"></tbody>
@@ -201,12 +202,17 @@
       <td data-role="vaga-modalidade"></td>
       <td data-role="vaga-local"></td>
       <td class="text-end mono" data-role="vaga-updated"></td>
+      <td class="text-end">
+        <button class="btn btn-ghost btn-sm" type="button" data-act="open-vaga">
+          <i class="bi bi-box-arrow-up-right me-1"></i>Ver vaga
+        </button>
+      </td>
     </tr>
   </template>
 
   <template id="tpl-vaga-aberta-empty-row">
     <tr>
-      <td colspan="6" class="text-center text-muted py-3">Nenhuma vaga aberta.</td>
+      <td colspan="7" class="text-center text-muted py-3">Nenhuma vaga aberta.</td>
     </tr>
   </template>
 

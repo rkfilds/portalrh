@@ -94,7 +94,7 @@ function enumFirstCode(key, fallback){
       const raw = localStorage.getItem(CANDS_KEY);
       let cur = { candidatos: state.candidatos, selectedId: state.selectedId };
       try{
-        // se jÃ¡ existia, respeita o formato e sÃ³ substitui os candidatos/selected
+        // se já¡ existia, respeita o formato e só substitui os candidatos/selected
         if(raw){
           const d = JSON.parse(raw);
           cur = { ...d, candidatos: state.candidatos, selectedId: state.selectedId };
@@ -555,7 +555,7 @@ function renderVagaFilter(){
       a.click();
       a.remove();
       URL.revokeObjectURL(url);
-      toast("ExportaÃ§Ã£o iniciada.");
+      toast("Exportação iniciada.");
     }
     function importJson(){
       const inp = document.createElement("input");
@@ -583,7 +583,7 @@ function renderVagaFilter(){
             state.selectedId = state.candidatos[0]?.id || null;
             renderVagaFilter();
             renderList();
-            toast("ImportaÃ§Ã£o concluÃ­da.");
+            toast("Importação concluí­da.");
           }catch(e){
             console.error(e);
             alert("Falha ao importar JSON. Verifique o arquivo.");

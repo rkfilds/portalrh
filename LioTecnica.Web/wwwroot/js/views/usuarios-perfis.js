@@ -85,7 +85,7 @@ function loadAll(){
     // ========= Toast
     function showToast(title, body){
       if (typeof window.toast !== "function") return;
-      window.toast(body || "-", title || "Notifica??o");
+      window.toast(body || "-", title || "Notificação");
     }
 
     // ========= Role helpers
@@ -162,7 +162,7 @@ function loadAll(){
 
       $("#usersHint").textContent = filtered.length
         ? "Dica: clique na linha para ver detalhes no drawer."
-        : "Nenhum usuÃ¡rio com os filtros atuais.";
+        : "Nenhum usuário com os filtros atuais.";
 
       const tbody = $("#usersTbody");
       tbody.innerHTML = filtered.map(u=>{
@@ -265,13 +265,13 @@ function loadAll(){
         if(!state.selectedUserId) return;
         const u = userById(state.selectedUserId);
         if(!u) return;
-        const ok = confirm(`Excluir usuÃ¡rio "${u.name}"? (demo)`);
+        const ok = confirm(`Excluir usuário "${u.name}"? (demo)`);
         if(!ok) return;
         state.users = state.users.filter(x=>x.id!==u.id);
         saveUsers();
         renderKPIs();
         renderUsers();
-        showToast("UsuÃ¡rio", "ExcluÃ­do (demo).");
+        showToast("Usuário", "Excluí­do (demo).");
       });
     }
 
@@ -279,7 +279,7 @@ function loadAll(){
     function openUserModal(userId){
       const modal = new bootstrap.Modal($("#modalUser"));
       const isEdit = !!userId;
-      $("#userModalTitle").textContent = isEdit ? "Editar usuÃ¡rio" : "Novo usuÃ¡rio";
+      $("#userModalTitle").textContent = isEdit ? "Editar usuário" : "Novo usuário";
 
       const u = isEdit ? userById(userId) : null;
 
@@ -338,7 +338,7 @@ function loadAll(){
       const roleIds = $$("#userRolesChecks .role-check").filter(x=>x.checked).map(x=>x.value);
 
       if(!name || !email){
-        showToast("ValidaÃ§Ã£o", "Informe Nome e Email.");
+        showToast("Validação", "Informe Nome e Email.");
         return;
       }
 
@@ -349,7 +349,7 @@ function loadAll(){
         u.name = name; u.email=email; u.dept=dept; u.status=status; u.mfaEnabled=mfaEnabled; u.roleIds=roleIds;
         u.updatedAt = now;
         saveUsers();
-        showToast("UsuÃ¡rio", "Atualizado com sucesso.");
+        showToast("Usuário", "Atualizado com sucesso.");
       }else{
         const u = {
           id: uid(),
@@ -363,7 +363,7 @@ function loadAll(){
         };
         state.users.push(u);
         saveUsers();
-        showToast("UsuÃ¡rio", "Criado com sucesso.");
+        showToast("Usuário", "Criado com sucesso.");
       }
 
       renderKPIs();
@@ -380,7 +380,7 @@ function loadAll(){
       saveUsers();
       renderKPIs();
       renderUsers();
-      showToast("Status", `UsuÃ¡rio agora estÃ¡: ${u.status}.`);
+      showToast("Status", `Usuário agora está¡: ${u.status}.`);
 
       if(keepDrawerOpen) openUserDrawer(userId);
     }
@@ -401,7 +401,7 @@ function loadAll(){
                   <div class="text-muted small">${escapeHtml(r.desc || "â€”")}</div>
                 </div>
               </div>
-              ${r.builtIn ? `<span class="pill"><i class="bi bi-stars"></i>padrÃ£o</span>` : `<span class="pill"><i class="bi bi-person-badge"></i>custom</span>`}
+              ${r.builtIn ? `<span class="pill"><i class="bi bi-stars"></i>padrão</span>` : `<span class="pill"><i class="bi bi-person-badge"></i>custom</span>`}
             </div>
           </div>
         `).join("");
@@ -491,7 +491,7 @@ function loadAll(){
       const name = ($("#roleName").value||"").trim();
       const desc = ($("#roleDesc").value||"").trim();
       if(!name){
-        showToast("ValidaÃ§Ã£o", "Informe o nome do perfil.");
+        showToast("Validação", "Informe o nome do perfil.");
         return;
       }
 
@@ -503,7 +503,7 @@ function loadAll(){
       renderRolesList();
       renderRoleFilterOptions();
       renderUsers(); // para atualizar nomes de perfis nas linhas
-      showToast("Perfil", "PermissÃµes salvas com sucesso.");
+      showToast("Perfil", "Permissões salvas com sucesso.");
     }
 
     function cloneSelectedRole(){
@@ -533,12 +533,12 @@ function loadAll(){
       if(!r) return;
 
       if(r.builtIn){
-        showToast("Perfil", "Perfis padrÃ£o nÃ£o podem ser excluÃ­dos (demo).");
+        showToast("Perfil", "Perfis padrão não podem ser excluÃ­dos (demo).");
         return;
       }
 
       const usedBy = state.users.filter(u => (u.roleIds||[]).includes(r.id)).length;
-      const ok = confirm(`Excluir perfil "${r.name}"? UsuÃ¡rios afetados: ${usedBy}. (demo)`);
+      const ok = confirm(`Excluir perfil "${r.name}"? Usuários afetados: ${usedBy}. (demo)`);
       if(!ok) return;
 
       // remove role from users
@@ -569,7 +569,7 @@ function loadAll(){
       const name = ($("#newRoleName").value||"").trim();
       const desc = ($("#newRoleDesc").value||"").trim();
       if(!name){
-        showToast("ValidaÃ§Ã£o", "Informe o nome do perfil.");
+        showToast("Validação", "Informe o nome do perfil.");
         return;
       }
       const r = {
@@ -594,10 +594,10 @@ function loadAll(){
       renderRoleFilterOptions();
       renderUsers();
       bootstrap.Modal.getInstance($("#modalRole")).hide();
-      showToast("Perfil", "Criado com sucesso. Ajuste as permissÃµes ao lado.");
+      showToast("Perfil", "Criado com sucesso. Ajuste as permissões ao lado.");
     }
 
-    // ========= CSV export (usuÃ¡rios)
+    // ========= CSV export (usuários)
     function exportUsersCsv(){
       const users = applyUserFilters(state.users);
       const headers = ["Nome","Email","Departamento","Status","MFA","Perfis","Ãšltimo login","Criado em"];
@@ -649,7 +649,7 @@ function loadAll(){
 
     function wireTopButtons(){
       $("#btnSeedReset").addEventListener("click", ()=>{
-        const ok = confirm("Restaurar demo? Isso recria roles/usuÃ¡rios iniciais.");
+        const ok = confirm("Restaurar demo? Isso recria roles/usuários iniciais.");
         if(!ok) return;
         localStorage.removeItem(USERS_KEY);
         localStorage.removeItem(ROLES_KEY);
@@ -661,7 +661,7 @@ function loadAll(){
 
       $("#btnExportUsers").addEventListener("click", exportUsersCsv);
 
-      // botÃ£o primÃ¡rio muda conforme aba
+      // botão primário muda conforme aba
       $("#btnPrimaryAction").addEventListener("click", ()=>{
         const usersActive = $("#tab-users").classList.contains("active");
         if(usersActive) openUserModal(null);

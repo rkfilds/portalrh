@@ -52,7 +52,7 @@ function enumFirstCode(key, fallback){
     const VAGAS_KEY = "lt_rh_vagas_v1";
     const CANDS_KEY = "lt_rh_candidatos_v1";
 
-    // Triagem: histÃ³rico de decisÃµes (novo key)
+    // Triagem: histórico de decisões (novo key)
     const TRIAGE_KEY = "lt_rh_triagem_v1";
 
     const state = {
@@ -134,7 +134,7 @@ function enumFirstCode(key, fallback){
       return state.candidatos.find(c => c.id === id) || null;
     }
 
-    // ========= Matching (MVP keyword) â€” mesmo padrÃ£o da tela de Candidatos
+    // ========= Matching (MVP keyword) â€” mesmo padrão da tela de Candidatos
     function calcMatchForCand(cand){
       const v = findVaga(cand.vagaId);
       if(!v) return { score: 0, pass: false, hits: [], missMandatory: [], totalPeso: 1, hitPeso: 0, threshold: 0 };
@@ -236,7 +236,7 @@ function enumFirstCode(key, fallback){
       const sla = state.filters.sla;
 
       return state.candidatos.filter(c => {
-        // sÃ³ pipeline de triagem
+        // só³ pipeline de triagem
         if(!["triagem","pendente","aprovado","reprovado"].includes(c.status)) return false;
 
         if(vid !== "all" && c.vagaId !== vid) return false;
@@ -577,7 +577,7 @@ function enumFirstCode(key, fallback){
 
       $("#decCandId").value = c.id;
 
-      // sugestÃ£o automÃ¡tica
+      // sugestão automática
       const v = findVaga(c.vagaId);
       const m = calcMatchForCand(c);
       const suggested = suggestDecision(c, v, m);
@@ -586,7 +586,7 @@ function enumFirstCode(key, fallback){
       $("#decReason").value = suggested.reason || "";
       $("#decObs").value = "";
 
-      $("#decisionTitle").textContent = `DecisÃ£o â€¢ ${c.nome}`;
+      $("#decisionTitle").textContent = `Decisão â€¢ ${c.nome}`;
 
       bootstrap.Modal.getOrCreateInstance($("#modalDecision")).show();
     }
@@ -595,9 +595,9 @@ function enumFirstCode(key, fallback){
 
     function suggestDecision(c, v, m){
       // Regras MVP:
-      // - se obrigatÃ³rios faltando => reprovar
-      // - senÃ£o se match < threshold => pendente (ou reprovar se muito baixo)
-      // - senÃ£o => aprovar
+      // - se obrigatórios faltando => reprovar
+      // - senão se match < threshold => pendente (ou reprovar se muito baixo)
+      // - senão => aprovar
       const thr = m.threshold ?? (v ? v.threshold : 0);
       const miss = (m.missMandatory||[]).length;
       if(miss){
@@ -626,7 +626,7 @@ function enumFirstCode(key, fallback){
         note: obs || ""
       });
 
-      // tambÃ©m grava observaÃ§Ã£o no candidato (append)
+      // tambÃ©m grava observação no candidato (append)
       if(reason || obs){
         const lines = [];
         if(reason) lines.push(reasonLabel || reason);
@@ -660,7 +660,7 @@ function enumFirstCode(key, fallback){
     function autoTriage(){
       const list = getFilteredCands();
 
-      // sÃ³ auto em triagem
+      // só auto em triagem
       const tri = list.filter(c => c.status === "triagem");
 
       if(!tri.length){
@@ -675,7 +675,7 @@ function enumFirstCode(key, fallback){
         const m = calcMatchForCand(c);
         const sug = suggestDecision(c, v, m);
 
-        // nÃ£o aprovar automaticamente se for "pendente"
+        // não aprovar automaticamente se for "pendente"
         // (mantÃ©m pendente como pendente quando sugerido, mas aqui move para pendente)
         if(sug.action && sug.action !== "triagem"){
           moveStage(c.id, sug.action, { reason: "Auto-triagem", note: formatDecisionReason(sug.reason) || "" });
@@ -704,7 +704,7 @@ function enumFirstCode(key, fallback){
       a.click();
       a.remove();
       URL.revokeObjectURL(url);
-      toast("ExportaÃ§Ã£o iniciada.");
+      toast("Exportação iniciada.");
     }
 
     function importJson(){
@@ -734,7 +734,7 @@ function enumFirstCode(key, fallback){
             renderVagaFilter();
             renderBoard();
             renderDetail();
-            toast("ImportaÃ§Ã£o concluÃ­da.");
+            toast("Importação concluí­da.");
           }catch(e){
             console.error(e);
             alert("Falha ao importar JSON. Verifique o arquivo.");
@@ -832,7 +832,7 @@ function enumFirstCode(key, fallback){
         toast("Nenhuma vaga encontrada no localStorage. Abra a tela de Vagas e crie/seed primeiro.");
       }
 
-      // se nÃ£o houver candidato selecionado, tenta um em triagem
+      // se não houver candidato selecionado, tenta um em triagem
       if(!state.selectedId){
         state.selectedId = state.candidatos.find(c => c.status === "triagem")?.id || state.candidatos[0]?.id || null;
         saveCands();

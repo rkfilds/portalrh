@@ -1,7 +1,7 @@
 ﻿@model PageSeedViewModel
 @{
-    ViewData["Title"] = "Portal RH â€¢ LiotÃ©cnica â€” RelatÃ³rios";
-    ViewData["SidebarSubtitle"] = "RelatÃ³rios";
+    ViewData["Title"] = "Portal RH â€¢ LiotÃ©cnica â€” Relatórios";
+    ViewData["SidebarSubtitle"] = "Relatórios";
 }
 
 
@@ -9,14 +9,14 @@
 <!-- MOBILE SIDEBAR OFFCANVAS -->
 
       @section Topbar {
-@await Html.PartialAsync("_TopbarBrand", "Tela: Relat?rios")
+@await Html.PartialAsync("_TopbarBrand", "Tela: Relatórios")
 
           <div class="d-flex align-items-center gap-2">
             <button class="btn btn-ghost" type="button" id="btnSeedReset" title="Restaurar demo">
               <i class="bi bi-arrow-counterclockwise"></i><span class="d-none d-sm-inline ms-1">Reset demo</span>
             </button>
 
-            <button class="btn btn-ghost" type="button" id="btnExport" title="Exportar relatÃ³rio atual (CSV)">
+            <button class="btn btn-ghost" type="button" id="btnExport" title="Exportar relatório atual (CSV)">
               <i class="bi bi-filetype-csv"></i><span class="d-none d-sm-inline ms-1">Exportar CSV</span>
             </button>
 
@@ -32,8 +32,8 @@
       <section class="content">
         <div class="page-title">
           <div>
-            <h4>RelatÃ³rios</h4>
-            <div class="subtitle">Gere relatÃ³rios operacionais e gerenciais (mocado). No sistema real: filtros â†’ query Postgres â†’ exportaÃ§Ã£o.</div>
+            <h4>Relatórios</h4>
+            <div class="subtitle">Gere relatórios operacionais e gerenciais (mocado). No sistema real: filtros â†’ query Postgres â†’ exportação.</div>
           </div>
           <div class="d-flex align-items-center gap-2 flex-wrap justify-content-end">
             <span class="badge-soft"><i class="bi bi-clock me-1"></i><span id="nowLabel">â€”</span></span>
@@ -72,7 +72,7 @@
 
             <div class="card-soft p-3">
               <div class="fw-bold">Filtros</div>
-              <div class="text-muted small">Os filtros alteram a tabela/â€œgrÃ¡ficoâ€ do relatÃ³rio selecionado.</div>
+              <div class="text-muted small">Os filtros alteram a tabela/â€œgráficoâ€ do relatório selecionado.</div>
 
               <div class="row g-2 mt-2">
                 <div class="col-12">
@@ -153,13 +153,13 @@
             </div>
           </div>
 
-          <!-- RIGHT: relatÃ³rio selecionado -->
+          <!-- RIGHT: relatório selecionado -->
           <div>
             <div class="card-soft p-3 mb-3">
               <div class="d-flex flex-wrap align-items-start justify-content-between gap-2">
                 <div>
                   <div class="fw-bold" id="reportTitle">â€”</div>
-                  <div class="text-muted small" id="reportDesc">Selecione um relatÃ³rio no catÃ¡logo.</div>
+                  <div class="text-muted small" id="reportDesc">Selecione um relatório no catálogo.</div>
                 </div>
                 <div class="d-flex flex-wrap gap-2 justify-content-end">
                   <span class="tag" id="tagScope"><i class="bi bi-sliders"></i>escopo</span>
@@ -178,7 +178,7 @@
                 <div class="mini-title">Resultados</div>
                 <div class="d-flex gap-2 flex-wrap">
                   <span class="pill"><i class="bi bi-table"></i><span id="rowCount">0</span> linhas</span>
-                  <span class="pill"><i class="bi bi-filetype-csv"></i>exportÃ¡vel</span>
+                  <span class="pill"><i class="bi bi-filetype-csv"></i>exportável</span>
                 </div>
               </div>
 
@@ -196,15 +196,15 @@
 
             <div class="card-soft p-3">
               <div class="fw-bold">Agendamento (MVP+)</div>
-              <div class="text-muted small">Exemplo visual de como seria agendar envio automÃ¡tico por e-mail (nÃ£o funcional).</div>
+              <div class="text-muted small">Exemplo visual de como seria agendar envio automático por e-mail (não funcional).</div>
 
               <div class="row g-2 mt-2">
                 <div class="col-12 col-md-6">
-                  <label class="form-label small">DestinatÃ¡rios</label>
+                  <label class="form-label small">Destinatários</label>
                   <input class="form-control" placeholder="ex.: rh@@empresa.com; gestor@@empresa.com">
                 </div>
                 <div class="col-6 col-md-3">
-                  <label class="form-label small">FrequÃªncia</label>
+                  <label class="form-label small">Frequência</label>
                   <select class="form-select" id="fFrequency">
                     @foreach (var opt in freqOptions)
                     {
