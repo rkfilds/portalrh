@@ -1,8 +1,9 @@
 ﻿// ========= Logo (embutido em Data URI - auto contido)
     // Observação: o arquivo fornecido veio como WebP (mesmo com nome .png).
-const seed = window.__seedData || {};
 const VAGAS_API_URL = window.__vagasApiUrl || "/api/vagas";
 const AREAS_API_URL = window.__areasApiUrl || "/api/lookup/areas";
+const DEPARTMENTS_API_URL = window.__departmentsApiUrl || "/api/lookup/departments";
+const VAGAS_ENUMS_URL = window.__vagasEnumsUrl || "/api/lookup/vaga-enums";
 
     const LOGO_DATA_URI = "data:image/webp;base64,UklGRngUAABXRUJQVlA4IGwUAAAQYwCdASpbAVsBPlEokUajoqGhIpNoyHAK7AQYJjYQmG9Dtu/6p6QZ4lQd6lPde+Jk3i3kG2EoP+QW0c0h8Oe3jW2C5zE0o9jzZ1x2fX9cZlX0d7rW8r0vQ9p3d2nJ1bqzQfQZxVwTt7mJvU8j1GqF4oJc8Qb+gq+oQyHcQyYc2b9u2fYf0Rj9x9hRZp2Y2xK0yVQ8Hj4p6w8B1K2cKk2mY9m2r8kz3a4m7xG4xg9m5VjzP3E4RjQH8fYkC4mB8g0vR3c5h1D0yE8Qzv7t7gQj0Z9yKk3cWZgVnq3l1kq6rE8oWc4z6oZk8k0b1o9m8p2m+QJ3nJm6GgA=";
 function enumFirstCode(key, fallback){
@@ -10,35 +11,71 @@ function enumFirstCode(key, fallback){
       return list.length ? list[0].code : fallback;
     }
 
+    function enumPreferredCode(key, preferred, fallback){
+      const list = getEnumOptions(key);
+      for(const code of preferred){
+        if(list.some(opt => opt.code === code)) return code;
+      }
+      return list.length ? list[0].code : fallback;
+    }
+
     const AREA_ALL = enumFirstCode("vagaAreaFilter", "all");
-    const REQ_CATEGORIAS_STORE_KEY = "lt_rh_req_categorias_v1";
-    const DEFAULT_MODALIDADE = enumFirstCode("vagaModalidade", "Presencial");
-    const DEFAULT_STATUS = enumFirstCode("vagaStatus", "aberta");
-    const DEFAULT_SENIORIDADE = enumFirstCode("vagaSenioridade", "Junior");
-    const DEFAULT_DEPARTAMENTO = enumFirstCode("vagaDepartamento", "");
-    const DEFAULT_AREA_TIME = enumFirstCode("vagaAreaTime", "");
-    const DEFAULT_TIPO_CONTRATACAO = enumFirstCode("vagaTipoContratacao", "");
-    const DEFAULT_MOTIVO = enumFirstCode("vagaMotivoAbertura", "");
-    const DEFAULT_ORCAMENTO = enumFirstCode("vagaOrcamentoAprovado", "");
-    const DEFAULT_PRIORIDADE = enumFirstCode("vagaPrioridade", "");
-    const DEFAULT_REGIME = enumFirstCode("vagaRegimeJornada", "");
-    const DEFAULT_ESCALA = enumFirstCode("vagaEscalaTrabalho", "");
-    const DEFAULT_MOEDA = enumFirstCode("vagaMoeda", "BRL");
-    const DEFAULT_REMUN_PERIOD = enumFirstCode("vagaRemuneracaoPeriodicidade", "mensal");
-    const DEFAULT_BONUS = enumFirstCode("vagaBonusTipo", "");
-    const DEFAULT_BENEFICIO_TIPO = enumFirstCode("vagaBeneficioTipo", "");
-    const DEFAULT_BENEFICIO_REC = enumFirstCode("vagaBeneficioRecorrencia", "mensal");
-    const DEFAULT_ESCOLARIDADE = enumFirstCode("vagaEscolaridade", "");
-    const DEFAULT_FORMACAO = enumFirstCode("vagaFormacaoArea", "");
-    const DEFAULT_REQ_NIVEL = enumFirstCode("vagaRequisitoNivel", "");
-    const DEFAULT_REQ_AVALIACAO = enumFirstCode("vagaRequisitoAvaliacao", "");
-    const DEFAULT_ETAPA_RESP = enumFirstCode("vagaEtapaResponsavel", "");
-    const DEFAULT_ETAPA_MODO = enumFirstCode("vagaEtapaModo", "");
-    const DEFAULT_QUESTION_TIPO = enumFirstCode("vagaPerguntaTipo", "");
-    const DEFAULT_PESO = enumFirstCode("vagaPeso", "1");
-    const DEFAULT_PUBLICACAO = enumFirstCode("vagaPublicacaoVisibilidade", "");
-    const DEFAULT_GENERO = enumFirstCode("vagaGeneroPreferencia", "");
+    let DEFAULT_MODALIDADE = enumFirstCode("vagaModalidade", "Presencial");
+    let DEFAULT_STATUS = enumPreferredCode("vagaStatus", ["Aberta", "Rascunho"], "Aberta");
+    let DEFAULT_SENIORIDADE = enumFirstCode("vagaSenioridade", "Junior");
+    let DEFAULT_DEPARTAMENTO = enumFirstCode("vagaDepartamento", "");
+    let DEFAULT_AREA_TIME = enumFirstCode("vagaAreaTime", "");
+    let DEFAULT_TIPO_CONTRATACAO = enumFirstCode("vagaTipoContratacao", "");
+    let DEFAULT_MOTIVO = enumFirstCode("vagaMotivoAbertura", "");
+    let DEFAULT_ORCAMENTO = enumFirstCode("vagaOrcamentoAprovado", "");
+    let DEFAULT_PRIORIDADE = enumFirstCode("vagaPrioridade", "");
+    let DEFAULT_REGIME = enumFirstCode("vagaRegimeJornada", "");
+    let DEFAULT_ESCALA = enumFirstCode("vagaEscalaTrabalho", "");
+    let DEFAULT_MOEDA = enumFirstCode("vagaMoeda", "BRL");
+    let DEFAULT_REMUN_PERIOD = enumFirstCode("vagaRemuneracaoPeriodicidade", "mensal");
+    let DEFAULT_BONUS = enumFirstCode("vagaBonusTipo", "");
+    let DEFAULT_BENEFICIO_TIPO = enumFirstCode("vagaBeneficioTipo", "");
+    let DEFAULT_BENEFICIO_REC = enumFirstCode("vagaBeneficioRecorrencia", "mensal");
+    let DEFAULT_ESCOLARIDADE = enumFirstCode("vagaEscolaridade", "");
+    let DEFAULT_FORMACAO = enumFirstCode("vagaFormacaoArea", "");
+    let DEFAULT_REQ_NIVEL = enumFirstCode("vagaRequisitoNivel", "");
+    let DEFAULT_REQ_AVALIACAO = enumFirstCode("vagaRequisitoAvaliacao", "");
+    let DEFAULT_ETAPA_RESP = enumFirstCode("vagaEtapaResponsavel", "");
+    let DEFAULT_ETAPA_MODO = enumFirstCode("vagaEtapaModo", "");
+    let DEFAULT_QUESTION_TIPO = enumFirstCode("vagaPerguntaTipo", "");
+    let DEFAULT_PESO = enumFirstCode("vagaPeso", "1");
+    let DEFAULT_PUBLICACAO = enumFirstCode("vagaPublicacaoVisibilidade", "");
+    let DEFAULT_GENERO = enumFirstCode("vagaGeneroPreferencia", "");
     const EMPTY_TEXT = "—";
+
+    function refreshEnumDefaults(){
+      DEFAULT_MODALIDADE = enumFirstCode("vagaModalidade", "Presencial");
+      DEFAULT_STATUS = enumPreferredCode("vagaStatus", ["Aberta", "Rascunho"], "Aberta");
+      DEFAULT_SENIORIDADE = enumFirstCode("vagaSenioridade", "");
+      DEFAULT_DEPARTAMENTO = "";
+      DEFAULT_AREA_TIME = enumFirstCode("vagaAreaTime", "");
+      DEFAULT_TIPO_CONTRATACAO = enumFirstCode("vagaTipoContratacao", "");
+      DEFAULT_MOTIVO = enumFirstCode("vagaMotivoAbertura", "");
+      DEFAULT_ORCAMENTO = enumFirstCode("vagaOrcamentoAprovado", "");
+      DEFAULT_PRIORIDADE = enumFirstCode("vagaPrioridade", "");
+      DEFAULT_REGIME = enumFirstCode("vagaRegimeJornada", "");
+      DEFAULT_ESCALA = enumFirstCode("vagaEscalaTrabalho", "");
+      DEFAULT_MOEDA = enumFirstCode("vagaMoeda", "BRL");
+      DEFAULT_REMUN_PERIOD = enumFirstCode("vagaRemuneracaoPeriodicidade", "");
+      DEFAULT_BONUS = enumFirstCode("vagaBonusTipo", "");
+      DEFAULT_BENEFICIO_TIPO = enumFirstCode("vagaBeneficioTipo", "");
+      DEFAULT_BENEFICIO_REC = enumFirstCode("vagaBeneficioRecorrencia", "");
+      DEFAULT_ESCOLARIDADE = enumFirstCode("vagaEscolaridade", "");
+      DEFAULT_FORMACAO = enumFirstCode("vagaFormacaoArea", "");
+      DEFAULT_REQ_NIVEL = enumFirstCode("vagaRequisitoNivel", "");
+      DEFAULT_REQ_AVALIACAO = enumFirstCode("vagaRequisitoAvaliacao", "");
+      DEFAULT_ETAPA_RESP = enumFirstCode("vagaEtapaResponsavel", "");
+      DEFAULT_ETAPA_MODO = enumFirstCode("vagaEtapaModo", "");
+      DEFAULT_QUESTION_TIPO = enumFirstCode("vagaPerguntaTipo", "");
+      DEFAULT_PESO = enumFirstCode("vagaPeso", "");
+      DEFAULT_PUBLICACAO = enumFirstCode("vagaPublicacaoVisibilidade", "");
+      DEFAULT_GENERO = enumFirstCode("vagaGeneroPreferencia", "");
+    }
     const BULLET = "•";
 
     function setText(root, role, value, fallback = EMPTY_TEXT){
@@ -81,6 +118,89 @@ function enumFirstCode(key, fallback){
       return (Array.isArray(list) ? list : []).join("; ");
     }
 
+    function joinTagsRaw(list){
+      return (Array.isArray(list) ? list : [])
+        .map(x => String(x || "").trim())
+        .filter(Boolean)
+        .join(";");
+    }
+
+    function emptyToNull(value){
+      const text = (value ?? "").toString().trim();
+      return text ? text : null;
+    }
+
+    function parseIntOrNull(value){
+      const text = (value ?? "").toString().trim();
+      if(!text) return null;
+      const n = parseInt(text, 10);
+      return Number.isFinite(n) ? n : null;
+    }
+
+    function parseDecimalOrNull(value){
+      const text = (value ?? "").toString().trim();
+      if(!text) return null;
+      const normalized = text.replace(/\./g, "").replace(",", ".");
+      const n = Number(normalized);
+      return Number.isFinite(n) ? n : null;
+    }
+
+    function parseDateOrNull(value){
+      const text = (value ?? "").toString().trim();
+      return text ? text : null;
+    }
+
+    function parseTimeOrNull(value){
+      const text = (value ?? "").toString().trim();
+      return text ? text : null;
+    }
+
+    function parseTimeSpanOrNull(value){
+      const text = (value ?? "").toString().trim();
+      if(!text) return null;
+      const parts = text.split(":").map(p => p.trim()).filter(Boolean);
+      if(parts.length === 2){
+        const hh = parts[0].padStart(2, "0");
+        const mm = parts[1].padStart(2, "0");
+        return `${hh}:${mm}:00`;
+      }
+      if(parts.length === 3){
+        const hh = parts[0].padStart(2, "0");
+        const mm = parts[1].padStart(2, "0");
+        const ss = parts[2].padStart(2, "0");
+        return `${hh}:${mm}:${ss}`;
+      }
+      return null;
+    }
+
+    function parseDateInput(value){
+      const text = (value ?? "").toString().trim();
+      if(!text) return null;
+      if(/^\d{4}-\d{2}-\d{2}$/.test(text)) return text;
+      const pt = text.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+      if(pt){
+        const [, dd, mm, yyyy] = pt;
+        return `${yyyy}-${mm}-${dd}`;
+      }
+      return null;
+    }
+
+    function formatPeso(value){
+      const text = getEnumText("vagaPeso", value, value);
+      return text || EMPTY_TEXT;
+    }
+
+    function pesoToNumber(value){
+      const text = getEnumText("vagaPeso", value, value);
+      const n = parseInt(text ?? "", 10);
+      return Number.isFinite(n) ? n : 0;
+    }
+
+    function isMultipleChoiceQuestion(type){
+      const v = (type || "").toString().toLowerCase();
+      return v.includes("multipla");
+    }
+
     function listAreas(){
       const list = (state.areas || []).map(a => a.name).filter(Boolean);
       const fromVagas = state.vagas.map(v => v.area).filter(Boolean);
@@ -100,29 +220,104 @@ function enumFirstCode(key, fallback){
       }
     }
 
+    async function syncDepartmentsFromApi(){
+      try{
+        const res = await fetch(DEPARTMENTS_API_URL, { headers: { "Accept": "application/json" } });
+        if(!res.ok) throw new Error(`Falha ao buscar departamentos: ${res.status}`);
+        const data = await res.json();
+        state.departments = Array.isArray(data) ? data : [];
+      }catch(e){
+        console.error("Falha ao carregar departamentos da API:", e);
+        state.departments = [];
+      }
+    }
+
+    async function syncVagaEnumsFromApi(){
+      try{
+        const res = await fetch(VAGAS_ENUMS_URL, { headers: { "Accept": "application/json" } });
+        if(!res.ok) throw new Error(`Falha ao buscar enums: ${res.status}`);
+        const data = await res.json();
+        window.__enumData = data || {};
+        refreshEnumDefaults();
+        applyVagaEnumOptions();
+        renderStatusFilter();
+      }catch(e){
+        console.error("Falha ao carregar enums da API:", e);
+      }
+    }
+
+    function fillEnumSelect(selectId, enumKey, placeholder){
+      const select = $("#"+selectId);
+      if(!select) return;
+      select.replaceChildren();
+      if(placeholder){
+        select.appendChild(buildOption("", placeholder, true));
+      }
+      const list = getEnumOptions(enumKey);
+      list.forEach(opt => select.appendChild(buildOption(opt.code, opt.text)));
+    }
+
+    function applyVagaEnumOptions(){
+      fillEnumSelect("vagaModalidade", "vagaModalidade");
+      fillEnumSelect("vagaStatus", "vagaStatus", "Selecionar status");
+      fillEnumSelect("vagaSenioridade", "vagaSenioridade");
+      fillEnumSelect("vagaAreaTime", "vagaAreaTime", "Selecionar area/time");
+      fillEnumSelect("vagaTipoContratacao", "vagaTipoContratacao", "Selecionar tipo");
+      fillEnumSelect("vagaMotivoAbertura", "vagaMotivoAbertura", "Selecionar motivo");
+      fillEnumSelect("vagaOrcamento", "vagaOrcamentoAprovado", "Selecionar orcamento");
+      fillEnumSelect("vagaPrioridade", "vagaPrioridade", "Selecionar prioridade");
+      fillEnumSelect("vagaRegime", "vagaRegimeJornada", "Selecionar regime");
+      fillEnumSelect("vagaEscala", "vagaEscalaTrabalho", "Selecionar escala");
+      fillEnumSelect("vagaMoeda", "vagaMoeda");
+      fillEnumSelect("vagaPeriodicidade", "vagaRemuneracaoPeriodicidade", "Selecionar periodicidade");
+      fillEnumSelect("vagaBonusTipo", "vagaBonusTipo", "Selecionar bonus");
+      fillEnumSelect("vagaEscolaridade", "vagaEscolaridade", "Selecionar escolaridade");
+      fillEnumSelect("vagaFormacaoArea", "vagaFormacaoArea", "Selecionar formacao");
+      fillEnumSelect("vagaVisibilidade", "vagaPublicacaoVisibilidade", "Selecionar visibilidade");
+      fillEnumSelect("vagaGeneroPreferencia", "vagaGeneroPreferencia", "Selecionar preferencia");
+    }
+
+    function renderStatusFilter(){
+      const sel = $("#fStatus");
+      if(!sel) return;
+      const cur = sel.value || "all";
+      sel.replaceChildren();
+      sel.appendChild(buildOption("all", "Status: todos", cur === "all"));
+      getEnumOptions("vagaStatus").forEach(opt => {
+        const code = normalizeStatusCode(opt.code);
+        sel.appendChild(buildOption(code, opt.text, code === cur));
+      });
+    }
+
     function fillVagaAreaSelect(selected){
       const select = $("#vagaArea");
       if(!select) return;
       select.replaceChildren();
       select.appendChild(buildOption("", "Selecionar area", !selected));
-      const areas = listAreas();
-      areas.forEach(a => select.appendChild(buildOption(a, a, a === selected)));
-      if(selected && !areas.includes(selected)){
+      const areas = (state.areas || []).slice().sort((a,b)=> (a.name || "").localeCompare(b.name || "", "pt-BR"));
+      areas.forEach(a => select.appendChild(buildOption(a.id, a.name, a.id === selected)));
+      if(selected && !areas.some(a => a.id === selected)){
+        select.appendChild(buildOption(selected, selected, true));
+      }
+      if(selected) select.value = selected;
+    }
+
+    function fillVagaDepartmentSelect(selected){
+      const select = $("#vagaDepartamento");
+      if(!select) return;
+      select.replaceChildren();
+      select.appendChild(buildOption("", "Selecionar departamento", !selected));
+      const list = (state.departments || []).slice().sort((a,b)=> (a.name || "").localeCompare(b.name || "", "pt-BR"));
+      list.forEach(d => select.appendChild(buildOption(d.id, d.name, d.id === selected)));
+      if(selected && !list.some(d => d.id === selected)){
         select.appendChild(buildOption(selected, selected, true));
       }
       if(selected) select.value = selected;
     }
 
     function loadReqCategorias(){
-      try{
-        const raw = localStorage.getItem(REQ_CATEGORIAS_STORE_KEY);
-        if(!raw) return Array.isArray(seed.requisitoCategorias) ? seed.requisitoCategorias : [];
-        const data = JSON.parse(raw);
-        if(data && Array.isArray(data.categorias)) return data.categorias;
-        return Array.isArray(seed.requisitoCategorias) ? seed.requisitoCategorias : [];
-      }catch{
-        return Array.isArray(seed.requisitoCategorias) ? seed.requisitoCategorias : [];
-      }
+      const seed = window.__seedData || {};
+      return Array.isArray(seed.requisitoCategorias) ? seed.requisitoCategorias : [];
     }
 
     function listReqCategorias(){
@@ -159,6 +354,7 @@ function normalizeStatusCode(s) {
     if (v === "aberta" || v === "open" || v === "ativa" || v === "active") return "aberta";
     if (v === "pausada" || v === "paused" || v === "pause") return "pausada";
     if (v === "fechada" || v === "closed" || v === "encerrada" || v === "cancelada" || v === "inactive") return "fechada";
+    if (v === "naoinformado" || v === "nao informado") return "rascunho";
     if (v === "rascunho" || v === "draft") return "rascunho";
     if (v === "emtriagem" || v === "triagem") return "triagem";
     if (v === "ementrevistas" || v === "entrevistas") return "entrevistas";
@@ -178,13 +374,28 @@ function parseDateOnly(ymd) {
 
 function mapApiVagaToState(v) {
     const areaName = v.areaName ?? v.area?.name ?? "";
+    const departmentName = v.departmentName ?? v.department?.name ?? "";
+    const requisitosRaw = Array.isArray(v.requisitos) ? v.requisitos : [];
+    const hasDetail = Array.isArray(v.requisitos) || Array.isArray(v.beneficios) || Array.isArray(v.etapas) || Array.isArray(v.perguntasTriagem);
     const matchMinimo = Number.isFinite(+v.matchMinimoPercentual) ? +v.matchMinimoPercentual : 0;
+
+    const requisitosDetalhados = requisitosRaw.map(r => ({
+      id: r.id,
+      nome: r.nome ?? "",
+      peso: r.peso ?? DEFAULT_PESO,
+      obrigatorio: !!r.obrigatorio,
+      anos: r.anosMinimos ?? "",
+      nivel: r.nivel ?? DEFAULT_REQ_NIVEL,
+      avaliacao: r.avaliacao ?? DEFAULT_REQ_AVALIACAO,
+      obs: r.observacoes ?? ""
+    }));
 
     return {
         id: v.id,
         codigo: v.codigo ?? "",
         titulo: v.titulo ?? "",
         status: normalizeStatusCode(v.status),
+        statusRaw: v.status ?? "",
         area: areaName,
 
         areaId: v.areaId ?? null,
@@ -193,7 +404,7 @@ function mapApiVagaToState(v) {
 
         departmentId: v.departmentId ?? null,
         departmentCode: v.departmentCode ?? "",
-        departmentName: v.departmentName ?? "",
+        departmentName,
 
         modalidade: v.modalidade ?? "",
         senioridade: v.senioridade ?? "",
@@ -211,13 +422,142 @@ function mapApiVagaToState(v) {
         cidade: v.cidade ?? "",
         uf: v.uf ?? "",
 
-        descricao: v.descricaoInterna ?? v.descricao ?? "",
+        descricao: v.descricaoInterna ?? "",
         createdAt: v.createdAtUtc ?? null,
         updatedAt: v.updatedAtUtc ?? null,
+        hasDetail,
 
-        requisitosTotal: Number.isFinite(+v.requisitosTotal) ? +v.requisitosTotal : null,
-        requisitosObrigatorios: Number.isFinite(+v.requisitosObrigatorios) ? +v.requisitosObrigatorios : null,
-        requisitos: Array.isArray(v.requisitos) ? v.requisitos : []
+        requisitosTotal: Number.isFinite(+v.requisitosTotal) ? +v.requisitosTotal : requisitosRaw.length,
+        requisitosObrigatorios: Number.isFinite(+v.requisitosObrigatorios) ? +v.requisitosObrigatorios : requisitosRaw.filter(r => r.obrigatorio).length,
+        requisitos: requisitosRaw.map(r => ({
+          id: r.id,
+          categoria: "",
+          termo: r.nome ?? "",
+          peso: r.peso ?? DEFAULT_PESO,
+          obrigatorio: !!r.obrigatorio,
+          sinonimos: [],
+          obs: r.observacoes ?? ""
+        })),
+
+        weights: v.weights || { competencia:40, experiencia:30, formacao:15, localidade:15 },
+        meta: {
+          departamento: v.departmentId ?? "",
+          areaTime: v.areaTime ?? "",
+          quantidade: Number.isFinite(+v.quantidadeVagas) ? +v.quantidadeVagas : 1,
+          tipoContratacao: v.tipoContratacao ?? "",
+          codigoInterno: v.codigoInterno ?? "",
+          cbo: v.codigoCbo ?? "",
+          gestorRequisitante: v.gestorRequisitante ?? "",
+          recrutador: v.recrutadorResponsavel ?? "",
+          motivoAbertura: v.motivoAbertura ?? "",
+          orcamentoAprovado: v.orcamentoAprovado ?? "",
+          prioridade: v.prioridade ?? "",
+          resumo: v.resumoPitch ?? "",
+          tagsResponsabilidades: splitTags(v.tagsResponsabilidadesRaw),
+          tagsKeywords: splitTags(v.tagsKeywordsRaw),
+          confidencial: !!v.confidencial,
+          aceitaPcd: !!v.aceitaPcd,
+          urgente: !!v.urgente,
+          projeto: {
+            nome: v.projetoNome ?? "",
+            cliente: v.projetoClienteAreaImpactada ?? "",
+            prazo: v.projetoPrazoPrevisto ?? "",
+            descricao: v.projetoDescricao ?? ""
+          },
+          pcdObs: v.observacoesPcd ?? ""
+        },
+        jornada: {
+          regime: v.regime ?? "",
+          cargaSemanal: v.cargaSemanalHoras != null ? String(v.cargaSemanalHoras) : "",
+          horaEntrada: v.horaEntrada ?? "",
+          horaSaida: v.horaSaida ?? "",
+          intervalo: v.intervalo ?? "",
+          escala: v.escala ?? "",
+          local: {
+            cep: v.cep ?? "",
+            logradouro: v.logradouro ?? "",
+            numero: v.numero ?? "",
+            bairro: v.bairro ?? "",
+            cidade: v.cidade ?? "",
+            uf: v.uf ?? "",
+            politicaTrabalho: v.politicaTrabalho ?? "",
+            deslocamentoObs: v.observacoesDeslocamento ?? ""
+          }
+        },
+        remuneracao: {
+          moeda: v.moeda ?? "",
+          salarioMin: v.salarioMinimo != null ? String(v.salarioMinimo) : "",
+          salarioMax: v.salarioMaximo != null ? String(v.salarioMaximo) : "",
+          periodicidade: v.periodicidade ?? "",
+          bonusTipo: v.bonusTipo ?? "",
+          percentual: v.bonusPercentual != null ? String(v.bonusPercentual) : "",
+          obs: v.observacoesRemuneracao ?? "",
+          beneficios: (Array.isArray(v.beneficios) ? v.beneficios : []).map(b => ({
+            tipo: b.tipo ?? DEFAULT_BENEFICIO_TIPO,
+            valor: b.valor != null ? String(b.valor) : "",
+            recorrencia: b.recorrencia ?? DEFAULT_BENEFICIO_REC,
+            obrigatorio: !!b.obrigatorio,
+            obs: b.observacoes ?? ""
+          }))
+        },
+        requisitosExtras: {
+          escolaridade: v.escolaridade ?? "",
+          formacaoArea: v.formacaoArea ?? "",
+          expMinAnos: v.experienciaMinimaAnos != null ? String(v.experienciaMinimaAnos) : "",
+          tagsStack: splitTags(v.tagsStackRaw),
+          tagsIdiomas: splitTags(v.tagsIdiomasRaw),
+          diferenciais: v.diferenciais ?? "",
+          requisitosDetalhados
+        },
+        processo: {
+          etapas: (Array.isArray(v.etapas) ? v.etapas : []).map(e => ({
+            nome: e.nome ?? "",
+            responsavel: e.responsavel ?? DEFAULT_ETAPA_RESP,
+            modo: e.modo ?? DEFAULT_ETAPA_MODO,
+            slaDias: e.slaDias != null ? String(e.slaDias) : "",
+            descricao: e.descricaoInstrucoes ?? ""
+          })),
+          perguntas: (Array.isArray(v.perguntasTriagem) ? v.perguntasTriagem : []).map(p => ({
+            pergunta: p.texto ?? "",
+            tipo: p.tipo ?? DEFAULT_QUESTION_TIPO,
+            peso: p.peso ?? DEFAULT_PESO,
+            obrigatoria: !!p.obrigatoria,
+            knockout: !!p.knockout,
+            opcoes: splitTags(p.opcoesRaw)
+          })),
+          obsInternas: v.observacoesProcesso ?? ""
+        },
+        publicacao: {
+          visibilidade: v.visibilidade ?? "",
+          dataInicio: v.dataInicio ?? "",
+          dataFim: v.dataEncerramento ?? "",
+          canais: {
+            linkedin: !!v.canalLinkedIn,
+            site: !!v.canalSiteCarreiras,
+            indicacao: !!v.canalIndicacao,
+            portalEmprego: !!v.canalPortaisEmprego
+          },
+          descricaoPublica: v.descricaoPublica ?? ""
+        },
+        compliance: {
+          diversidade: {
+            generoPreferencia: v.generoPreferencia ?? "",
+            vagaAfirmativa: !!v.vagaAfirmativa,
+            linguagemInclusiva: !!v.linguagemInclusiva,
+            publicoAfirmativo: v.publicoAfirmativo ?? ""
+          },
+          lgpd: {
+            consentimentoBase: !!v.lgpdSolicitarConsentimentoExplicito,
+            compartilhamento: !!v.lgpdCompartilharCurriculoInternamente,
+            retencao: !!v.lgpdRetencaoAtiva,
+            retencaoMeses: v.lgpdRetencaoMeses != null ? String(v.lgpdRetencaoMeses) : ""
+          },
+          docs: {
+            cnh: !!v.exigeCnh,
+            disponibilidadeViagens: !!v.disponibilidadeParaViagens,
+            antecedentes: !!v.checagemAntecedentes
+          }
+        }
     };
 }
 
@@ -258,6 +598,7 @@ function fmtStatus(s){
     const state = {
       vagas: [],
       areas: [],
+      departments: [],
       selectedId: null,
       filters: { q:"", status:"all", area:"all" }
     };
@@ -369,10 +710,10 @@ function fmtStatus(s){
             ev.stopPropagation();
             const act = btn.dataset.act;
             const id = btn.dataset.id;
-            if(act === "detail") openDetailModal(id);
-            if(act === "edit") openVagaModal("edit", id);
-            if(act === "dup") duplicateVaga(id);
-            if(act === "del") deleteVaga(id);
+            if(act === "detail") void openDetailModal(id);
+            if(act === "edit") void openVagaModal("edit", id);
+            if(act === "dup") void duplicateVaga(id);
+            if(act === "del") void deleteVaga(id);
             return;
           }
         });
@@ -385,14 +726,42 @@ function fmtStatus(s){
       return state.vagas.find(v => v.id === id) || null;
     }
 
+    function upsertVagaInState(v){
+      const idx = state.vagas.findIndex(x => x.id === v.id);
+      if(idx >= 0){
+        state.vagas[idx] = v;
+      }else{
+        state.vagas.unshift(v);
+      }
+      return v;
+    }
+
+    async function ensureVagaDetail(id){
+      let v = findVaga(id);
+      if(v && v.hasDetail) return v;
+      try{
+        const detail = await fetchVagaById(id);
+        if(detail){
+          upsertVagaInState(detail);
+          return detail;
+        }
+      }catch(e){
+        console.error("Falha ao buscar detalhes da vaga:", e);
+        toast("Falha ao carregar detalhes da vaga.");
+      }
+      return v;
+    }
+
     function selectVaga(id){
       state.selectedId = id;
       renderList();
       renderDetail();
     }
 
-    function openDetailModal(id){
-      selectVaga(id);
+    async function openDetailModal(id){
+      const v = await ensureVagaDetail(id);
+      if(!v) return;
+      selectVaga(v.id);
       const modal = bootstrap.Modal.getOrCreateInstance($("#modalVagaDetalhes"));
       modal.show();
     }
@@ -472,9 +841,9 @@ function fmtStatus(s){
       $$("#detailHost [data-dact]").forEach(btn => {
         btn.addEventListener("click", () => {
           const act = btn.dataset.dact;
-          if(act === "editvaga") openVagaModal("edit", v.id);
-          if(act === "duplicate") duplicateVaga(v.id);
-          if(act === "delete") deleteVaga(v.id);
+          if(act === "editvaga") void openVagaModal("edit", v.id);
+          if(act === "duplicate") void duplicateVaga(v.id);
+          if(act === "delete") void deleteVaga(v.id);
           if(act === "addreq") openReqModal("new", v.id);
           if(act === "saveWeights") saveWeightsFromDetail(v.id);
           if(act === "simulate") simulateMatch(v.id);
@@ -553,7 +922,7 @@ function fmtStatus(s){
         setText(tr, "req-categoria", r.categoria);
         setText(tr, "req-termo", r.termo);
         setText(tr, "req-obs", r.obs || EMPTY_TEXT);
-        setText(tr, "req-peso", clamp(parseInt(r.peso ?? 0,10)||0,0,10));
+        setText(tr, "req-peso", formatPeso(r.peso));
         const syn = (r.sinonimos || []).join(", ");
         setText(tr, "req-sinonimos", syn || EMPTY_TEXT);
 
@@ -633,8 +1002,8 @@ function fmtStatus(s){
       const obsEl = row.querySelector('[data-role="benefit-obs"]');
       const titleEl = row.querySelector('[data-role="benefit-title"]');
 
-      if(typeEl) typeEl.value = item.tipo || DEFAULT_BENEFICIO_TIPO;
-      if(recEl) recEl.value = item.recorrencia || DEFAULT_BENEFICIO_REC;
+      if(typeEl) fillSelectFromEnum(typeEl, "vagaBeneficioTipo", item.tipo || DEFAULT_BENEFICIO_TIPO);
+      if(recEl) fillSelectFromEnum(recEl, "vagaBeneficioRecorrencia", item.recorrencia || DEFAULT_BENEFICIO_REC);
       if(valEl) valEl.value = item.valor || "";
       if(reqEl) reqEl.checked = !!item.obrigatorio;
       if(obsEl) obsEl.value = item.obs || "";
@@ -685,11 +1054,11 @@ function fmtStatus(s){
       const titleEl = row.querySelector('[data-role="req-title"]');
 
       if(nameEl) nameEl.value = item.nome || "";
-      if(weightEl) weightEl.value = item.peso != null ? String(item.peso) : DEFAULT_PESO;
+      if(weightEl) fillSelectFromEnum(weightEl, "vagaPeso", item.peso != null ? String(item.peso) : DEFAULT_PESO);
       if(reqEl) reqEl.checked = !!item.obrigatorio;
       if(yearsEl) yearsEl.value = item.anos || "";
-      if(levelEl) levelEl.value = item.nivel || DEFAULT_REQ_NIVEL;
-      if(evalEl) evalEl.value = item.avaliacao || DEFAULT_REQ_AVALIACAO;
+      if(levelEl) fillSelectFromEnum(levelEl, "vagaRequisitoNivel", item.nivel || DEFAULT_REQ_NIVEL);
+      if(evalEl) fillSelectFromEnum(evalEl, "vagaRequisitoAvaliacao", item.avaliacao || DEFAULT_REQ_AVALIACAO);
       if(obsEl) obsEl.value = item.obs || "";
       if(titleEl && nameEl) titleEl.textContent = nameEl.value || "Requisito";
 
@@ -718,7 +1087,7 @@ function fmtStatus(s){
       if(!host) return [];
       return $$(".vaga-req-row", host).map(row => ({
         nome: row.querySelector('[data-role="req-name"]')?.value || "",
-        peso: parseInt(row.querySelector('[data-role="req-weight"]')?.value || DEFAULT_PESO, 10),
+        peso: row.querySelector('[data-role="req-weight"]')?.value || DEFAULT_PESO,
         obrigatorio: !!row.querySelector('[data-role="req-required"]')?.checked,
         anos: row.querySelector('[data-role="req-years"]')?.value || "",
         nivel: row.querySelector('[data-role="req-level"]')?.value || "",
@@ -738,8 +1107,8 @@ function fmtStatus(s){
       const titleEl = row.querySelector('[data-role="stage-title"]');
 
       if(nameEl) nameEl.value = item.nome || "";
-      if(ownerEl) ownerEl.value = item.responsavel || DEFAULT_ETAPA_RESP;
-      if(modeEl) modeEl.value = item.modo || DEFAULT_ETAPA_MODO;
+      if(ownerEl) fillSelectFromEnum(ownerEl, "vagaEtapaResponsavel", item.responsavel || DEFAULT_ETAPA_RESP);
+      if(modeEl) fillSelectFromEnum(modeEl, "vagaEtapaModo", item.modo || DEFAULT_ETAPA_MODO);
       if(slaEl) slaEl.value = item.slaDias || "";
       if(descEl) descEl.value = item.descricao || "";
       if(titleEl && nameEl) titleEl.textContent = nameEl.value || "Etapa";
@@ -780,7 +1149,7 @@ function fmtStatus(s){
       const typeEl = row.querySelector('[data-role="question-type"]');
       const wrap = row.querySelector('[data-role="question-options-wrap"]');
       if(!typeEl || !wrap) return;
-      wrap.classList.toggle("d-none", typeEl.value !== "multipla");
+      wrap.classList.toggle("d-none", !isMultipleChoiceQuestion(typeEl.value));
     }
 
     function buildQuestionRow(item){
@@ -795,8 +1164,8 @@ function fmtStatus(s){
       const titleEl = row.querySelector('[data-role="question-title"]');
 
       if(textEl) textEl.value = item.pergunta || "";
-      if(typeEl) typeEl.value = item.tipo || DEFAULT_QUESTION_TIPO;
-      if(weightEl) weightEl.value = item.peso != null ? String(item.peso) : DEFAULT_PESO;
+      if(typeEl) fillSelectFromEnum(typeEl, "vagaPerguntaTipo", item.tipo || DEFAULT_QUESTION_TIPO);
+      if(weightEl) fillSelectFromEnum(weightEl, "vagaPeso", item.peso != null ? String(item.peso) : DEFAULT_PESO);
       if(reqEl) reqEl.checked = !!item.obrigatoria;
       if(koEl) koEl.checked = !!item.knockout;
       if(optEl) optEl.value = Array.isArray(item.opcoes) ? item.opcoes.join("; ") : (item.opcoes || "");
@@ -832,25 +1201,27 @@ function fmtStatus(s){
       return $$(".vaga-question-row", host).map(row => {
         const type = row.querySelector('[data-role="question-type"]')?.value || "";
         const optText = row.querySelector('[data-role="question-options"]')?.value || "";
+        const hasOptions = isMultipleChoiceQuestion(type);
         return {
           pergunta: row.querySelector('[data-role="question-text"]')?.value || "",
           tipo: type,
-          peso: parseInt(row.querySelector('[data-role="question-weight"]')?.value || DEFAULT_PESO, 10),
+          peso: row.querySelector('[data-role="question-weight"]')?.value || DEFAULT_PESO,
           obrigatoria: !!row.querySelector('[data-role="question-required"]')?.checked,
           knockout: !!row.querySelector('[data-role="question-ko"]')?.checked,
-          opcoes: type === "multipla" ? splitTags(optText) : []
+          opcoes: hasOptions ? splitTags(optText) : []
         };
       });
     }
 
     // ========= CRUD: Vagas
-    function openVagaModal(mode, id){
+    async function openVagaModal(mode, id){
       const modal = bootstrap.Modal.getOrCreateInstance($("#modalVaga"));
       const isEdit = mode === "edit";
       $("#modalVagaTitle").textContent = isEdit ? "Editar vaga" : "Nova vaga";
+      applyVagaEnumOptions();
 
       if(isEdit){
-        const v = findVaga(id);
+        const v = await ensureVagaDetail(id);
         if(!v) return;
         const meta = v.meta || {};
         const jornada = v.jornada || {};
@@ -867,17 +1238,18 @@ function fmtStatus(s){
         $("#vagaId").value = v.id;
         $("#vagaCodigo").value = v.codigo || "";
         $("#vagaTitulo").value = v.titulo || "";
-        fillVagaAreaSelect(v.area || "");
-        $("#vagaArea").value = v.area || "";
+        fillVagaDepartmentSelect(v.departmentId || meta.departamento || "");
+        fillVagaAreaSelect(v.areaId || "");
+        $("#vagaArea").value = v.areaId || "";
         $("#vagaModalidade").value = v.modalidade || DEFAULT_MODALIDADE;
-        $("#vagaStatus").value = v.status || DEFAULT_STATUS;
+        $("#vagaStatus").value = v.statusRaw || DEFAULT_STATUS;
         $("#vagaCidade").value = v.cidade || local.cidade || "";
         $("#vagaUF").value = v.uf || local.uf || "";
         $("#vagaSenioridade").value = v.senioridade || DEFAULT_SENIORIDADE;
         $("#vagaThreshold").value = clamp(parseInt(v.threshold ?? 70,10)||70, 0, 100);
         $("#vagaDescricao").value = v.descricao || "";
 
-        setValue("vagaDepartamento", meta.departamento || DEFAULT_DEPARTAMENTO);
+        setValue("vagaDepartamento", v.departmentId || meta.departamento || DEFAULT_DEPARTAMENTO);
         setValue("vagaAreaTime", meta.areaTime || DEFAULT_AREA_TIME);
         setValue("vagaQuantidade", meta.quantidade ?? 1);
         setValue("vagaTipoContratacao", meta.tipoContratacao || DEFAULT_TIPO_CONTRATACAO);
@@ -960,6 +1332,7 @@ function fmtStatus(s){
         $("#vagaId").value = "";
         $("#vagaCodigo").value = "";
         $("#vagaTitulo").value = "";
+        fillVagaDepartmentSelect("");
         fillVagaAreaSelect("");
         $("#vagaArea").value = "";
         $("#vagaModalidade").value = DEFAULT_MODALIDADE;
@@ -1054,239 +1427,441 @@ function fmtStatus(s){
       modal.show();
     }
 
-    function upsertVagaFromModal(){
-      const id = $("#vagaId").value || null;
-      const codigo = ($("#vagaCodigo").value || "").trim();
-      const titulo = ($("#vagaTitulo").value || "").trim();
-      const area = ($("#vagaArea").value || "").trim();
-      const modalidade = ($("#vagaModalidade").value || "").trim();
-      const status = ($("#vagaStatus").value || "").trim();
-      const cidade = ($("#vagaCidade").value || "").trim();
-      const uf = ($("#vagaUF").value || "").trim().toUpperCase().slice(0,2);
-      const senioridade = ($("#vagaSenioridade").value || "").trim();
-      const threshold = clamp(parseInt($("#vagaThreshold").value,10)||70, 0, 100);
-      const descricao = ($("#vagaDescricao").value || "").trim();
-      const meta = {
-        departamento: getValue("vagaDepartamento"),
-        areaTime: getValue("vagaAreaTime"),
-        quantidade: parseInt(getValue("vagaQuantidade") || "1", 10) || 1,
-        tipoContratacao: getValue("vagaTipoContratacao"),
-        codigoInterno: getValue("vagaCodigoInterno"),
-        cbo: getValue("vagaCbo"),
-        gestorRequisitante: getValue("vagaGestor"),
-        recrutador: getValue("vagaRecrutador"),
-        motivoAbertura: getValue("vagaMotivoAbertura"),
-        orcamentoAprovado: getValue("vagaOrcamento"),
-        prioridade: getValue("vagaPrioridade"),
-        resumo: getValue("vagaResumo"),
-        tagsResponsabilidades: splitTags(getValue("vagaTagsResponsabilidades")),
-        tagsKeywords: splitTags(getValue("vagaTagsKeywords")),
+    function buildVagaPayloadFromForm(){
+      const titulo = getValue("vagaTitulo");
+      const departmentId = getValue("vagaDepartamento");
+      const areaId = getValue("vagaArea");
+      const status = getValue("vagaStatus");
+      const quantidadeVagas = parseIntOrNull(getValue("vagaQuantidade"));
+      const matchMinimoPercentual = parseIntOrNull(getValue("vagaThreshold"));
+
+      if(!titulo) return { error: "Informe o titulo da vaga." };
+      if(!departmentId) return { error: "Selecione o departamento da vaga." };
+      if(!areaId) return { error: "Selecione a area da vaga." };
+      if(!status) return { error: "Selecione o status da vaga." };
+      if(quantidadeVagas == null || quantidadeVagas < 1) return { error: "Informe a quantidade de vagas." };
+      if(matchMinimoPercentual == null || matchMinimoPercentual < 0 || matchMinimoPercentual > 100) return { error: "Informe o match minimo (0 a 100)." };
+
+      const tagsResponsabilidadesRaw = joinTagsRaw(splitTags(getValue("vagaTagsResponsabilidades")));
+      const tagsKeywordsRaw = joinTagsRaw(splitTags(getValue("vagaTagsKeywords")));
+      const tagsStackRaw = joinTagsRaw(splitTags(getValue("vagaTagsStack")));
+      const tagsIdiomasRaw = joinTagsRaw(splitTags(getValue("vagaTagsIdiomas")));
+      const uf = emptyToNull(getValue("vagaUF"));
+      const ufCode = uf ? uf.toUpperCase().slice(0, 2) : null;
+
+      const beneficios = collectBenefitList().map((b, idx) => ({
+        ordem: idx + 1,
+        tipo: emptyToNull(b.tipo) || DEFAULT_BENEFICIO_TIPO,
+        valor: parseDecimalOrNull(b.valor),
+        recorrencia: emptyToNull(b.recorrencia) || DEFAULT_BENEFICIO_REC,
+        obrigatorio: !!b.obrigatorio,
+        observacoes: emptyToNull(b.obs)
+      }));
+
+      const requisitos = collectModalReqList()
+        .filter(r => (r.nome || "").trim())
+        .map((r, idx) => ({
+          ordem: idx + 1,
+          nome: r.nome.trim(),
+          peso: emptyToNull(r.peso) || DEFAULT_PESO,
+          obrigatorio: !!r.obrigatorio,
+          anosMinimos: parseIntOrNull(r.anos),
+          nivel: emptyToNull(r.nivel),
+          avaliacao: emptyToNull(r.avaliacao),
+          observacoes: emptyToNull(r.obs)
+        }));
+
+      const etapas = collectStageList()
+        .filter(e => (e.nome || "").trim())
+        .map((e, idx) => ({
+          ordem: idx + 1,
+          nome: e.nome.trim(),
+          responsavel: emptyToNull(e.responsavel) || DEFAULT_ETAPA_RESP,
+          modo: emptyToNull(e.modo) || DEFAULT_ETAPA_MODO,
+          slaDias: parseIntOrNull(e.slaDias),
+          descricaoInstrucoes: emptyToNull(e.descricao)
+        }));
+
+      const perguntasTriagem = collectQuestionList()
+        .filter(p => (p.pergunta || "").trim())
+        .map((p, idx) => ({
+          ordem: idx + 1,
+          texto: p.pergunta.trim(),
+          tipo: emptyToNull(p.tipo) || DEFAULT_QUESTION_TIPO,
+          peso: emptyToNull(p.peso) || DEFAULT_PESO,
+          obrigatoria: !!p.obrigatoria,
+          knockout: !!p.knockout,
+          opcoesRaw: isMultipleChoiceQuestion(p.tipo) ? joinTagsRaw(p.opcoes) : null
+        }));
+
+      const payload = {
+        titulo,
+        departmentId,
+        areaId,
+        status,
+        codigo: emptyToNull(getValue("vagaCodigo")),
+        areaTime: emptyToNull(getValue("vagaAreaTime")),
+        modalidade: emptyToNull(getValue("vagaModalidade")),
+        senioridade: emptyToNull(getValue("vagaSenioridade")),
+        quantidadeVagas,
+        tipoContratacao: emptyToNull(getValue("vagaTipoContratacao")),
+        matchMinimoPercentual,
+        descricaoInterna: emptyToNull(getValue("vagaDescricao")),
+        codigoInterno: emptyToNull(getValue("vagaCodigoInterno")),
+        codigoCbo: emptyToNull(getValue("vagaCbo")),
+        motivoAbertura: emptyToNull(getValue("vagaMotivoAbertura")),
+        orcamentoAprovado: emptyToNull(getValue("vagaOrcamento")),
+        gestorRequisitante: emptyToNull(getValue("vagaGestor")),
+        recrutadorResponsavel: emptyToNull(getValue("vagaRecrutador")),
+        prioridade: emptyToNull(getValue("vagaPrioridade")),
+        resumoPitch: emptyToNull(getValue("vagaResumo")),
+        tagsResponsabilidadesRaw: emptyToNull(tagsResponsabilidadesRaw),
+        tagsKeywordsRaw: emptyToNull(tagsKeywordsRaw),
         confidencial: getChecked("vagaConfidencial"),
         aceitaPcd: getChecked("vagaAceitaPcd"),
         urgente: getChecked("vagaUrgente"),
-        projeto: {
-          nome: getValue("vagaProjetoNome"),
-          cliente: getValue("vagaProjetoCliente"),
-          prazo: getValue("vagaProjetoPrazo"),
-          descricao: getValue("vagaProjetoDescricao")
-        },
-        pcdObs: getValue("vagaPcdObs")
-      };
-      const diversidade = {
-        generoPreferencia: getValue("vagaGeneroPreferencia"),
+        generoPreferencia: emptyToNull(getValue("vagaGeneroPreferencia")),
         vagaAfirmativa: getChecked("vagaVagaAfirmativa"),
         linguagemInclusiva: getChecked("vagaLinguagemInclusiva"),
-        publicoAfirmativo: getValue("vagaPublicoAfirmativo")
-      };
-      const jornada = {
-        regime: getValue("vagaRegime"),
-        cargaSemanal: getValue("vagaCargaSemanal"),
-        horaEntrada: getValue("vagaHoraEntrada"),
-        horaSaida: getValue("vagaHoraSaida"),
-        intervalo: getValue("vagaIntervalo"),
-        escala: getValue("vagaEscala"),
-        local: {
-          cep: getValue("vagaCep"),
-          logradouro: getValue("vagaLogradouro"),
-          numero: getValue("vagaNumero"),
-          bairro: getValue("vagaBairro"),
-          cidade,
-          uf,
-          politicaTrabalho: getValue("vagaPoliticaTrabalho"),
-          deslocamentoObs: getValue("vagaDeslocamentoObs")
-        }
-      };
-      const remuneracao = {
-        moeda: getValue("vagaMoeda"),
-        salarioMin: getValue("vagaSalarioMin"),
-        salarioMax: getValue("vagaSalarioMax"),
-        periodicidade: getValue("vagaPeriodicidade"),
-        bonusTipo: getValue("vagaBonusTipo"),
-        percentual: getValue("vagaBonusPercentual"),
-        obs: getValue("vagaRemObs"),
-        beneficios: collectBenefitList()
-      };
-      const requisitosExtras = {
-        escolaridade: getValue("vagaEscolaridade"),
-        formacaoArea: getValue("vagaFormacaoArea"),
-        expMinAnos: getValue("vagaExpMinAnos"),
-        tagsStack: splitTags(getValue("vagaTagsStack")),
-        tagsIdiomas: splitTags(getValue("vagaTagsIdiomas")),
-        diferenciais: getValue("vagaDiferenciais"),
-        requisitosDetalhados: collectModalReqList().filter(r => (r.nome || "").trim())
-      };
-      const processo = {
-        etapas: collectStageList().filter(e => (e.nome || "").trim()),
-        perguntas: collectQuestionList().filter(p => (p.pergunta || "").trim()),
-        obsInternas: getValue("vagaObsProcesso")
-      };
-      const publicacao = {
-        visibilidade: getValue("vagaVisibilidade"),
-        dataInicio: getValue("vagaDataInicio"),
-        dataFim: getValue("vagaDataFim"),
-        canais: {
-          linkedin: getChecked("vagaCanalLinkedin"),
-          site: getChecked("vagaCanalSite"),
-          indicacao: getChecked("vagaCanalIndicacao"),
-          portalEmprego: getChecked("vagaCanalPortal")
-        },
-        descricaoPublica: getValue("vagaDescricaoPublica")
-      };
-      const compliance = {
-        diversidade,
-        lgpd: {
-          consentimentoBase: getChecked("vagaLgpdConsentimento"),
-          compartilhamento: getChecked("vagaLgpdCompartilhamento"),
-          retencao: getChecked("vagaLgpdRetencao"),
-          retencaoMeses: getValue("vagaLgpdRetencaoMeses")
-        },
-        docs: {
-          cnh: getChecked("vagaDocCnh"),
-          disponibilidadeViagens: getChecked("vagaDocViagens"),
-          antecedentes: getChecked("vagaDocAntecedentes")
-        }
+        publicoAfirmativo: emptyToNull(getValue("vagaPublicoAfirmativo")),
+        observacoesPcd: emptyToNull(getValue("vagaPcdObs")),
+        projetoNome: emptyToNull(getValue("vagaProjetoNome")),
+        projetoClienteAreaImpactada: emptyToNull(getValue("vagaProjetoCliente")),
+        projetoPrazoPrevisto: emptyToNull(getValue("vagaProjetoPrazo")),
+        projetoDescricao: emptyToNull(getValue("vagaProjetoDescricao")),
+        regime: emptyToNull(getValue("vagaRegime")),
+        cargaSemanalHoras: parseIntOrNull(getValue("vagaCargaSemanal")),
+        escala: emptyToNull(getValue("vagaEscala")),
+        horaEntrada: parseTimeOrNull(getValue("vagaHoraEntrada")),
+        horaSaida: parseTimeOrNull(getValue("vagaHoraSaida")),
+        intervalo: parseTimeSpanOrNull(getValue("vagaIntervalo")),
+        cep: emptyToNull(getValue("vagaCep")),
+        logradouro: emptyToNull(getValue("vagaLogradouro")),
+        numero: emptyToNull(getValue("vagaNumero")),
+        bairro: emptyToNull(getValue("vagaBairro")),
+        cidade: emptyToNull(getValue("vagaCidade")),
+        uf: ufCode,
+        politicaTrabalho: emptyToNull(getValue("vagaPoliticaTrabalho")),
+        observacoesDeslocamento: emptyToNull(getValue("vagaDeslocamentoObs")),
+        moeda: emptyToNull(getValue("vagaMoeda")),
+        salarioMinimo: parseDecimalOrNull(getValue("vagaSalarioMin")),
+        salarioMaximo: parseDecimalOrNull(getValue("vagaSalarioMax")),
+        periodicidade: emptyToNull(getValue("vagaPeriodicidade")),
+        bonusTipo: emptyToNull(getValue("vagaBonusTipo")),
+        bonusPercentual: parseDecimalOrNull(getValue("vagaBonusPercentual")),
+        observacoesRemuneracao: emptyToNull(getValue("vagaRemObs")),
+        escolaridade: emptyToNull(getValue("vagaEscolaridade")),
+        formacaoArea: emptyToNull(getValue("vagaFormacaoArea")),
+        experienciaMinimaAnos: parseIntOrNull(getValue("vagaExpMinAnos")),
+        tagsStackRaw: emptyToNull(tagsStackRaw),
+        tagsIdiomasRaw: emptyToNull(tagsIdiomasRaw),
+        diferenciais: emptyToNull(getValue("vagaDiferenciais")),
+        observacoesProcesso: emptyToNull(getValue("vagaObsProcesso")),
+        visibilidade: emptyToNull(getValue("vagaVisibilidade")),
+        dataInicio: parseDateInput(getValue("vagaDataInicio")),
+        dataEncerramento: parseDateInput(getValue("vagaDataFim")),
+        canalLinkedIn: getChecked("vagaCanalLinkedin"),
+        canalSiteCarreiras: getChecked("vagaCanalSite"),
+        canalIndicacao: getChecked("vagaCanalIndicacao"),
+        canalPortaisEmprego: getChecked("vagaCanalPortal"),
+        descricaoPublica: emptyToNull(getValue("vagaDescricaoPublica")),
+        lgpdSolicitarConsentimentoExplicito: getChecked("vagaLgpdConsentimento"),
+        lgpdCompartilharCurriculoInternamente: getChecked("vagaLgpdCompartilhamento"),
+        lgpdRetencaoAtiva: getChecked("vagaLgpdRetencao"),
+        lgpdRetencaoMeses: parseIntOrNull(getValue("vagaLgpdRetencaoMeses")),
+        exigeCnh: getChecked("vagaDocCnh"),
+        disponibilidadeParaViagens: getChecked("vagaDocViagens"),
+        checagemAntecedentes: getChecked("vagaDocAntecedentes"),
+        beneficios,
+        requisitos,
+        etapas,
+        perguntasTriagem
       };
 
-      // validação mínima
-      if(!titulo){
-        toast("Informe o tÃ­tulo da vaga.");
-        return;
-      }
-      if(!area){
-        toast("Selecione a área da vaga.");
-        return;
-      }
-      if(!status){
-        toast("Selecione o status da vaga.");
-        return;
-      }
-
-      const now = new Date().toISOString();
-
-      if(id){
-        const v = findVaga(id);
-        if(!v) return;
-
-        v.codigo = codigo;
-        v.titulo = titulo;
-        v.area = area;
-        v.modalidade = modalidade;
-        v.status = status;
-        v.cidade = cidade;
-        v.uf = uf;
-        v.senioridade = senioridade;
-        v.threshold = threshold;
-        v.descricao = descricao;
-        v.meta = meta;
-        v.jornada = jornada;
-        v.remuneracao = remuneracao;
-        v.requisitosExtras = requisitosExtras;
-        v.processo = processo;
-        v.publicacao = publicacao;
-        v.compliance = compliance;
-        v.updatedAt = now;
-
-        toast("Vaga atualizada.");
-        state.selectedId = v.id;
-      }else{
-        const v = {
-          id: uid(),
-          codigo,
-          titulo,
-          area,
-          modalidade,
-          status,
-          cidade,
-          uf,
-          senioridade,
-          threshold,
-          descricao,
-          createdAt: now,
-          updatedAt: now,
-          weights: { competencia:40, experiencia:30, formacao:15, localidade:15 },
-          requisitos: [],
-          meta,
-          jornada,
-          remuneracao,
-          requisitosExtras,
-          processo,
-          publicacao,
-          compliance
-        };
-        state.vagas.unshift(v);
-        state.selectedId = v.id;
-        toast("Vaga criada.");
-      }
-
-      renderAreaFilter();
-      updateKpis();
-      renderList();
-      renderDetail();
-
-      bootstrap.Modal.getOrCreateInstance($("#modalVaga")).hide();
+      return { payload };
     }
 
-    function deleteVaga(id){
+    function buildVagaPayloadFromState(v){
+      const meta = v.meta || {};
+      const jornada = v.jornada || {};
+      const local = jornada.local || {};
+      const remuneracao = v.remuneracao || {};
+      const requisitosExtras = v.requisitosExtras || {};
+      const processo = v.processo || {};
+      const publicacao = v.publicacao || {};
+      const compliance = v.compliance || {};
+      const diversidade = compliance.diversidade || {};
+      const lgpd = compliance.lgpd || {};
+      const docs = compliance.docs || {};
+
+      const departmentId = v.departmentId || meta.departamento;
+      const areaId = v.areaId;
+      const status = v.statusRaw || DEFAULT_STATUS;
+      if(!v.titulo || !departmentId || !areaId || !status) return null;
+
+      const tagsResponsabilidadesRaw = joinTagsRaw(meta.tagsResponsabilidades);
+      const tagsKeywordsRaw = joinTagsRaw(meta.tagsKeywords);
+      const tagsStackRaw = joinTagsRaw(requisitosExtras.tagsStack);
+      const tagsIdiomasRaw = joinTagsRaw(requisitosExtras.tagsIdiomas);
+      const uf = emptyToNull(local.uf || v.uf);
+      const ufCode = uf ? uf.toUpperCase().slice(0, 2) : null;
+
+      return {
+        titulo: v.titulo,
+        departmentId,
+        areaId,
+        status,
+        codigo: emptyToNull(v.codigo),
+        areaTime: emptyToNull(meta.areaTime),
+        modalidade: emptyToNull(v.modalidade),
+        senioridade: emptyToNull(v.senioridade),
+        quantidadeVagas: parseIntOrNull(meta.quantidade) ?? v.quantidadeVagas ?? 1,
+        tipoContratacao: emptyToNull(meta.tipoContratacao),
+        matchMinimoPercentual: Number.isFinite(+v.threshold) ? +v.threshold : (v.matchMinimoPercentual ?? 0),
+        descricaoInterna: emptyToNull(v.descricao),
+        codigoInterno: emptyToNull(meta.codigoInterno),
+        codigoCbo: emptyToNull(meta.cbo),
+        motivoAbertura: emptyToNull(meta.motivoAbertura),
+        orcamentoAprovado: emptyToNull(meta.orcamentoAprovado),
+        gestorRequisitante: emptyToNull(meta.gestorRequisitante),
+        recrutadorResponsavel: emptyToNull(meta.recrutador),
+        prioridade: emptyToNull(meta.prioridade),
+        resumoPitch: emptyToNull(meta.resumo),
+        tagsResponsabilidadesRaw: emptyToNull(tagsResponsabilidadesRaw),
+        tagsKeywordsRaw: emptyToNull(tagsKeywordsRaw),
+        confidencial: !!(meta.confidencial || v.confidencial),
+        aceitaPcd: !!(meta.aceitaPcd || v.aceitaPcd),
+        urgente: !!(meta.urgente || v.urgente),
+        generoPreferencia: emptyToNull(diversidade.generoPreferencia),
+        vagaAfirmativa: !!diversidade.vagaAfirmativa,
+        linguagemInclusiva: !!diversidade.linguagemInclusiva,
+        publicoAfirmativo: emptyToNull(diversidade.publicoAfirmativo),
+        observacoesPcd: emptyToNull(meta.pcdObs),
+        projetoNome: emptyToNull(meta.projeto?.nome),
+        projetoClienteAreaImpactada: emptyToNull(meta.projeto?.cliente),
+        projetoPrazoPrevisto: emptyToNull(meta.projeto?.prazo),
+        projetoDescricao: emptyToNull(meta.projeto?.descricao),
+        regime: emptyToNull(jornada.regime),
+        cargaSemanalHoras: parseIntOrNull(jornada.cargaSemanal),
+        escala: emptyToNull(jornada.escala),
+        horaEntrada: parseTimeOrNull(jornada.horaEntrada),
+        horaSaida: parseTimeOrNull(jornada.horaSaida),
+        intervalo: parseTimeSpanOrNull(jornada.intervalo),
+        cep: emptyToNull(local.cep),
+        logradouro: emptyToNull(local.logradouro),
+        numero: emptyToNull(local.numero),
+        bairro: emptyToNull(local.bairro),
+        cidade: emptyToNull(local.cidade || v.cidade),
+        uf: ufCode,
+        politicaTrabalho: emptyToNull(local.politicaTrabalho),
+        observacoesDeslocamento: emptyToNull(local.deslocamentoObs),
+        moeda: emptyToNull(remuneracao.moeda),
+        salarioMinimo: parseDecimalOrNull(remuneracao.salarioMin),
+        salarioMaximo: parseDecimalOrNull(remuneracao.salarioMax),
+        periodicidade: emptyToNull(remuneracao.periodicidade),
+        bonusTipo: emptyToNull(remuneracao.bonusTipo),
+        bonusPercentual: parseDecimalOrNull(remuneracao.percentual),
+        observacoesRemuneracao: emptyToNull(remuneracao.obs),
+        escolaridade: emptyToNull(requisitosExtras.escolaridade),
+        formacaoArea: emptyToNull(requisitosExtras.formacaoArea),
+        experienciaMinimaAnos: parseIntOrNull(requisitosExtras.expMinAnos),
+        tagsStackRaw: emptyToNull(tagsStackRaw),
+        tagsIdiomasRaw: emptyToNull(tagsIdiomasRaw),
+        diferenciais: emptyToNull(requisitosExtras.diferenciais),
+        observacoesProcesso: emptyToNull(processo.obsInternas),
+        visibilidade: emptyToNull(publicacao.visibilidade),
+        dataInicio: parseDateInput(publicacao.dataInicio),
+        dataEncerramento: parseDateInput(publicacao.dataFim),
+        canalLinkedIn: !!publicacao.canais?.linkedin,
+        canalSiteCarreiras: !!publicacao.canais?.site,
+        canalIndicacao: !!publicacao.canais?.indicacao,
+        canalPortaisEmprego: !!publicacao.canais?.portalEmprego,
+        descricaoPublica: emptyToNull(publicacao.descricaoPublica),
+        lgpdSolicitarConsentimentoExplicito: !!lgpd.consentimentoBase,
+        lgpdCompartilharCurriculoInternamente: !!lgpd.compartilhamento,
+        lgpdRetencaoAtiva: !!lgpd.retencao,
+        lgpdRetencaoMeses: parseIntOrNull(lgpd.retencaoMeses),
+        exigeCnh: !!docs.cnh,
+        disponibilidadeParaViagens: !!docs.disponibilidadeViagens,
+        checagemAntecedentes: !!docs.antecedentes,
+        beneficios: (remuneracao.beneficios || []).map((b, idx) => ({
+          ordem: idx + 1,
+          tipo: emptyToNull(b.tipo) || DEFAULT_BENEFICIO_TIPO,
+          valor: parseDecimalOrNull(b.valor),
+          recorrencia: emptyToNull(b.recorrencia) || DEFAULT_BENEFICIO_REC,
+          obrigatorio: !!b.obrigatorio,
+          observacoes: emptyToNull(b.obs)
+        })),
+        requisitos: (requisitosExtras.requisitosDetalhados || []).map((r, idx) => ({
+          ordem: idx + 1,
+          nome: (r.nome || "").trim(),
+          peso: emptyToNull(r.peso) || DEFAULT_PESO,
+          obrigatorio: !!r.obrigatorio,
+          anosMinimos: parseIntOrNull(r.anos),
+          nivel: emptyToNull(r.nivel),
+          avaliacao: emptyToNull(r.avaliacao),
+          observacoes: emptyToNull(r.obs)
+        })),
+        etapas: (processo.etapas || []).map((e, idx) => ({
+          ordem: idx + 1,
+          nome: (e.nome || "").trim(),
+          responsavel: emptyToNull(e.responsavel) || DEFAULT_ETAPA_RESP,
+          modo: emptyToNull(e.modo) || DEFAULT_ETAPA_MODO,
+          slaDias: parseIntOrNull(e.slaDias),
+          descricaoInstrucoes: emptyToNull(e.descricao)
+        })),
+        perguntasTriagem: (processo.perguntas || []).map((p, idx) => ({
+          ordem: idx + 1,
+          texto: (p.pergunta || "").trim(),
+          tipo: emptyToNull(p.tipo) || DEFAULT_QUESTION_TIPO,
+          peso: emptyToNull(p.peso) || DEFAULT_PESO,
+          obrigatoria: !!p.obrigatoria,
+          knockout: !!p.knockout,
+          opcoesRaw: isMultipleChoiceQuestion(p.tipo) ? joinTagsRaw(p.opcoes || []) : null
+        }))
+      };
+    }
+
+    async function readJsonSafe(res){
+      const text = await res.text();
+      if(!text) return null;
+      try{
+        return JSON.parse(text);
+      }catch{
+        return null;
+      }
+    }
+
+    async function createVaga(payload){
+      const res = await fetch(VAGAS_API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      if(!res.ok){
+        const msg = await res.text();
+        throw new Error(msg || `Falha ao criar vaga (${res.status}).`);
+      }
+      return await readJsonSafe(res);
+    }
+
+    async function updateVaga(id, payload){
+      const res = await fetch(`${VAGAS_API_URL}/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      if(res.status === 404) return null;
+      if(!res.ok){
+        const msg = await res.text();
+        throw new Error(msg || `Falha ao atualizar vaga (${res.status}).`);
+      }
+      return await readJsonSafe(res);
+    }
+
+    async function upsertVagaFromModal(){
+      const id = $("#vagaId").value || null;
+      const result = buildVagaPayloadFromForm();
+      if(result.error){
+        toast(result.error);
+        return;
+      }
+
+      try{
+        const data = id
+          ? await updateVaga(id, result.payload)
+          : await createVaga(result.payload);
+
+        if(!data && id){
+          toast("Vaga nao encontrada.");
+          return;
+        }
+
+        if(data){
+          const v = mapApiVagaToState(data);
+          upsertVagaInState(v);
+          state.selectedId = v.id;
+        }
+
+        renderAreaFilter();
+        updateKpis();
+        renderList();
+        renderDetail();
+
+        bootstrap.Modal.getOrCreateInstance($("#modalVaga")).hide();
+        toast(id ? "Vaga atualizada." : "Vaga criada.");
+      }catch(e){
+        console.error("Falha ao salvar vaga:", e);
+        toast("Falha ao salvar vaga.");
+      }
+    }
+
+    async function deleteVaga(id){
       const v = findVaga(id);
       if(!v) return;
 
-      const ok = confirm(`Excluir a vaga "${v.titulo}"?\n\nIsso remove tambÃ©m os requisitos.`);
+      const ok = confirm(`Excluir a vaga "${v.titulo}"?
+
+Isso remove tambem os requisitos.`);
       if(!ok) return;
 
-      state.vagas = state.vagas.filter(x => x.id !== id);
-      if(state.selectedId === id){
-        state.selectedId = state.vagas[0]?.id || null;
+      try{
+        const res = await fetch(`${VAGAS_API_URL}/${id}`, { method: "DELETE" });
+        if(res.status === 404){
+          toast("Vaga nao encontrada.");
+          return;
+        }
+        if(!res.ok){
+          const msg = await res.text();
+          throw new Error(msg || `Falha ao excluir vaga (${res.status}).`);
+        }
+
+        state.vagas = state.vagas.filter(x => x.id !== id);
+        if(state.selectedId === id){
+          state.selectedId = state.vagas[0]?.id || null;
+        }
+        renderAreaFilter();
+        updateKpis();
+        renderList();
+        renderDetail();
+        toast("Vaga excluida.");
+      }catch(e){
+        console.error("Falha ao excluir vaga:", e);
+        toast("Falha ao excluir vaga.");
       }
-      renderAreaFilter();
-      updateKpis();
-      renderList();
-      renderDetail();
-      toast("Vaga excluÃ­da.");
     }
 
-    function duplicateVaga(id){
-      const v = findVaga(id);
+    async function duplicateVaga(id){
+      const v = await ensureVagaDetail(id);
       if(!v) return;
 
-      const now = new Date().toISOString();
-      const copy = JSON.parse(JSON.stringify(v));
-      copy.id = uid();
-      copy.codigo = (v.codigo ? v.codigo + "-COPY" : "");
-      copy.titulo = (v.titulo ? v.titulo + " (Cópia)" : "Cópia");
-      copy.createdAt = now;
-      copy.updatedAt = now;
-      // novos ids de requisitos
-      (copy.requisitos || []).forEach(r => r.id = uid());
+      const payload = buildVagaPayloadFromState(v);
+      if(!payload){
+        toast("Nao foi possivel duplicar a vaga.");
+        return;
+      }
 
-      state.vagas.unshift(copy);
-      state.selectedId = copy.id;
-      renderAreaFilter();
-      updateKpis();
-      renderList();
-      renderDetail();
-      toast("Vaga duplicada.");
+      const baseCode = payload.codigo ? `${payload.codigo}-COPY` : null;
+      const baseTitle = payload.titulo ? `${payload.titulo} (Copia)` : "Copia";
+      payload.codigo = baseCode ? baseCode.slice(0, 40) : null;
+      payload.titulo = baseTitle.slice(0, 160);
+
+      try{
+        const data = await createVaga(payload);
+        if(!data) return;
+        const created = mapApiVagaToState(data);
+        upsertVagaInState(created);
+        state.selectedId = created.id;
+        renderAreaFilter();
+        updateKpis();
+        renderList();
+        renderDetail();
+        toast("Vaga duplicada.");
+      }catch(e){
+        console.error("Falha ao duplicar vaga:", e);
+        toast("Falha ao duplicar vaga.");
+      }
     }
-
     // ========= CRUD: Requisitos
     function openReqModal(mode, vagaId, reqId){
       const v = findVaga(vagaId);
@@ -1306,7 +1881,7 @@ function fmtStatus(s){
         const selected = r.categoria || getDefaultCategoria();
         renderReqCategoriaOptions(selected);
         $("#reqCategoria").value = selected;
-        $("#reqPeso").value = clamp(parseInt(r.peso ?? 0,10)||0, 0, 10);
+        $("#reqPeso").value = clamp(pesoToNumber(r.peso), 0, 10);
         $("#reqObrigatorio").checked = !!r.obrigatorio;
         $("#reqTermo").value = r.termo || "";
         $("#reqSinonimos").value = (r.sinonimos || []).join(", ");
@@ -1458,7 +2033,7 @@ function simulateMatch(vagaId, fromMobile=false){
         return;
       }
 
-      const totalPeso = reqs.reduce((acc, r)=> acc + clamp(parseInt(r.peso||0,10)||0,0,10), 0) || 1;
+      const totalPeso = reqs.reduce((acc, r)=> acc + clamp(pesoToNumber(r.peso), 0, 10), 0) || 1;
       let hitPeso = 0;
 
       const hits = [];
@@ -1470,7 +2045,7 @@ function simulateMatch(vagaId, fromMobile=false){
         const bag = [termo, ...syns].filter(Boolean);
 
         const found = bag.some(t => t && text.includes(t));
-        const p = clamp(parseInt(r.peso||0,10)||0,0,10);
+        const p = clamp(pesoToNumber(r.peso), 0, 10);
 
         if(found){
           hitPeso += p;
@@ -1773,8 +2348,8 @@ function simulateMatch(vagaId, fromMobile=false){
     }
 
     function wireButtons(){
-      $("#btnNewVaga").addEventListener("click", () => openVagaModal("new"));
-      $("#btnSaveVaga").addEventListener("click", upsertVagaFromModal);
+      $("#btnNewVaga").addEventListener("click", () => void openVagaModal("new"));
+      $("#btnSaveVaga").addEventListener("click", () => void upsertVagaFromModal());
       $("#btnSaveReq").addEventListener("click", saveReqFromModal);
       $("#btnAddBenefit").addEventListener("click", () => {
         const host = $("#vagaBenefitsList");
@@ -1805,6 +2380,7 @@ function simulateMatch(vagaId, fromMobile=false){
         if(!ok) return;
         try{
           await syncAreasFromApi();
+          await syncDepartmentsFromApi();
           await syncVagasFromApi();
           toast("Dados atualizados.");
         }catch(e){
@@ -1829,21 +2405,11 @@ function simulateMatch(vagaId, fromMobile=false){
       const open = params.get("open");
       if(!vagaId) return;
 
-      let v = findVaga(vagaId);
-      if(!v){
-        v = await fetchVagaById(vagaId);
-        if(v){
-          state.vagas.unshift(v);
-          renderAreaFilter();
-          updateKpis();
-          renderList();
-          renderDetail();
-        }
-      }
-
+      const v = await ensureVagaDetail(vagaId);
       if(!v) return;
+
       if(open === "detail"){
-        openDetailModal(vagaId);
+        await openDetailModal(vagaId);
       }else{
         selectVaga(vagaId);
       }
@@ -1876,7 +2442,9 @@ async function syncVagasFromApi() {
     wireClock();
 
     try {
+        await syncVagaEnumsFromApi();
         await syncAreasFromApi();
+        await syncDepartmentsFromApi();
         await syncVagasFromApi();
     } catch (e) {
         console.error("Falha ao carregar vagas da API:", e);
@@ -1893,6 +2461,7 @@ async function syncVagasFromApi() {
     wireButtons();
     await openDetailFromQuery();
 })();
+
 
 
 

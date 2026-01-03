@@ -1,4 +1,6 @@
-﻿using System.Net.Http.Json;
+using System.Net;
+using System.Text;
+using System.Text.Json;
 
 namespace LioTecnica.Web.Infrastructure.ApiClients;
 
@@ -6,69 +8,69 @@ public sealed class VagasApiClient
 {
     private readonly HttpClient _http;
 
+    private static readonly JsonSerializerOptions JsonOpts = new(JsonSerializerDefaults.Web);
+
     public VagasApiClient(HttpClient http) => _http = http;
 
-    public async Task<IReadOnlyList<VagaDto>> GetVagasAsync(string tenantId, string? authorization, CancellationToken ct)
+    public Task<ApiRawResponse> GetVagasRawAsync(string tenantId, string? authorization, CancellationToken ct)
     {
-        using var req = new HttpRequestMessage(HttpMethod.Get, "api/vagas");
-        req.Headers.TryAddWithoutValidation("X-Tenant-Id", tenantId);
-
-        if (!string.IsNullOrWhiteSpace(authorization))
-            req.Headers.TryAddWithoutValidation("Authorization", authorization);
-
-        using var res = await _http.SendAsync(req, ct);
-        res.EnsureSuccessStatusCode();
-
-        return (await res.Content.ReadFromJsonAsync<List<VagaDto>>(cancellationToken: ct)) ?? [];
+        var req = BuildRequest(HttpMethod.Get, "api/vagas", tenantId, authorization);
+        return SendAsync(req, ct);
     }
 
-    public async Task<VagaDto?> GetVagaByIdAsync(string tenantId, string? authorization, Guid id, CancellationToken ct)
+    public Task<ApiRawResponse> GetVagaByIdRawAsync(string tenantId, string? authorization, Guid id, CancellationToken ct)
     {
-        using var req = new HttpRequestMessage(HttpMethod.Get, $"api/vagas/{id}");
+        var req = BuildRequest(HttpMethod.Get, $"api/vagas/{id}", tenantId, authorization);
+        return SendAsync(req, ct);
+    }
+
+    public Task<ApiRawResponse> CreateRawAsync(string tenantId, string? authorization, JsonElement payload, CancellationToken ct)
+    {
+        var json = JsonSerializer.Serialize(payload, JsonOpts);
+        var req = BuildRequest(HttpMethod.Post, "api/vagas", tenantId, authorization, json);
+        return SendAsync(req, ct);
+    }
+
+    public Task<ApiRawResponse> UpdateRawAsync(string tenantId, string? authorization, Guid id, JsonElement payload, CancellationToken ct)
+    {
+        var json = JsonSerializer.Serialize(payload, JsonOpts);
+        var req = BuildRequest(HttpMethod.Put, $"api/vagas/{id}", tenantId, authorization, json);
+        return SendAsync(req, ct);
+    }
+
+    public Task<ApiRawResponse> DeleteRawAsync(string tenantId, string? authorization, Guid id, CancellationToken ct)
+    {
+        var req = BuildRequest(HttpMethod.Delete, $"api/vagas/{id}", tenantId, authorization);
+        return SendAsync(req, ct);
+    }
+
+    public Task<ApiRawResponse> GetVagaEnumsRawAsync(string tenantId, string? authorization, CancellationToken ct)
+    {
+        var req = BuildRequest(HttpMethod.Get, "api/lookup/vaga-enums", tenantId, authorization);
+        return SendAsync(req, ct);
+    }
+
+    private HttpRequestMessage BuildRequest(HttpMethod method, string url, string tenantId, string? authorization, string? jsonBody = null)
+    {
+        var req = new HttpRequestMessage(method, url);
         req.Headers.TryAddWithoutValidation("X-Tenant-Id", tenantId);
+        req.Headers.TryAddWithoutValidation("Accept", "application/json");
 
         if (!string.IsNullOrWhiteSpace(authorization))
             req.Headers.TryAddWithoutValidation("Authorization", authorization);
 
-        using var res = await _http.SendAsync(req, ct);
-        if (res.StatusCode == System.Net.HttpStatusCode.NotFound) return null;
+        if (jsonBody != null)
+            req.Content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
 
-        res.EnsureSuccessStatusCode();
-        return await res.Content.ReadFromJsonAsync<VagaDto>(cancellationToken: ct);
+        return req;
+    }
+
+    private async Task<ApiRawResponse> SendAsync(HttpRequestMessage req, CancellationToken ct)
+    {
+        using var res = await _http.SendAsync(req, ct);
+        var content = await res.Content.ReadAsStringAsync(ct);
+        return new ApiRawResponse(res.StatusCode, content);
     }
 }
 
-// Ajuste esse DTO para bater com o que sua API devolve hoje
-public sealed record VagaDto(
-    Guid Id,
-    string Codigo,
-    string Titulo,
-    string Status,
-
-    Guid AreaId,
-    string AreaCode,
-    string AreaName,
-
-    Guid DepartmentId,
-    string DepartmentCode,
-    string DepartmentName,
-
-    string Modalidade,
-    string Senioridade,
-    int QuantidadeVagas,
-    int MatchMinimoPercentual,
-
-    bool Confidencial,
-    bool Urgente,
-    bool AceitaPcd,
-
-    DateOnly DataInicio,
-    DateOnly DataEncerramento,
-
-    string Cidade,
-    string Uf,
-
-    DateTimeOffset CreatedAtUtc,
-    DateTimeOffset UpdatedAtUtc
-);
-
+public sealed record ApiRawResponse(HttpStatusCode StatusCode, string? Content);

@@ -17,6 +17,19 @@ public sealed class DepartmentsApiClient
 
     public DepartmentsApiClient(HttpClient http) => _http = http;
 
+    public async Task<IReadOnlyList<LookupOption>> GetLookupOptionsAsync(string tenantId, CancellationToken ct)
+    {
+        using var req = new HttpRequestMessage(HttpMethod.Get, "/api/lookup/departments");
+        req.Headers.TryAddWithoutValidation("X-Tenant-Id", tenantId);
+        req.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+        using var resp = await _http.SendAsync(req, ct);
+        resp.EnsureSuccessStatusCode();
+
+        var json = await resp.Content.ReadAsStringAsync(ct);
+        return JsonSerializer.Deserialize<List<LookupOption>>(json, JsonOpts) ?? new List<LookupOption>();
+    }
+
     public async Task<DepartmentsPagedResponse> GetDepartmentsAsync(
         string tenantId,
         string? search,
@@ -240,4 +253,16 @@ public sealed class DepartmentUpdateRequest
     public string? CostCenter { get; set; }
     public string? BranchOrLocation { get; set; }
     public string? Description { get; set; }
+}
+
+public sealed class LookupOption
+{
+    [JsonPropertyName("id")]
+    public Guid Id { get; set; }
+
+    [JsonPropertyName("code")]
+    public string? Code { get; set; }
+
+    [JsonPropertyName("name")]
+    public string? Name { get; set; }
 }

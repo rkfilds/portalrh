@@ -480,9 +480,11 @@
 <!-- Bootstrap JS (CDN) -->
 @section Scripts {
 	<script>
+		window.__seedData = @Html.Raw(Model.SeedJson);
 		window.__vagasApiUrl = "@Url.Content("~/api/vagas")";
+		window.__areasApiUrl = "@Url.Content("~/api/lookup/areas")";
+		window.__departmentsApiUrl = "@Url.Content("~/api/lookup/departments")";
+		window.__vagasEnumsUrl = "@Url.Content("~/api/lookup/vaga-enums")";
 	</script>
 	<script src="~/js/views/vagas.js" asp-append-version="true"></script>
 }
-
-
