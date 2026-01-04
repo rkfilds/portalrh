@@ -74,7 +74,7 @@ function getAreaOptions(){
 
 function getDefaultSenioridade(){
   const list = getEnumOptions("vagaSenioridade");
-  const pref = list.find(x => x.code === "Gerencia");
+  const pref = list.find(x => (x.code || "").toString().toLowerCase() === "gerencia" || (x.code || "").toString().toLowerCase() === "gerente");
   return pref ? pref.code : (list[0]?.code || "");
 }
 
@@ -99,12 +99,17 @@ function fillSenioridadeSelect(selected){
   select.replaceChildren();
   select.appendChild(buildOption("", "Selecionar senioridade"));
   const list = getEnumOptions("vagaSenioridade");
-  list.forEach(opt => select.appendChild(buildOption(opt.code, opt.text, opt.code === selected)));
-  if(selected && !list.some(x => x.code === selected)){
+  const selectedKey = (selected || "").toString().toLowerCase();
+  list.forEach(opt => {
+    const isSelected = selectedKey && (opt.code || "").toString().toLowerCase() === selectedKey;
+    select.appendChild(buildOption(opt.code, opt.text, isSelected));
+  });
+  if(selected && !list.some(x => (x.code || "").toString().toLowerCase() === selectedKey)){
     select.appendChild(buildOption(selected, selected, true));
   }
   if(selected){
-    select.value = selected;
+    const match = list.find(x => (x.code || "").toString().toLowerCase() === selectedKey);
+    select.value = match ? match.code : selected;
   }
 }
 
@@ -406,8 +411,10 @@ function wireClock(){
   setInterval(tick, 1000 * 15);
 }
 
-(function init(){
+(async function init(){
   wireClock();
+  await ensureEnumData();
+  applyEnumSelects();
   const has = loadState();
   if(!has) seedIfEmpty();
   else seedIfEmpty();

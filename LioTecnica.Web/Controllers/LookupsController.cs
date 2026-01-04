@@ -49,10 +49,10 @@ public sealed class LookupController : ControllerBase
         return Ok(list);
     }
 
-    [HttpGet("vaga-enums")]
-    public async Task<IActionResult> VagaEnums(CancellationToken ct)
+    [HttpGet("enums")]
+    public async Task<IActionResult> Enums(CancellationToken ct)
     {
-        var resp = await _vagas.GetVagaEnumsRawAsync(_tenantContext.TenantId, ct);
+        var resp = await _vagas.GetEnumsRawAsync(_tenantContext.TenantId, ct);
         if (string.IsNullOrWhiteSpace(resp.Content))
             return new StatusCodeResult((int)resp.StatusCode);
 

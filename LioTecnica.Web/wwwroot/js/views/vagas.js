@@ -3,7 +3,7 @@
 const VAGAS_API_URL = window.__vagasApiUrl || "/api/vagas";
 const AREAS_API_URL = window.__areasApiUrl || "/api/lookup/areas";
 const DEPARTMENTS_API_URL = window.__departmentsApiUrl || "/api/lookup/departments";
-const VAGAS_ENUMS_URL = window.__vagasEnumsUrl || "/api/lookup/vaga-enums";
+const NORMALIZE_ENUM = (value) => (value ?? "").toString().trim().toLowerCase();
 
     const LOGO_DATA_URI = "data:image/webp;base64,UklGRngUAABXRUJQVlA4IGwUAAAQYwCdASpbAVsBPlEokUajoqGhIpNoyHAK7AQYJjYQmG9Dtu/6p6QZ4lQd6lPde+Jk3i3kG2EoP+QW0c0h8Oe3jW2C5zE0o9jzZ1x2fX9cZlX0d7rW8r0vQ9p3d2nJ1bqzQfQZxVwTt7mJvU8j1GqF4oJc8Qb+gq+oQyHcQyYc2b9u2fYf0Rj9x9hRZp2Y2xK0yVQ8Hj4p6w8B1K2cKk2mY9m2r8kz3a4m7xG4xg9m5VjzP3E4RjQH8fYkC4mB8g0vR3c5h1D0yE8Qzv7t7gQj0Z9yKk3cWZgVnq3l1kq6rE8oWc4z6oZk8k0b1o9m8p2m+QJ3nJm6GgA=";
 function enumFirstCode(key, fallback){
@@ -13,16 +13,18 @@ function enumFirstCode(key, fallback){
 
     function enumPreferredCode(key, preferred, fallback){
       const list = getEnumOptions(key);
-      for(const code of preferred){
-        if(list.some(opt => opt.code === code)) return code;
+      const target = (preferred || []).map(code => NORMALIZE_ENUM(code));
+      for(const code of target){
+        const match = list.find(opt => NORMALIZE_ENUM(opt.code) === code);
+        if(match) return match.code;
       }
       return list.length ? list[0].code : fallback;
     }
 
     const AREA_ALL = enumFirstCode("vagaAreaFilter", "all");
-    let DEFAULT_MODALIDADE = enumFirstCode("vagaModalidade", "Presencial");
-    let DEFAULT_STATUS = enumPreferredCode("vagaStatus", ["Aberta", "Rascunho"], "Aberta");
-    let DEFAULT_SENIORIDADE = enumFirstCode("vagaSenioridade", "Junior");
+    let DEFAULT_MODALIDADE = enumFirstCode("vagaModalidade", "presencial");
+    let DEFAULT_STATUS = enumPreferredCode("vagaStatus", ["aberta", "rascunho"], "aberta");
+    let DEFAULT_SENIORIDADE = enumFirstCode("vagaSenioridade", "junior");
     let DEFAULT_DEPARTAMENTO = enumFirstCode("vagaDepartamento", "");
     let DEFAULT_AREA_TIME = enumFirstCode("vagaAreaTime", "");
     let DEFAULT_TIPO_CONTRATACAO = enumFirstCode("vagaTipoContratacao", "");
@@ -31,7 +33,7 @@ function enumFirstCode(key, fallback){
     let DEFAULT_PRIORIDADE = enumFirstCode("vagaPrioridade", "");
     let DEFAULT_REGIME = enumFirstCode("vagaRegimeJornada", "");
     let DEFAULT_ESCALA = enumFirstCode("vagaEscalaTrabalho", "");
-    let DEFAULT_MOEDA = enumFirstCode("vagaMoeda", "BRL");
+    let DEFAULT_MOEDA = enumFirstCode("vagaMoeda", "brl");
     let DEFAULT_REMUN_PERIOD = enumFirstCode("vagaRemuneracaoPeriodicidade", "mensal");
     let DEFAULT_BONUS = enumFirstCode("vagaBonusTipo", "");
     let DEFAULT_BENEFICIO_TIPO = enumFirstCode("vagaBeneficioTipo", "");
@@ -49,8 +51,8 @@ function enumFirstCode(key, fallback){
     const EMPTY_TEXT = "—";
 
     function refreshEnumDefaults(){
-      DEFAULT_MODALIDADE = enumFirstCode("vagaModalidade", "Presencial");
-      DEFAULT_STATUS = enumPreferredCode("vagaStatus", ["Aberta", "Rascunho"], "Aberta");
+      DEFAULT_MODALIDADE = enumFirstCode("vagaModalidade", "presencial");
+      DEFAULT_STATUS = enumPreferredCode("vagaStatus", ["aberta", "rascunho"], "aberta");
       DEFAULT_SENIORIDADE = enumFirstCode("vagaSenioridade", "");
       DEFAULT_DEPARTAMENTO = "";
       DEFAULT_AREA_TIME = enumFirstCode("vagaAreaTime", "");
@@ -60,7 +62,7 @@ function enumFirstCode(key, fallback){
       DEFAULT_PRIORIDADE = enumFirstCode("vagaPrioridade", "");
       DEFAULT_REGIME = enumFirstCode("vagaRegimeJornada", "");
       DEFAULT_ESCALA = enumFirstCode("vagaEscalaTrabalho", "");
-      DEFAULT_MOEDA = enumFirstCode("vagaMoeda", "BRL");
+      DEFAULT_MOEDA = enumFirstCode("vagaMoeda", "brl");
       DEFAULT_REMUN_PERIOD = enumFirstCode("vagaRemuneracaoPeriodicidade", "");
       DEFAULT_BONUS = enumFirstCode("vagaBonusTipo", "");
       DEFAULT_BENEFICIO_TIPO = enumFirstCode("vagaBeneficioTipo", "");
@@ -88,7 +90,15 @@ function enumFirstCode(key, fallback){
     function setValue(id, value){
       const el = $("#"+id);
       if(!el) return;
-      el.value = value ?? "";
+      const raw = value ?? "";
+      if(el.tagName === "SELECT"){
+        const target = raw.toString();
+        const normalized = target.toLowerCase();
+        const match = Array.from(el.options).find(opt => (opt.value || "").toString().toLowerCase() === normalized);
+        el.value = match ? match.value : target;
+        return;
+      }
+      el.value = raw;
     }
 
     function setChecked(id, value){
@@ -173,17 +183,11 @@ function enumFirstCode(key, fallback){
     }
 
     async function syncVagaEnumsFromApi(){
-      try{
-        const res = await fetch(VAGAS_ENUMS_URL, { headers: { "Accept": "application/json" } });
-        if(!res.ok) throw new Error(`Falha ao buscar enums: ${res.status}`);
-        const data = await res.json();
-        window.__enumData = data || {};
-        refreshEnumDefaults();
-        applyVagaEnumOptions();
-        renderStatusFilter();
-      }catch(e){
-        console.error("Falha ao carregar enums da API:", e);
-      }
+      await ensureEnumData();
+      refreshEnumDefaults();
+      applyVagaEnumOptions();
+      renderStatusFilter();
+      applyEnumSelects();
     }
 
     function fillEnumSelect(selectId, enumKey, placeholder){
@@ -1181,11 +1185,11 @@ function fmtStatus(s){
         fillVagaDepartmentSelect(v.departmentId || meta.departamento || "");
         fillVagaAreaSelect(v.areaId || "");
         $("#vagaArea").value = v.areaId || "";
-        $("#vagaModalidade").value = v.modalidade || DEFAULT_MODALIDADE;
-        $("#vagaStatus").value = v.statusRaw || DEFAULT_STATUS;
+        setValue("vagaModalidade", v.modalidade || DEFAULT_MODALIDADE);
+        setValue("vagaStatus", normalizeStatusCode(v.statusRaw || v.status || DEFAULT_STATUS));
         $("#vagaCidade").value = v.cidade || local.cidade || "";
         $("#vagaUF").value = v.uf || local.uf || "";
-        $("#vagaSenioridade").value = v.senioridade || DEFAULT_SENIORIDADE;
+        setValue("vagaSenioridade", v.senioridade || DEFAULT_SENIORIDADE);
         $("#vagaThreshold").value = clamp(parseInt(v.threshold ?? 70,10)||70, 0, 100);
         $("#vagaDescricao").value = v.descricao || "";
 
@@ -1275,11 +1279,11 @@ function fmtStatus(s){
         fillVagaDepartmentSelect("");
         fillVagaAreaSelect("");
         $("#vagaArea").value = "";
-        $("#vagaModalidade").value = DEFAULT_MODALIDADE;
-        $("#vagaStatus").value = DEFAULT_STATUS;
+        setValue("vagaModalidade", DEFAULT_MODALIDADE);
+        setValue("vagaStatus", DEFAULT_STATUS);
         $("#vagaCidade").value = "";
         $("#vagaUF").value = "SP";
-        $("#vagaSenioridade").value = DEFAULT_SENIORIDADE;
+        setValue("vagaSenioridade", DEFAULT_SENIORIDADE);
         $("#vagaThreshold").value = 70;
         $("#vagaDescricao").value = "";
 

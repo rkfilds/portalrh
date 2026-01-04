@@ -44,9 +44,9 @@ public sealed class VagasApiClient
         return SendAsync(req, ct);
     }
 
-    public Task<ApiRawResponse> GetVagaEnumsRawAsync(string tenantId, CancellationToken ct)
+    public Task<ApiRawResponse> GetEnumsRawAsync(string tenantId, CancellationToken ct)
     {
-        var req = BuildRequest(HttpMethod.Get, "api/lookup/vaga-enums", tenantId);
+        var req = BuildRequest(HttpMethod.Get, "api/lookup/enums", tenantId);
         return SendAsync(req, ct);
     }
 

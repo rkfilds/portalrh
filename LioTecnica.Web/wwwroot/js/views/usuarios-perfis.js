@@ -1,5 +1,5 @@
-Ôªø// ========= Logo (data URI real do arquivo recebido)
-// Obs: apesar do nome do arquivo ser .png, o conte√É¬∫do √É¬© WebP (ok).
+// ========= Logo (data URI real do arquivo recebido)
+// Obs: apesar do nome do arquivo ser .png, o conte√∫do √© WebP (ok).
 const seed = window.__seedData || {};
 const LOGO_DATA_URI = "data:image/webp;base64,UklGRngUAABXRUJQVlA4IGwUAAAQYwCdASpbAVsBPlEokUajoqGhIpNoyHAK7AQYJjYQmG9Dtu/6p6QZ4lQd6lPde+Jk3i3kG2EoP+QW0c0h8Oe3jW2C5zE0o9jzZ1x2fX9cZlX0d7rW8r0vQ9p3d2nJ1bqzQfQZxVwTt7mJvU8j1GqF4oJc8Qb+gq+oQyHcQyYc2b9u2fYf0Rj9x9hRZp2Y2xK0yVQ8Hj4p6w8B1K2cKk2mY9m2r8kz3a4m7xG4xg9m5VjzP3E4RjQH8fYkC4mB8g0vR3c5h1D0yE8Qzv7t7gQj0Z9yKk3cWZgVnq3l1kq6rE8oWc4z6oZk8k0b1o9m8p2m+QJ3nJm6GgA=";
 function enumFirstCode(key, fallback) {
@@ -7,8 +7,11 @@ function enumFirstCode(key, fallback) {
     return list.length ? list[0].code : fallback;
 }
 
-const ROLE_ALL = enumFirstCode("roleFilter", "all");
-// ========= Storage keys (compat√É¬≠vel com outras telas)
+let ROLE_ALL = enumFirstCode("roleFilter", "all");
+let DEFAULT_USER_STATUS = enumFirstCode("usuarioStatus", "active");
+let DEFAULT_USER_STATUS_FILTER = enumFirstCode("usuarioStatusFilter", "all");
+let DEFAULT_MFA_OPTION = enumFirstCode("usuarioMfaOption", "false");
+// ========= Storage keys (compat√≠vel com outras telas)
 const USERS_KEY = "lt_rh_users_v1";
 const ROLES_KEY = "lt_rh_roles_v1";
 
@@ -20,9 +23,9 @@ const MODULES = [
     { key: "triagem", label: "Triagem" },
     { key: "matching", label: "Matching" },
     { key: "entrada", label: "Entrada (Email/Pasta)" },
-    { key: "relatorios", label: "Relat√≥rios" },
-    { key: "config", label: "Configura√ß√µes" },
-    { key: "usuarios", label: "Usu√°rios & Perfis" },
+    { key: "relatorios", label: "RelatÛrios" },
+    { key: "config", label: "ConfiguraÁıes" },
+    { key: "usuarios", label: "Usu·rios & Perfis" },
 ];
 const ACTIONS = [
     { key: "view", label: "Visualizar" },
@@ -85,12 +88,12 @@ function loadAll() {
 // ========= Toast
 function showToast(title, body) {
     if (typeof window.toast !== "function") return;
-    window.toast(body || "-", title || "Notifica√ß√£o");
+    window.toast(body || "-", title || "NotificaÁ„o");
 }
 
 // ========= Role helpers
 function roleById(id) { return state.roles.find(r => r.id === id) || null; }
-function roleName(id) { return roleById(id)?.name || "‚Ä¢"; }
+function roleName(id) { return roleById(id)?.name || "ï"; }
 function userById(id) { return state.users.find(u => u.id === id) || null; }
 
 // ========= KPIs
@@ -144,10 +147,12 @@ function applyUserFilters(users) {
 }
 
 function statusTag(status) {
-    if (status === "active") return `<span class="tag ok"><i class="bi bi-check2-circle"></i>Ativo</span>`;
-    if (status === "invited") return `<span class="tag warn"><i class="bi bi-envelope"></i>Convidado</span>`;
-    if (status === "disabled") return `<span class="tag bad"><i class="bi bi-slash-circle"></i>Desativado</span>`;
-    return `<span class="tag"><i class="bi bi-dot"></i>${escapeHtml(status || "‚Ä¢")}</span>`;
+    const label = getEnumText("usuarioStatus", status, status || "-");
+    if (status === "active") return `<span class="tag ok"><i class="bi bi-check2-circle"></i>${escapeHtml(label)}</span>`;
+    if (status === "invited") return `<span class="tag warn"><i class="bi bi-envelope"></i>${escapeHtml(label)}</span>`;
+    if (status === "disabled") return `<span class="tag bad"><i class="bi bi-slash-circle"></i>${escapeHtml(label)}</span>`;
+    return `<span class="tag"><i class="bi bi-dot"></i>${escapeHtml(label)}</span>`;
+}</span>`;
 }
 function mfaTag(enabled) {
     return enabled
@@ -162,12 +167,12 @@ function renderUsers() {
 
     $("#usersHint").textContent = filtered.length
         ? "Dica: clique na linha para ver detalhes no drawer."
-        : "Nenhum usu√°rio com os filtros atuais.";
+        : "Nenhum usu·rio com os filtros atuais.";
 
     const tbody = $("#usersTbody");
     tbody.innerHTML = filtered.map(u => {
         const roles = (u.roleIds || []).map(id => `<span class="pill"><i class="bi bi-person-badge"></i>${escapeHtml(roleName(id))}</span>`).join(" ");
-        const last = u.lastLoginAt ? fmtDate(u.lastLoginAt) : "‚Ä¢";
+        const last = u.lastLoginAt ? fmtDate(u.lastLoginAt) : "ï";
 
         return `
           <tr data-id="${u.id}" class="user-row" style="cursor:pointer;">
@@ -175,14 +180,14 @@ function renderUsers() {
               <div class="d-flex align-items-center gap-2">
                 <div class="avatar">${escapeHtml(initials(u.name, "U"))}</div>
                 <div class="lh-1">
-                  <div class="fw-bold">${escapeHtml(u.name || "‚Ä¢")}</div>
+                  <div class="fw-bold">${escapeHtml(u.name || "ï")}</div>
                   <small class="text-muted">${escapeHtml(u.id.slice(0, 8))}</small>
                 </div>
               </div>
             </td>
-            <td class="mono">${escapeHtml(u.email || "‚Ä¢")}</td>
-            <td>${escapeHtml(u.dept || "‚Ä¢")}</td>
-            <td>${roles || "‚Ä¢"}</td>
+            <td class="mono">${escapeHtml(u.email || "ï")}</td>
+            <td>${escapeHtml(u.dept || "ï")}</td>
+            <td>${roles || "ï"}</td>
             <td>${statusTag(u.status)}</td>
             <td>${mfaTag(!!u.mfaEnabled)}</td>
             <td>${escapeHtml(last)}</td>
@@ -225,12 +230,12 @@ function openUserDrawer(userId) {
     if (!u) return;
 
     $("#drawerAvatar").textContent = initials(u.name, "U");
-    $("#drawerName").textContent = u.name || "‚Ä¢";
-    $("#drawerEmail").textContent = u.email || "‚Ä¢";
-    $("#drawerDept").textContent = u.dept || "‚Ä¢";
+    $("#drawerName").textContent = u.name || "ï";
+    $("#drawerEmail").textContent = u.email || "ï";
+    $("#drawerDept").textContent = u.dept || "ï";
     $("#drawerCreated").textContent = fmtDate(u.createdAt);
-    $("#drawerLastLogin").textContent = u.lastLoginAt ? fmtDate(u.lastLoginAt) : "‚Ä¢";
-    $("#drawerRoles").textContent = (u.roleIds || []).map(roleName).join(", ") || "‚Ä¢";
+    $("#drawerLastLogin").textContent = u.lastLoginAt ? fmtDate(u.lastLoginAt) : "ï";
+    $("#drawerRoles").textContent = (u.roleIds || []).map(roleName).join(", ") || "ï";
     $("#drawerMfa").textContent = u.mfaEnabled ? "Habilitado" : "Desabilitado";
 
     const st = u.status;
@@ -238,7 +243,7 @@ function openUserDrawer(userId) {
     if (st === "active") { tag.className = "tag ok"; tag.innerHTML = `<i class="bi bi-check2-circle"></i>Ativo`; }
     else if (st === "invited") { tag.className = "tag warn"; tag.innerHTML = `<i class="bi bi-envelope"></i>Convidado`; }
     else if (st === "disabled") { tag.className = "tag bad"; tag.innerHTML = `<i class="bi bi-slash-circle"></i>Desativado`; }
-    else { tag.className = "tag"; tag.innerHTML = `<i class="bi bi-dot"></i>${escapeHtml(st || "‚Ä¢")}`; }
+    else { tag.className = "tag"; tag.innerHTML = `<i class="bi bi-dot"></i>${escapeHtml(st || "ï")}`; }
 
     const oc = new bootstrap.Offcanvas($("#offcanvasUser"));
     oc.show();
@@ -265,13 +270,13 @@ function wireDrawerButtons() {
         if (!state.selectedUserId) return;
         const u = userById(state.selectedUserId);
         if (!u) return;
-        const ok = confirm(`Excluir usu√°rio "${u.name}"? (demo)`);
+        const ok = confirm(`Excluir usu·rio "${u.name}"? (demo)`);
         if (!ok) return;
         state.users = state.users.filter(x => x.id !== u.id);
         saveUsers();
         renderKPIs();
         renderUsers();
-        showToast("Usu√°rio", "Exclu√≠¬≠do (demo).");
+        showToast("Usu·rio", "ExcluÌ≠do (demo).");
     });
 }
 
@@ -279,7 +284,7 @@ function wireDrawerButtons() {
 function openUserModal(userId) {
     const modal = new bootstrap.Modal($("#modalUser"));
     const isEdit = !!userId;
-    $("#userModalTitle").textContent = isEdit ? "Editar usu√°rio" : "Novo usu√°rio";
+    $("#userModalTitle").textContent = isEdit ? "Editar usu·rio" : "Novo usu·rio";
 
     const u = isEdit ? userById(userId) : null;
 
@@ -287,8 +292,8 @@ function openUserModal(userId) {
     $("#userName").value = u?.name || "";
     $("#userEmail").value = u?.email || "";
     $("#userDept").value = u?.dept || "";
-    $("#userStatus").value = u?.status || "active";
-    $("#userMfa").value = (u?.mfaEnabled ? "true" : "false");
+    $("#userStatus").value = u?.status || DEFAULT_USER_STATUS;
+    $("#userMfa").value = (u?.mfaEnabled ? "true" : DEFAULT_MFA_OPTION);
 
     renderUserRoleSelectors(u?.roleIds || []);
     modal.show();
@@ -338,7 +343,7 @@ function saveUserFromModal() {
     const roleIds = $$("#userRolesChecks .role-check").filter(x => x.checked).map(x => x.value);
 
     if (!name || !email) {
-        showToast("Valida√ß√£o", "Informe Nome e Email.");
+        showToast("ValidaÁ„o", "Informe Nome e Email.");
         return;
     }
 
@@ -349,7 +354,7 @@ function saveUserFromModal() {
         u.name = name; u.email = email; u.dept = dept; u.status = status; u.mfaEnabled = mfaEnabled; u.roleIds = roleIds;
         u.updatedAt = now;
         saveUsers();
-        showToast("Usu√°rio", "Atualizado com sucesso.");
+        showToast("Usu·rio", "Atualizado com sucesso.");
     } else {
         const u = {
             id: uid(),
@@ -363,7 +368,7 @@ function saveUserFromModal() {
         };
         state.users.push(u);
         saveUsers();
-        showToast("Usu√°rio", "Criado com sucesso.");
+        showToast("Usu·rio", "Criado com sucesso.");
     }
 
     renderKPIs();
@@ -380,7 +385,7 @@ function toggleUserStatus(userId, keepDrawerOpen = false) {
     saveUsers();
     renderKPIs();
     renderUsers();
-    showToast("Status", `Usu√°rio agora est√°¬°: ${u.status}.`);
+    showToast("Status", `Usu·rio agora est·°: ${u.status}.`);
 
     if (keepDrawerOpen) openUserDrawer(userId);
 }
@@ -398,10 +403,10 @@ function renderRolesList() {
                 <div class="iconbox"><i class="bi bi-shield-lock"></i></div>
                 <div>
                   <div class="fw-bold">${escapeHtml(r.name)}</div>
-                  <div class="text-muted small">${escapeHtml(r.desc || "‚Ä¢")}</div>
+                  <div class="text-muted small">${escapeHtml(r.desc || "ï")}</div>
                 </div>
               </div>
-              ${r.builtIn ? `<span class="pill"><i class="bi bi-stars"></i>padr√£o</span>` : `<span class="pill"><i class="bi bi-person-badge"></i>custom</span>`}
+              ${r.builtIn ? `<span class="pill"><i class="bi bi-stars"></i>padr„o</span>` : `<span class="pill"><i class="bi bi-person-badge"></i>custom</span>`}
             </div>
           </div>
         `).join("");
@@ -418,7 +423,7 @@ function renderRolesList() {
 function renderRoleEditor() {
     const r = roleById(state.selectedRoleId);
     if (!r) {
-        $("#roleEditorTitle").textContent = "‚Ä¢";
+        $("#roleEditorTitle").textContent = "ï";
         $("#roleEditorDesc").textContent = "Selecione um perfil ao lado.";
         $("#roleName").value = "";
         $("#roleDesc").value = "";
@@ -427,7 +432,7 @@ function renderRoleEditor() {
     }
 
     $("#roleEditorTitle").textContent = `Editor de perfil: ${r.name}`;
-    $("#roleEditorDesc").textContent = r.desc || "‚Ä¢";
+    $("#roleEditorDesc").textContent = r.desc || "ï";
     $("#roleName").value = r.name || "";
     $("#roleDesc").value = r.desc || "";
 
@@ -491,7 +496,7 @@ function saveRoleEditor() {
     const name = ($("#roleName").value || "").trim();
     const desc = ($("#roleDesc").value || "").trim();
     if (!name) {
-        showToast("Valida√ß√£o", "Informe o nome do perfil.");
+        showToast("ValidaÁ„o", "Informe o nome do perfil.");
         return;
     }
 
@@ -503,7 +508,7 @@ function saveRoleEditor() {
     renderRolesList();
     renderRoleFilterOptions();
     renderUsers(); // para atualizar nomes de perfis nas linhas
-    showToast("Perfil", "Permiss√µes salvas com sucesso.");
+    showToast("Perfil", "Permissıes salvas com sucesso.");
 }
 
 function cloneSelectedRole() {
@@ -511,7 +516,7 @@ function cloneSelectedRole() {
     if (!r) return;
     const nr = {
         id: uid(),
-        name: r.name + " (C√É¬≥pia)",
+        name: r.name + " (C√≥pia)",
         desc: r.desc || "",
         perms: JSON.parse(JSON.stringify(r.perms || emptyPerms())),
         builtIn: false,
@@ -533,12 +538,12 @@ function deleteSelectedRole() {
     if (!r) return;
 
     if (r.builtIn) {
-        showToast("Perfil", "Perfis padr√£o n√£o podem ser exclu√É¬≠dos (demo).");
+        showToast("Perfil", "Perfis padr„o n„o podem ser exclu√≠dos (demo).");
         return;
     }
 
     const usedBy = state.users.filter(u => (u.roleIds || []).includes(r.id)).length;
-    const ok = confirm(`Excluir perfil "${r.name}"? Usu√°rios afetados: ${usedBy}. (demo)`);
+    const ok = confirm(`Excluir perfil "${r.name}"? Usu·rios afetados: ${usedBy}. (demo)`);
     if (!ok) return;
 
     // remove role from users
@@ -556,7 +561,7 @@ function deleteSelectedRole() {
     renderRoleFilterOptions();
     renderRolesList();
     renderRoleEditor();
-    showToast("Perfil", "Exclu√É¬≠do com sucesso.");
+    showToast("Perfil", "Exclu√≠do com sucesso.");
 }
 
 // ========= Create role modal
@@ -569,7 +574,7 @@ function createRoleFromModal() {
     const name = ($("#newRoleName").value || "").trim();
     const desc = ($("#newRoleDesc").value || "").trim();
     if (!name) {
-        showToast("Valida√ß√£o", "Informe o nome do perfil.");
+        showToast("ValidaÁ„o", "Informe o nome do perfil.");
         return;
     }
     const r = {
@@ -581,7 +586,7 @@ function createRoleFromModal() {
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString()
     };
-    // perm m√É¬≠nima: dashboard.view
+    // perm m√≠nima: dashboard.view
     r.perms.dashboard.view = true;
 
     state.roles.push(r);
@@ -594,13 +599,13 @@ function createRoleFromModal() {
     renderRoleFilterOptions();
     renderUsers();
     bootstrap.Modal.getInstance($("#modalRole")).hide();
-    showToast("Perfil", "Criado com sucesso. Ajuste as permiss√µes ao lado.");
+    showToast("Perfil", "Criado com sucesso. Ajuste as permissıes ao lado.");
 }
 
-// ========= CSV export (usu√°rios)
+// ========= CSV export (usu·rios)
 function exportUsersCsv() {
     const users = applyUserFilters(state.users);
-    const headers = ["Nome", "Email", "Departamento", "Status", "MFA", "Perfis", "√É≈°ltimo login", "Criado em"];
+    const headers = ["Nome", "Email", "Departamento", "Status", "MFA", "Perfis", "√öltimo login", "Criado em"];
     const strip = (s) => String(s ?? "").replace(/\s+/g, " ").trim().replaceAll('"', '""');
     const csv = [
         headers.map(h => `"${strip(h)}"`).join(";"),
@@ -654,7 +659,7 @@ function wireClock() {
 
 function wireTopButtons() {
     $("#btnSeedReset").addEventListener("click", () => {
-        const ok = confirm("Restaurar demo? Isso recria roles/usu√°rios iniciais.");
+        const ok = confirm("Restaurar demo? Isso recria roles/usu·rios iniciais.");
         if (!ok) return;
         localStorage.removeItem(USERS_KEY);
         localStorage.removeItem(ROLES_KEY);
@@ -666,7 +671,7 @@ function wireTopButtons() {
 
     $("#btnExportUsers").addEventListener("click", exportUsersCsv);
 
-    // bot√£o prim√°rio muda conforme aba
+    // bot„o prim·rio muda conforme aba
     $("#btnPrimaryAction").addEventListener("click", () => {
         const usersActive = $("#tab-users").classList.contains("active");
         if (usersActive) openUserModal(null);
@@ -675,7 +680,7 @@ function wireTopButtons() {
 
     $("#btnNewUser").addEventListener("click", () => openUserModal(null));
     $("#btnNewRole").addEventListener("click", () => openRoleModal());
-    $("#btnAuditMock").addEventListener("click", () => showToast("Auditoria", "Mock: em produ√ß√£o, listar a√ß√µes (login, altera√ß√£o de role, exporta√ß√µes)."));
+    $("#btnAuditMock").addEventListener("click", () => showToast("Auditoria", "Mock: em produÁ„o, listar aÁıes (login, alteraÁ„o de role, exportaÁıes)."));
 }
 
 function wireUsersFilters() {
@@ -708,7 +713,7 @@ function wireTabPrimaryAction() {
     const onTabShown = (ev) => {
         const id = ev.target?.id;
         if (id === "tab-users") {
-            $("#btnPrimaryAction").innerHTML = `<i class="bi bi-person-plus"></i><span class="d-none d-sm-inline ms-1">Novo usu√°rio</span>`;
+            $("#btnPrimaryAction").innerHTML = `<i class="bi bi-person-plus"></i><span class="d-none d-sm-inline ms-1">Novo usu·rio</span>`;
         } else {
             $("#btnPrimaryAction").innerHTML = `<i class="bi bi-plus-circle"></i><span class="d-none d-sm-inline ms-1">Novo perfil</span>`;
         }
@@ -717,6 +722,12 @@ function wireTabPrimaryAction() {
     $("#tab-roles").addEventListener("shown.bs.tab", onTabShown);
 }
 
+function refreshEnumDefaults() {
+    ROLE_ALL = enumFirstCode("roleFilter", "all");
+    DEFAULT_USER_STATUS = enumFirstCode("usuarioStatus", "active");
+    DEFAULT_USER_STATUS_FILTER = enumFirstCode("usuarioStatusFilter", "all");
+    DEFAULT_MFA_OPTION = enumFirstCode("usuarioMfaOption", "false");
+}
 // ========= Render all
 function renderAll() {
     renderKPIs();
@@ -727,9 +738,13 @@ function renderAll() {
 }
 
 // ========= Init
-(function init() {
+(async function init() {
     initLogo();
     wireClock();
+
+    await ensureEnumData();
+    refreshEnumDefaults();
+    applyEnumSelects();
 
     seedIfEmpty();
     loadAll();

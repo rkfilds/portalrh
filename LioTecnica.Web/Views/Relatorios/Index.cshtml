@@ -1,21 +1,21 @@
-Ôªø@model PageSeedViewModel
+@model PageSeedViewModel
 @{
-	ViewData["Title"] = "Portal RH ‚Ä¢ Devcraft Studio ‚Ä¢ Relat√≥rios";
-	ViewData["SidebarSubtitle"] = "Relat√≥rios";
+	ViewData["Title"] = "Portal RH ï Devcraft Studio ï RelatÛrios";
+	ViewData["SidebarSubtitle"] = "RelatÛrios";
 }
 
 
 
 <!-- MOBILE SIDEBAR OFFCANVAS -->
 @section Topbar {
-	@await Html.PartialAsync("_TopbarBrand", "Tela: Relat√≥rios")
+	@await Html.PartialAsync("_TopbarBrand", "Tela: RelatÛrios")
 
 	<div class="d-flex align-items-center gap-2">
 		<button class="btn btn-ghost" type="button" id="btnSeedReset" title="Restaurar demo">
 			<i class="bi bi-arrow-counterclockwise"></i><span class="d-none d-sm-inline ms-1">Reset demo</span>
 		</button>
 
-		<button class="btn btn-ghost" type="button" id="btnExport" title="Exportar relat√≥rio atual (CSV)">
+		<button class="btn btn-ghost" type="button" id="btnExport" title="Exportar relatÛrio atual (CSV)">
 			<i class="bi bi-filetype-csv"></i><span class="d-none d-sm-inline ms-1">Exportar CSV</span>
 		</button>
 
@@ -31,8 +31,8 @@
 <section class="content">
 	<div class="page-title">
 		<div>
-			<h4>Relat√≥rios</h4>
-			<div class="subtitle">Gere relat√≥rios operacionais e gerenciais. No sistema real: filtros & query Postgres & exporta√ß√£o.</div>
+			<h4>RelatÛrios</h4>
+			<div class="subtitle">Gere relatÛrios operacionais e gerenciais. No sistema real: filtros & query Postgres & exportaÁ„o.</div>
 		</div>
 	</div>
 
@@ -43,19 +43,19 @@
 	new { ColClass = "col-6 col-lg-3", Title = "Vagas", ValueStyle = "font-size:1.6rem;color:var(--lt-primary);", ValueId = "kpiVagas", Value = "0", PillIcon = "bi-briefcase", PillText = "ativas", Hint = "Total no cadastro (demo)." },
 	new { ColClass = "col-6 col-lg-3", Title = "Candidatos", ValueStyle = "font-size:1.6rem;color:var(--lt-primary);", ValueId = "kpiCands", Value = "0", PillIcon = "bi-people", PillText = "base", Hint = "Recebidos/triados (demo)." },
 	new { ColClass = "col-6 col-lg-3", Title = "Entrada", ValueStyle = "font-size:1.6rem;color:var(--lt-primary);", ValueId = "kpiInbox", Value = "0", PillIcon = "bi-inbox", PillText = "itens", Hint = "Fila (novo/processando)." },
-	new { ColClass = "col-6 col-lg-3", Title = "Convers√£o", ValueStyle = "font-size:1.6rem;color:var(--lt-primary);", ValueId = "kpiConv", Value = "0%", PillIcon = "bi-arrow-right-circle", PillText = "triagem", Hint = "Processado √¢‚Ä†‚Äô candidato." }
+	new { ColClass = "col-6 col-lg-3", Title = "Convers„o", ValueStyle = "font-size:1.6rem;color:var(--lt-primary);", ValueId = "kpiConv", Value = "0%", PillIcon = "bi-arrow-right-circle", PillText = "triagem", Hint = "Processado ‚Üí candidato." }
 	};
 	}
 	@await Html.PartialAsync("_KpiMiniRow", kpis)
 
 	<div class="grid2">
-		<!-- LEFT: cat√°logo de relat√≥rios + filtros -->
+		<!-- LEFT: cat·logo de relatÛrios + filtros -->
 		<div>
 			<div class="card-soft p-3 mb-3">
 				<div class="d-flex align-items-start justify-content-between gap-2">
 					<div>
-						<div class="fw-bold">Cat√°logo de relat√≥rios</div>
-						<div class="text-muted small">Selecione um relat√≥rio e configure filtros.</div>
+						<div class="fw-bold">Cat·logo de relatÛrios</div>
+						<div class="text-muted small">Selecione um relatÛrio e configure filtros.</div>
 					</div>
 				</div>
 
@@ -66,64 +66,27 @@
 
 			<div class="card-soft p-3">
 				<div class="fw-bold">Filtros</div>
-				<div class="text-muted small">Os filtros alteram a tabela/gr√°fico¬ù do relat√≥rio selecionado.</div>
+				<div class="text-muted small">Os filtros alteram a tabela/gr·ficoù do relatÛrio selecionado.</div>
 
 				<div class="row g-2 mt-2">
 					<div class="col-12">
-						<label class="form-label small">Per√≠¬≠odo</label>
-						@{
-							var periodOptions = EnumOptionsHelper.GetOptions<RelatorioPeriodo>();
-							var defaultPeriod = EnumOptionsHelper.GetCode(RelatorioPeriodo.Last30Days);
-							var vagaFilterOptions = EnumOptionsHelper.GetOptions<VagaFilterSimple>();
-							var origemOptions = EnumOptionsHelper.GetOptions<OrigemFilterSimple>();
-							var statusOptions = EnumOptionsHelper.GetOptions<InboxStatusFilterSimple>();
-							var freqOptions = EnumOptionsHelper.GetOptions<RelatorioFrequencia>();
-							var defaultFreq = EnumOptionsHelper.GetCode(RelatorioFrequencia.Weekly);
-						}
-
-						<select class="form-select" id="fPeriod">
-							@foreach (var opt in periodOptions)
-							{
-								if (opt.Code == defaultPeriod)
-								{
-									<option value="@opt.Code" selected>@opt.Text</option>
-								}
-								else
-								{
-									<option value="@opt.Code">@opt.Text</option>
-								}
-							}
-						</select>
+						<label class="form-label small">PerÌ≠odo</label>
+						<select class="form-select" id="fPeriod" data-enum="relatorioPeriodo" data-selected="30d" style="min-width: 200px; border-color:var(--lt-border);"></select>
 					</div>
 
 					<div class="col-12">
 						<label class="form-label small">Vaga</label>
-						<select class="form-select" id="fVaga">
-							@foreach (var opt in vagaFilterOptions)
-							{
-								<option value="@opt.Code">@opt.Text</option>
-							}
-						</select>
+						<select class="form-select" id="fVaga" style="min-width: 240px; border-color:var(--lt-border);"></select>
 					</div>
 
 					<div class="col-12">
 						<label class="form-label small">Origem</label>
-						<select class="form-select" id="fOrigem">
-							@foreach (var opt in origemOptions)
-							{
-								<option value="@opt.Code">@opt.Text</option>
-							}
-						</select>
+						<select class="form-select" id="fOrigem" data-enum="origemFilterSimple" style="min-width: 180px; border-color:var(--lt-border);"></select>
 					</div>
 
 					<div class="col-12">
 						<label class="form-label small">Status</label>
-						<select class="form-select" id="fStatus">
-							@foreach (var opt in statusOptions)
-							{
-								<option value="@opt.Code">@opt.Text</option>
-							}
-						</select>
+						<select class="form-select" id="fStatus" data-enum="inboxStatusFilterSimple" style="min-width: 180px; border-color:var(--lt-border);"></select>
 					</div>
 
 					<div class="col-12">
@@ -142,18 +105,18 @@
 
 				<div class="text-muted small mt-3">
 					<i class="bi bi-info-circle me-1"></i>
-					No produto real: filtros viram par√É¬¢metros de query e agrega√ß√µes no Postgres.
+					No produto real: filtros viram par√¢metros de query e agregaÁıes no Postgres.
 				</div>
 			</div>
 		</div>
 
-		<!-- RIGHT: relat√≥rio selecionado -->
+		<!-- RIGHT: relatÛrio selecionado -->
 		<div>
 			<div class="card-soft p-3 mb-3">
 				<div class="d-flex flex-wrap align-items-start justify-content-between gap-2">
 					<div>
-						<div class="fw-bold" id="reportTitle">‚Ä¢</div>
-						<div class="text-muted small" id="reportDesc">Selecione um relat√≥rio no cat√°logo.</div>
+						<div class="fw-bold" id="reportTitle">ï</div>
+						<div class="text-muted small" id="reportDesc">Selecione um relatÛrio no cat·logo.</div>
 					</div>
 					<div class="d-flex flex-wrap gap-2 justify-content-end">
 						<span class="tag" id="tagScope"><i class="bi bi-sliders"></i>escopo</span>
@@ -164,7 +127,7 @@
 				<hr class="my-3 divider">
 
 				<div class="chart-wrap mb-3">
-					<!-- gr√É¬°fico simples em canvas (mocado) -->
+					<!-- gr√°fico simples em canvas (mocado) -->
 					<canvas id="chart" style="width:100%; height:100%;"></canvas>
 				</div>
 
@@ -172,7 +135,7 @@
 					<div class="mini-title">Resultados</div>
 					<div class="d-flex gap-2 flex-wrap">
 						<span class="pill"><i class="bi bi-table"></i><span id="rowCount">0</span> linhas</span>
-						<span class="pill"><i class="bi bi-filetype-csv"></i>export√°vel</span>
+						<span class="pill"><i class="bi bi-filetype-csv"></i>export·vel</span>
 					</div>
 				</div>
 
@@ -190,28 +153,16 @@
 
 			<div class="card-soft p-3">
 				<div class="fw-bold">Agendamento</div>
-				<div class="text-muted small">Exemplo visual de como seria agendar envio autom√°tico por e-mail.</div>
+				<div class="text-muted small">Exemplo visual de como seria agendar envio autom·tico por e-mail.</div>
 
 				<div class="row g-2 mt-2">
 					<div class="col-12 col-md-6">
-						<label class="form-label small">Destinat√°rios</label>
+						<label class="form-label small">Destinat·rios</label>
 						<input class="form-control" placeholder="ex.: rh@@empresa.com; gestor@@empresa.com">
 					</div>
 					<div class="col-6 col-md-3">
-						<label class="form-label small">Frequ√™ncia</label>
-						<select class="form-select" id="fFrequency">
-							@foreach (var opt in freqOptions)
-							{
-								if (opt.Code == defaultFreq)
-								{
-									<option value="@opt.Code" selected>@opt.Text</option>
-								}
-								else
-								{
-									<option value="@opt.Code">@opt.Text</option>
-								}
-							}
-						</select>
+						<label class="form-label small">FrequÍncia</label>
+						<select class="form-select" id="fFrequency" data-enum="relatorioFrequencia" data-selected="weekly"></select>
 					</div>
 					<div class="col-6 col-md-3">
 						<label class="form-label small">Dia/Hora</label>

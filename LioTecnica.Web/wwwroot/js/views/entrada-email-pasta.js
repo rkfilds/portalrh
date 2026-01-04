@@ -58,27 +58,30 @@ function loadAll(){
 
     function findVaga(id){ return state.vagas.find(v => v.id === id) || null; }
     function findInbox(id){ return state.inbox.find(x => x.id === id) || null; }
-
     function statusTag(st){
       const map = {
-        novo:  { cls:"", icon:"dot", label:"Novo" },
-        processando:{ cls:"warn", icon:"arrow-repeat", label:"Processando" },
-        processado:{ cls:"ok", icon:"check2-circle", label:"Processado" },
-        falha:{ cls:"bad", icon:"exclamation-triangle", label:"Falha" },
-        descartado:{ cls:"bad", icon:"trash3", label:"Descartado" }
+        novo:  { cls:"", icon:"dot" },
+        processando:{ cls:"warn", icon:"arrow-repeat" },
+        processado:{ cls:"ok", icon:"check2-circle" },
+        falha:{ cls:"bad", icon:"exclamation-triangle" },
+        descartado:{ cls:"bad", icon:"trash3" }
       };
-      const it = map[st] || { cls:"", icon:"dot", label: (st||"—") };
-      return `<span class="status-tag ${it.cls}"><i class="bi bi-${it.icon}"></i>${it.label}</span>`;
+      const label = getEnumText("inboxStatusFilter", st, st || "-");
+      const it = map[st] || { cls:"", icon:"dot" };
+      return `<span class="status-tag ${it.cls}"><i class="bi bi-${it.icon}"></i>${label}</span>`;
     }
+
     function origemPill(o){
       const map = {
-        email: { icon:"envelope", label:"Email" },
-        pasta: { icon:"folder2-open", label:"Pasta" },
-        upload: { icon:"cloud-arrow-up", label:"Upload" }
+        email: { icon:"envelope" },
+        pasta: { icon:"folder2-open" },
+        upload: { icon:"cloud-arrow-up" }
       };
-      const it = map[o] || { icon:"question-circle", label:o||"—" };
-      return `<span class="pill"><i class="bi bi-${it.icon}"></i>${it.label}</span>`;
+      const label = getEnumText("origemFilter", o, o || "-");
+      const it = map[o] || { icon:"question-circle" };
+      return `<span class="pill"><i class="bi bi-${it.icon}"></i>${label}</span>`;
     }
+
     function attachmentPill(a){
       const icon = a.tipo === "pdf" ? "file-earmark-pdf" :
                    (a.tipo === "doc" || a.tipo === "docx" ? "file-earmark-word" : "file-earmark");
@@ -662,9 +665,12 @@ function loadAll(){
     }
 
     // ========= Init
-    (function init(){
+    (async function init(){
       initLogo();
       wireClock();
+
+      await ensureEnumData();
+      applyEnumSelects();
 
       seedIfEmpty();
       loadAll();

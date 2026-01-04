@@ -6,9 +6,9 @@ function enumFirstCode(key, fallback){
       return list.length ? list[0].code : fallback;
     }
 
-    const VAGA_ALL = enumFirstCode("vagaFilter", "all");
-    const STATUS_ALL = enumFirstCode("candidatoStatusFilter", "all");
-    const SORT_DEFAULT = enumFirstCode("matchingSort", "score_desc");
+    let VAGA_ALL = enumFirstCode("vagaFilter", "all");
+    let STATUS_ALL = enumFirstCode("candidatoStatusFilter", "all");
+    let SORT_DEFAULT = enumFirstCode("matchingSort", "score_desc");
     const EMPTY_TEXT = "—";
     const BULLET = "-";
     function setText(root, role, value, fallback = EMPTY_TEXT){
@@ -610,6 +610,12 @@ function renderVagaFilter(){
       tick();
       setInterval(tick, 1000*15);
     }
+    function refreshEnumDefaults(){
+      VAGA_ALL = enumFirstCode("vagaFilter", "all");
+      STATUS_ALL = enumFirstCode("candidatoStatusFilter", "all");
+      SORT_DEFAULT = enumFirstCode("matchingSort", "score_desc");
+    }
+
     function resetFiltersUI(){
       state.filters = { q:"", vagaId: VAGA_ALL, status: STATUS_ALL, sort: SORT_DEFAULT };
       const search = $("#fSearch");
@@ -678,9 +684,13 @@ function renderVagaFilter(){
     }
 
     // ========= Init
-    (function init(){
+    (async function init(){
       initLogo();
       wireClock();
+
+      await ensureEnumData();
+      refreshEnumDefaults();
+      applyEnumSelects();
 
       state.vagas = loadVagas();
       state.candidatos = loadCands();

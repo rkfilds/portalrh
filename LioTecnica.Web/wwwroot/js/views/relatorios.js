@@ -6,7 +6,7 @@ function enumFirstCode(key, fallback){
       return list.length ? list[0].code : fallback;
     }
 
-    const VAGA_ALL = enumFirstCode("vagaFilterSimple", "all");
+    let VAGA_ALL = enumFirstCode("vagaFilterSimple", "all");
     const EMPTY_TEXT = "—";
     const BULLET = "•";
 
@@ -311,6 +311,10 @@ function loadAll(){
         return;
       }
       td.textContent = cell;
+    }
+
+    function refreshEnumDefaults(){
+      VAGA_ALL = enumFirstCode("vagaFilterSimple", "all");
     }
 
     function setTable(headers, rows){
@@ -648,9 +652,13 @@ function loadAll(){
     }
 
     // ========= Init
-    (function init(){
+    (async function init(){
       initLogo();
       wireClock();
+
+      await ensureEnumData();
+      refreshEnumDefaults();
+      applyEnumSelects();
 
       seedIfEmpty();
       loadAll();

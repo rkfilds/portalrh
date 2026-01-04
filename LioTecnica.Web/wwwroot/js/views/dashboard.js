@@ -54,7 +54,7 @@ const AREAS_STORE_KEY = "lt_rh_areas_v1";
       return list.length ? list[0].code : fallback;
     }
 
-    const VAGA_ALL = enumFirstCode("vagaFilterSimple", "all");
+    let VAGA_ALL = enumFirstCode("vagaFilterSimple", "all");
 
     function badgeEtapa(etapa){
       const map = {
@@ -87,6 +87,10 @@ const AREAS_STORE_KEY = "lt_rh_areas_v1";
         });
 
       sel.value = (current === VAGA_ALL || vagas.some(v => v.id === current)) ? current : VAGA_ALL;
+    }
+
+    function refreshEnumDefaults(){
+      VAGA_ALL = enumFirstCode("vagaFilterSimple", "all");
     }
 
     function renderTable(minMatch=0){
@@ -321,7 +325,11 @@ const AREAS_STORE_KEY = "lt_rh_areas_v1";
     }
 
     // ========= Init
-    (function init(){
+    (async function init(){
+      await ensureEnumData();
+      refreshEnumDefaults();
+      applyEnumSelects();
+
       renderVagaFilterOptions();
       renderQuickAreaOptions();
       wireMenus();

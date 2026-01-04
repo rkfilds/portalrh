@@ -9,10 +9,10 @@
       return list.length ? list[0].code : fallback;
     }
 
-    const VAGA_ALL = enumFirstCode("vagaFilter", "all");
-    const SELECT_PLACEHOLDER = enumFirstCode("selectPlaceholder", "");
-    const DEFAULT_CAND_FONTE = enumFirstCode("candidatoFonte", "Email");
-    const DEFAULT_CAND_STATUS = enumFirstCode("candidatoStatus", "novo");
+    let VAGA_ALL = enumFirstCode("vagaFilter", "all");
+    let SELECT_PLACEHOLDER = enumFirstCode("selectPlaceholder", "");
+    let DEFAULT_CAND_FONTE = enumFirstCode("candidatoFonte", "email");
+    let DEFAULT_CAND_STATUS = enumFirstCode("candidatoStatus", "novo");
     const EMPTY_TEXT = "\u2014";
     const BULLET = "\u2022";
 
@@ -23,8 +23,7 @@
 
     function toApiStatus(value){
       const text = (value ?? DEFAULT_CAND_STATUS).toString().trim().toLowerCase();
-      if(!text) return DEFAULT_CAND_STATUS;
-      return text.charAt(0).toUpperCase() + text.slice(1);
+      return text || DEFAULT_CAND_STATUS;
     }
 
     const state = {
@@ -108,9 +107,16 @@
 
     function mapPesoToNumber(peso){
       if(typeof peso === "number") return peso;
-      const text = (peso ?? "").toString();
-      const match = text.match(/\d+/);
+      const text = getEnumText("vagaPeso", peso, peso);
+      const match = (text ?? "").toString().match(/\d+/);
       return match ? parseInt(match[0], 10) : 0;
+    }
+
+    function refreshEnumDefaults(){
+      VAGA_ALL = enumFirstCode("vagaFilter", "all");
+      SELECT_PLACEHOLDER = enumFirstCode("selectPlaceholder", "");
+      DEFAULT_CAND_FONTE = enumFirstCode("candidatoFonte", "email");
+      DEFAULT_CAND_STATUS = enumFirstCode("candidatoStatus", "novo");
     }
 
     function mapVagaFromList(api){
@@ -157,7 +163,7 @@
 
     function mapCandidateFromApi(api){
       if(!api) return null;
-      const fonte = (api.fonte || DEFAULT_CAND_FONTE).toString().trim() || DEFAULT_CAND_FONTE;
+      const fonte = (api.fonte || DEFAULT_CAND_FONTE).toString().trim().toLowerCase() || DEFAULT_CAND_FONTE;
       const status = toUiStatus(api.status || DEFAULT_CAND_STATUS);
 
       return {
@@ -187,7 +193,7 @@
         fone: (c.fone || "").trim() || null,
         cidade: (c.cidade || "").trim() || null,
         uf: (c.uf || "").trim().toUpperCase().slice(0,2) || null,
-        fonte: (c.fonte || DEFAULT_CAND_FONTE).trim(),
+        fonte: (c.fonte || DEFAULT_CAND_FONTE).trim().toLowerCase(),
         status: toApiStatus(c.status || DEFAULT_CAND_STATUS),
         vagaId: c.vagaId,
         obs: (c.obs || "").trim() || null,
@@ -1275,6 +1281,10 @@
     (async function init(){
       initLogo();
       wireClock();
+
+      await ensureEnumData();
+      refreshEnumDefaults();
+      applyEnumSelects();
 
       try{
         await syncVagasSummary();

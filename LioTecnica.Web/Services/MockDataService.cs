@@ -1,5 +1,3 @@
-using LioTecnica.Web.Enums;
-using LioTecnica.Web.Helpers;
 using LioTecnica.Web.ViewModels.Seed;
 
 namespace LioTecnica.Web.Services;
@@ -1378,9 +1376,9 @@ public static class MockDataService
             }
         };
 
-        var seniorGerencia = EnumOptionsHelper.GetCode(VagaSenioridade.Gerencia);
-        var seniorCoordenacao = EnumOptionsHelper.GetCode(VagaSenioridade.Coordenacao);
-        var seniorPleno = EnumOptionsHelper.GetCode(VagaSenioridade.Pleno);
+        var seniorGerencia = "gerente";
+        var seniorCoordenacao = "coordenador";
+        var seniorPleno = "pleno";
 
         var cargos = new List<CargoSeed>
         {
@@ -2148,16 +2146,16 @@ public static class MockDataService
             }
         };
 
-        var fonteEmail = EnumOptionsHelper.GetCode(CandidatoFonte.Email);
-        var fontePasta = EnumOptionsHelper.GetCode(CandidatoFonte.Pasta);
-        var fonteLinkedIn = EnumOptionsHelper.GetCode(CandidatoFonte.LinkedIn);
-        var fonteIndicacao = EnumOptionsHelper.GetCode(CandidatoFonte.Indicacao);
+        var fonteEmail = "email";
+        var fontePasta = "pasta";
+        var fonteLinkedIn = "linkedin";
+        var fonteIndicacao = "indicacao";
 
-        var statusNovo = EnumOptionsHelper.GetCode(CandidatoStatus.Novo);
-        var statusTriagem = EnumOptionsHelper.GetCode(CandidatoStatus.Triagem);
-        var statusPendente = EnumOptionsHelper.GetCode(CandidatoStatus.Pendente);
-        var statusAprovado = EnumOptionsHelper.GetCode(CandidatoStatus.Aprovado);
-        var statusReprovado = EnumOptionsHelper.GetCode(CandidatoStatus.Reprovado);
+        var statusNovo = "novo";
+        var statusTriagem = "triagem";
+        var statusPendente = "pendente";
+        var statusAprovado = "aprovado";
+        var statusReprovado = "reprovado";
 
         var candidatos = new List<CandidatoSeed>
         {

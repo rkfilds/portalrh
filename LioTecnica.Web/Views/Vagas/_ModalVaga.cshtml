@@ -10,36 +10,6 @@
       </div>
 
       <div class="modal-body">
-        @{
-          var selectPlaceholder = EnumOptionsHelper.GetOptions<SelectPlaceholder>();
-          var areaOptions = EnumOptionsHelper.GetOptions<VagaArea>();
-          var modalidadeOptions = EnumOptionsHelper.GetOptions<VagaModalidade>();
-          var statusOptions = EnumOptionsHelper.GetOptions<VagaStatus>();
-          var senioridadeOptions = EnumOptionsHelper.GetOptions<VagaSenioridade>();
-          var departamentoOptions = EnumOptionsHelper.GetOptions<VagaDepartamento>();
-          var areaTimeOptions = EnumOptionsHelper.GetOptions<VagaAreaTime>();
-          var tipoContratacaoOptions = EnumOptionsHelper.GetOptions<VagaTipoContratacao>();
-          var motivoAberturaOptions = EnumOptionsHelper.GetOptions<VagaMotivoAbertura>();
-          var orcamentoOptions = EnumOptionsHelper.GetOptions<VagaOrcamentoAprovado>();
-          var prioridadeOptions = EnumOptionsHelper.GetOptions<VagaPrioridade>();
-          var regimeOptions = EnumOptionsHelper.GetOptions<VagaRegimeJornada>();
-          var escalaOptions = EnumOptionsHelper.GetOptions<VagaEscalaTrabalho>();
-          var moedaOptions = EnumOptionsHelper.GetOptions<VagaMoeda>();
-          var remuneracaoPeriodOptions = EnumOptionsHelper.GetOptions<VagaRemuneracaoPeriodicidade>();
-          var bonusOptions = EnumOptionsHelper.GetOptions<VagaBonusTipo>();
-          var beneficioTipoOptions = EnumOptionsHelper.GetOptions<VagaBeneficioTipo>();
-          var beneficioRecorrenciaOptions = EnumOptionsHelper.GetOptions<VagaBeneficioRecorrencia>();
-          var escolaridadeOptions = EnumOptionsHelper.GetOptions<VagaEscolaridade>();
-          var formacaoOptions = EnumOptionsHelper.GetOptions<VagaFormacaoArea>();
-          var reqNivelOptions = EnumOptionsHelper.GetOptions<VagaRequisitoNivel>();
-          var reqAvaliacaoOptions = EnumOptionsHelper.GetOptions<VagaRequisitoAvaliacao>();
-          var etapaResponsavelOptions = EnumOptionsHelper.GetOptions<VagaEtapaResponsavel>();
-          var etapaModoOptions = EnumOptionsHelper.GetOptions<VagaEtapaModo>();
-          var perguntaTipoOptions = EnumOptionsHelper.GetOptions<VagaPerguntaTipo>();
-          var pesoOptions = EnumOptionsHelper.GetOptions<VagaPeso>();
-          var publicacaoVisibilidadeOptions = EnumOptionsHelper.GetOptions<VagaPublicacaoVisibilidade>();
-          var generoPreferenciaOptions = EnumOptionsHelper.GetOptions<VagaGeneroPreferencia>();
-        }
         <input type="hidden" id="vagaId">
 
         <div class="row g-2">
@@ -60,77 +30,37 @@
           <div class="col-12 col-md-4">
             <label class="form-label small text-muted">Departamento *</label>
             <select class="form-select" id="vagaDepartamento">
-              @foreach (var opt in selectPlaceholder)
-              {
-                <option value="@opt.Code">@opt.Text</option>
-              }
-              @foreach (var opt in departamentoOptions)
-              {
-                <option value="@opt.Code">@opt.Text</option>
-              }
-            </select>
+              </select>
           </div>
 
           <div class="col-12 col-md-4">
             <label class="form-label small text-muted">Area/Time</label>
             <select class="form-select" id="vagaAreaTime">
-              @foreach (var opt in selectPlaceholder)
-              {
-                <option value="@opt.Code">@opt.Text</option>
-              }
-              @foreach (var opt in areaTimeOptions)
-              {
-                <option value="@opt.Code">@opt.Text</option>
-              }
-            </select>
+              </select>
           </div>
 
           <div class="col-12 col-md-4">
             <label class="form-label small text-muted">Area *</label>
             <select class="form-select" id="vagaArea">
-              @foreach (var opt in selectPlaceholder)
-              {
-                <option value="@opt.Code">@opt.Text</option>
-              }
-              @foreach (var opt in areaOptions)
-              {
-                <option value="@opt.Code">@opt.Text</option>
-              }
-            </select>
+              </select>
           </div>
 
           <div class="col-12 col-md-4">
             <label class="form-label small text-muted">Modalidade</label>
             <select class="form-select" id="vagaModalidade">
-              @foreach (var opt in modalidadeOptions)
-              {
-                <option value="@opt.Code">@opt.Text</option>
-              }
-            </select>
+              </select>
           </div>
 
           <div class="col-12 col-md-4">
             <label class="form-label small text-muted">Status *</label>
             <select class="form-select" id="vagaStatus">
-              @foreach (var opt in selectPlaceholder)
-              {
-                <option value="@opt.Code">@opt.Text</option>
-              }
-              @foreach (var opt in statusOptions)
-              {
-                <option value="@opt.Code">@opt.Text</option>
-              }
-            </select>
+              </select>
           </div>
 
           <div class="col-12 col-md-4">
             <label class="form-label small text-muted">Senioridade</label>
             <select class="form-select" id="vagaSenioridade">
-              @foreach (var opt in senioridadeOptions)
-              {
-                <option value="@opt.Code">@opt.Text</option>
-              }
-            </select>
+              </select>
           </div>
 
           <div class="col-12 col-md-3">
@@ -141,15 +71,7 @@
           <div class="col-12 col-md-3">
             <label class="form-label small text-muted">Tipo de contratacao</label>
             <select class="form-select" id="vagaTipoContratacao">
-              @foreach (var opt in selectPlaceholder)
-              {
-                <option value="@opt.Code">@opt.Text</option>
-              }
-              @foreach (var opt in tipoContratacaoOptions)
-              {
-                <option value="@opt.Code">@opt.Text</option>
-              }
-            </select>
+              </select>
           </div>
 
           <div class="col-12 col-md-3">
@@ -176,28 +98,12 @@
           <div class="col-12 col-md-3">
             <label class="form-label small text-muted">Motivo da abertura</label>
             <select class="form-select" id="vagaMotivoAbertura">
-              @foreach (var opt in selectPlaceholder)
-              {
-                <option value="@opt.Code">@opt.Text</option>
-              }
-              @foreach (var opt in motivoAberturaOptions)
-              {
-                <option value="@opt.Code">@opt.Text</option>
-              }
-            </select>
+              </select>
           </div>
           <div class="col-12 col-md-3">
             <label class="form-label small text-muted">Orcamento aprovado</label>
             <select class="form-select" id="vagaOrcamento">
-              @foreach (var opt in selectPlaceholder)
-              {
-                <option value="@opt.Code">@opt.Text</option>
-              }
-              @foreach (var opt in orcamentoOptions)
-              {
-                <option value="@opt.Code">@opt.Text</option>
-              }
-            </select>
+              </select>
           </div>
 
           <div class="col-12 col-md-4">
@@ -211,15 +117,7 @@
           <div class="col-12 col-md-4">
             <label class="form-label small text-muted">Prioridade</label>
             <select class="form-select" id="vagaPrioridade">
-              @foreach (var opt in selectPlaceholder)
-              {
-                <option value="@opt.Code">@opt.Text</option>
-              }
-              @foreach (var opt in prioridadeOptions)
-              {
-                <option value="@opt.Code">@opt.Text</option>
-              }
-            </select>
+              </select>
           </div>
 
           <div class="col-12">
@@ -266,15 +164,7 @@
           <div class="col-12 col-md-4">
             <label class="form-label small text-muted">Preferencia de genero</label>
             <select class="form-select" id="vagaGeneroPreferencia">
-              @foreach (var opt in selectPlaceholder)
-              {
-                <option value="@opt.Code">@opt.Text</option>
-              }
-              @foreach (var opt in generoPreferenciaOptions)
-              {
-                <option value="@opt.Code">@opt.Text</option>
-              }
-            </select>
+              </select>
           </div>
           <div class="col-12 col-md-4">
             <label class="form-label small text-muted">Vaga afirmativa?</label>
@@ -329,15 +219,7 @@
           <div class="col-12 col-md-4">
             <label class="form-label small text-muted">Regime</label>
             <select class="form-select" id="vagaRegime">
-              @foreach (var opt in selectPlaceholder)
-              {
-                <option value="@opt.Code">@opt.Text</option>
-              }
-              @foreach (var opt in regimeOptions)
-              {
-                <option value="@opt.Code">@opt.Text</option>
-              }
-            </select>
+              </select>
           </div>
           <div class="col-12 col-md-4">
             <label class="form-label small text-muted">Carga semanal (h)</label>
@@ -346,15 +228,7 @@
           <div class="col-12 col-md-4">
             <label class="form-label small text-muted">Escala</label>
             <select class="form-select" id="vagaEscala">
-              @foreach (var opt in selectPlaceholder)
-              {
-                <option value="@opt.Code">@opt.Text</option>
-              }
-              @foreach (var opt in escalaOptions)
-              {
-                <option value="@opt.Code">@opt.Text</option>
-              }
-            </select>
+              </select>
           </div>
 
           <div class="col-12 col-md-4">
@@ -411,11 +285,7 @@
           <div class="col-12 col-md-3">
             <label class="form-label small text-muted">Moeda</label>
             <select class="form-select" id="vagaMoeda">
-              @foreach (var opt in moedaOptions)
-              {
-                <option value="@opt.Code">@opt.Text</option>
-              }
-            </select>
+              </select>
           </div>
           <div class="col-12 col-md-3">
             <label class="form-label small text-muted">Salario minimo</label>
@@ -428,24 +298,12 @@
           <div class="col-12 col-md-3">
             <label class="form-label small text-muted">Periodicidade</label>
             <select class="form-select" id="vagaPeriodicidade">
-              @foreach (var opt in remuneracaoPeriodOptions)
-              {
-                <option value="@opt.Code">@opt.Text</option>
-              }
-            </select>
+              </select>
           </div>
           <div class="col-12 col-md-4">
             <label class="form-label small text-muted">Bonus/Comissao</label>
             <select class="form-select" id="vagaBonusTipo">
-              @foreach (var opt in selectPlaceholder)
-              {
-                <option value="@opt.Code">@opt.Text</option>
-              }
-              @foreach (var opt in bonusOptions)
-              {
-                <option value="@opt.Code">@opt.Text</option>
-              }
-            </select>
+              </select>
           </div>
           <div class="col-12 col-md-4">
             <label class="form-label small text-muted">Percentual bonus/comissao</label>
@@ -477,28 +335,12 @@
           <div class="col-12 col-md-4">
             <label class="form-label small text-muted">Escolaridade</label>
             <select class="form-select" id="vagaEscolaridade">
-              @foreach (var opt in selectPlaceholder)
-              {
-                <option value="@opt.Code">@opt.Text</option>
-              }
-              @foreach (var opt in escolaridadeOptions)
-              {
-                <option value="@opt.Code">@opt.Text</option>
-              }
-            </select>
+              </select>
           </div>
           <div class="col-12 col-md-4">
             <label class="form-label small text-muted">Area de formacao</label>
             <select class="form-select" id="vagaFormacaoArea">
-              @foreach (var opt in selectPlaceholder)
-              {
-                <option value="@opt.Code">@opt.Text</option>
-              }
-              @foreach (var opt in formacaoOptions)
-              {
-                <option value="@opt.Code">@opt.Text</option>
-              }
-            </select>
+              </select>
           </div>
           <div class="col-12 col-md-4">
             <label class="form-label small text-muted">Experiencia minima (anos)</label>
@@ -572,15 +414,7 @@
           <div class="col-12 col-md-4">
             <label class="form-label small text-muted">Visibilidade</label>
             <select class="form-select" id="vagaVisibilidade">
-              @foreach (var opt in selectPlaceholder)
-              {
-                <option value="@opt.Code">@opt.Text</option>
-              }
-              @foreach (var opt in publicacaoVisibilidadeOptions)
-              {
-                <option value="@opt.Code">@opt.Text</option>
-              }
-            </select>
+              </select>
           </div>
           <div class="col-12 col-md-4">
             <label class="form-label small text-muted">Data de inicio</label>
@@ -693,11 +527,7 @@
               <div class="col-12 col-md-4">
                 <label class="form-label small text-muted">Tipo</label>
                 <select class="form-select form-select-sm" data-role="benefit-type">
-                  @foreach (var opt in beneficioTipoOptions)
-                  {
-                    <option value="@opt.Code">@opt.Text</option>
-                  }
-                </select>
+                  </select>
               </div>
               <div class="col-12 col-md-4">
                 <label class="form-label small text-muted">Valor (opcional)</label>
@@ -706,11 +536,7 @@
               <div class="col-12 col-md-2">
                 <label class="form-label small text-muted">Recorrencia</label>
                 <select class="form-select form-select-sm" data-role="benefit-rec">
-                  @foreach (var opt in beneficioRecorrenciaOptions)
-                  {
-                    <option value="@opt.Code">@opt.Text</option>
-                  }
-                </select>
+                  </select>
               </div>
               <div class="col-12 col-md-2">
                 <label class="form-label small text-muted">Obrigatorio?</label>
@@ -743,11 +569,7 @@
               <div class="col-6 col-md-2">
                 <label class="form-label small text-muted">Peso (1-5)</label>
                 <select class="form-select form-select-sm" data-role="req-weight">
-                  @foreach (var opt in pesoOptions)
-                  {
-                    <option value="@opt.Code">@opt.Text</option>
-                  }
-                </select>
+                  </select>
               </div>
               <div class="col-6 col-md-2">
                 <label class="form-label small text-muted">Obrigatorio</label>
@@ -763,20 +585,12 @@
               <div class="col-12 col-md-4">
                 <label class="form-label small text-muted">Nivel</label>
                 <select class="form-select form-select-sm" data-role="req-level">
-                  @foreach (var opt in reqNivelOptions)
-                  {
-                    <option value="@opt.Code">@opt.Text</option>
-                  }
-                </select>
+                  </select>
               </div>
               <div class="col-12 col-md-4">
                 <label class="form-label small text-muted">Avaliacao</label>
                 <select class="form-select form-select-sm" data-role="req-eval">
-                  @foreach (var opt in reqAvaliacaoOptions)
-                  {
-                    <option value="@opt.Code">@opt.Text</option>
-                  }
-                </select>
+                  </select>
               </div>
               <div class="col-12 col-md-4">
                 <label class="form-label small text-muted">Obs.</label>
@@ -802,20 +616,12 @@
               <div class="col-12 col-md-3">
                 <label class="form-label small text-muted">Responsavel</label>
                 <select class="form-select form-select-sm" data-role="stage-owner">
-                  @foreach (var opt in etapaResponsavelOptions)
-                  {
-                    <option value="@opt.Code">@opt.Text</option>
-                  }
-                </select>
+                  </select>
               </div>
               <div class="col-6 col-md-2">
                 <label class="form-label small text-muted">Modo</label>
                 <select class="form-select form-select-sm" data-role="stage-mode">
-                  @foreach (var opt in etapaModoOptions)
-                  {
-                    <option value="@opt.Code">@opt.Text</option>
-                  }
-                </select>
+                  </select>
               </div>
               <div class="col-6 col-md-3">
                 <label class="form-label small text-muted">SLA (dias)</label>
@@ -845,20 +651,12 @@
               <div class="col-12 col-md-4">
                 <label class="form-label small text-muted">Tipo</label>
                 <select class="form-select form-select-sm" data-role="question-type">
-                  @foreach (var opt in perguntaTipoOptions)
-                  {
-                    <option value="@opt.Code">@opt.Text</option>
-                  }
-                </select>
+                  </select>
               </div>
               <div class="col-6 col-md-2">
                 <label class="form-label small text-muted">Peso</label>
                 <select class="form-select form-select-sm" data-role="question-weight">
-                  @foreach (var opt in pesoOptions)
-                  {
-                    <option value="@opt.Code">@opt.Text</option>
-                  }
-                </select>
+                  </select>
               </div>
               <div class="col-6 col-md-3">
                 <label class="form-label small text-muted">Obrigatoria?</label>

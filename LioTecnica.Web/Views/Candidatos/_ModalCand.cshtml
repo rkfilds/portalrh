@@ -10,11 +10,6 @@
       </div>
 
       <div class="modal-body">
-        @{
-          var fonteOptions = EnumOptionsHelper.GetOptions<CandidatoFonte>();
-          var statusOptions = EnumOptionsHelper.GetOptions<CandidatoStatus>();
-          var selectPlaceholder = EnumOptionsHelper.GetOptions<SelectPlaceholder>();
-        }
         <input type="hidden" id="candId">
 
         <ul class="nav nav-pills gap-2 mb-3" style="background: rgba(173,200,220,.16); padding: .35rem; border-radius: 999px; border: 1px solid rgba(16,82,144,.14);">
@@ -60,33 +55,18 @@
 
               <div class="col-12 col-md-2">
                 <label class="form-label small text-muted">Fonte</label>
-                <select class="form-select" id="candFonte">
-                  @foreach (var opt in fonteOptions)
-                  {
-                    <option value="@opt.Code">@opt.Text</option>
-                  }
-                </select>
+                <select class="form-select" id="candFonte" data-enum="candidatoFonte"></select>
               </div>
 
               <div class="col-12 col-md-7">
                 <label class="form-label small text-muted">Vaga *</label>
-                <select class="form-select" id="candVaga">
-                  @foreach (var opt in selectPlaceholder)
-                  {
-                    <option value="@opt.Code">@opt.Text</option>
-                  }
-                </select>
+                <select class="form-select" id="candVaga"></select>
                 <div class="form-text">Vagas sao carregadas da API.</div>
               </div>
 
               <div class="col-12 col-md-5">
                 <label class="form-label small text-muted">Status *</label>
-                <select class="form-select" id="candStatus">
-                  @foreach (var opt in statusOptions)
-                  {
-                    <option value="@opt.Code">@opt.Text</option>
-                  }
-                </select>
+                <select class="form-select" id="candStatus" data-enum="candidatoStatus"></select>
               </div>
 
               <div class="col-12">

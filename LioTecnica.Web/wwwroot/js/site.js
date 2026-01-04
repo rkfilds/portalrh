@@ -19,6 +19,8 @@
       .replaceAll("'", "&#039;");
   };
 
+  const normalizeEnumCode = (code) => (code ?? "").toString().trim().toLowerCase();
+
   g.getEnumOptions = (key) => {
     const data = g.__enumData || {};
     const list = data[key];
@@ -27,7 +29,8 @@
 
   g.getEnumText = (key, code, fallback = "") => {
     const list = g.getEnumOptions(key);
-    const opt = list.find(o => o.code === code);
+    const target = normalizeEnumCode(code);
+    const opt = list.find(o => normalizeEnumCode(o.code) === target);
     return opt ? opt.text : (fallback || code || "");
   };
 
@@ -43,9 +46,49 @@
     if (!select) return;
     select.replaceChildren();
     const list = g.getEnumOptions(key);
+    const selectedKey = normalizeEnumCode(selectedCode);
+    const hasSelected = selectedKey.length > 0;
     list.forEach(opt => {
-      select.appendChild(g.buildOption(opt.code, opt.text, opt.code === selectedCode));
+      const isSelected = hasSelected && normalizeEnumCode(opt.code) === selectedKey;
+      select.appendChild(g.buildOption(opt.code, opt.text, isSelected));
     });
+  };
+
+  g.applyEnumSelects = (root = document) => {
+    g.$$(`select[data-enum]`, root).forEach(select => {
+      const key = select.dataset.enum;
+      if (!key) return;
+      const selected = select.dataset.selected ?? select.value ?? "";
+      g.fillSelectFromEnum(select, key, selected);
+    });
+  };
+
+  g.ensureEnumData = async () => {
+    if (g.__enumDataLoaded && g.__enumData) return g.__enumData;
+    if (g.__enumDataPromise) return g.__enumDataPromise;
+    const url = g.__enumsUrl || "/api/lookup/enums";
+    g.__enumDataPromise = fetch(url, { headers: { "Accept": "application/json" } })
+      .then(res => {
+        if (!res.ok) throw new Error(`Falha ao buscar enums: ${res.status}`);
+        return res.json();
+      })
+      .then(data => {
+        g.__enumData = data || {};
+        g.__enumDataLoaded = true;
+        g.applyEnumSelects();
+        return g.__enumData;
+      })
+      .catch(err => {
+        console.error("Falha ao carregar enums da API:", err);
+        g.__enumData = g.__enumData || {};
+        g.__enumDataLoaded = true;
+        return g.__enumData;
+      })
+      .finally(() => {
+        g.__enumDataPromise = null;
+      });
+
+    return g.__enumDataPromise;
   };
 
   g.cloneTemplate = (id) => {

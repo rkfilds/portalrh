@@ -79,31 +79,31 @@ public sealed class LookupController : ControllerBase
     {
         var result = new Dictionary<string, IReadOnlyList<EnumOptionResponse>>
         {
-            ["vagaStatus"] = BuildEnumOptions<VagaStatus>(),
+            ["vagaStatus"] = BuildEnumOptions<VagaStatus>(moveZeroToEnd: true),
             ["vagaModalidade"] = BuildEnumOptions<VagaModalidade>(),
-            ["vagaSenioridade"] = BuildEnumOptions<VagaSenioridade>(),
-            ["vagaAreaTime"] = BuildEnumOptions<VagaAreaTime>(),
-            ["vagaTipoContratacao"] = BuildEnumOptions<VagaTipoContratacao>(),
-            ["vagaMotivoAbertura"] = BuildEnumOptions<VagaMotivoAbertura>(),
-            ["vagaOrcamentoAprovado"] = BuildEnumOptions<VagaOrcamentoAprovado>(),
-            ["vagaPrioridade"] = BuildEnumOptions<VagaPrioridade>(),
-            ["vagaRegimeJornada"] = BuildEnumOptions<VagaRegimeJornada>(),
-            ["vagaEscalaTrabalho"] = BuildEnumOptions<VagaEscalaTrabalho>(),
+            ["vagaSenioridade"] = BuildEnumOptions<VagaSenioridade>(moveZeroToEnd: true),
+            ["vagaAreaTime"] = BuildEnumOptions<VagaAreaTime>(moveZeroToEnd: true),
+            ["vagaTipoContratacao"] = BuildEnumOptions<VagaTipoContratacao>(moveZeroToEnd: true),
+            ["vagaMotivoAbertura"] = BuildEnumOptions<VagaMotivoAbertura>(moveZeroToEnd: true),
+            ["vagaOrcamentoAprovado"] = BuildEnumOptions<VagaOrcamentoAprovado>(moveZeroToEnd: true),
+            ["vagaPrioridade"] = BuildEnumOptions<VagaPrioridade>(moveZeroToEnd: true),
+            ["vagaRegimeJornada"] = BuildEnumOptions<VagaRegimeJornada>(moveZeroToEnd: true),
+            ["vagaEscalaTrabalho"] = BuildEnumOptions<VagaEscalaTrabalho>(moveZeroToEnd: true),
             ["vagaMoeda"] = BuildEnumOptions<VagaMoeda>(),
             ["vagaRemuneracaoPeriodicidade"] = BuildEnumOptions<VagaRemuneracaoPeriodicidade>(),
-            ["vagaBonusTipo"] = BuildEnumOptions<VagaBonusTipo>(),
+            ["vagaBonusTipo"] = BuildEnumOptions<VagaBonusTipo>(moveZeroToEnd: true),
             ["vagaBeneficioTipo"] = BuildEnumOptions<VagaBeneficioTipo>(),
             ["vagaBeneficioRecorrencia"] = BuildEnumOptions<VagaBeneficioRecorrencia>(),
-            ["vagaEscolaridade"] = BuildEnumOptions<VagaEscolaridade>(),
-            ["vagaFormacaoArea"] = BuildEnumOptions<VagaFormacaoArea>(),
+            ["vagaEscolaridade"] = BuildEnumOptions<VagaEscolaridade>(moveZeroToEnd: true),
+            ["vagaFormacaoArea"] = BuildEnumOptions<VagaFormacaoArea>(moveZeroToEnd: true),
             ["vagaRequisitoNivel"] = BuildEnumOptions<VagaRequisitoNivel>(),
             ["vagaRequisitoAvaliacao"] = BuildEnumOptions<VagaRequisitoAvaliacao>(),
             ["vagaEtapaResponsavel"] = BuildEnumOptions<VagaEtapaResponsavel>(),
             ["vagaEtapaModo"] = BuildEnumOptions<VagaEtapaModo>(),
             ["vagaPerguntaTipo"] = BuildEnumOptions<VagaPerguntaTipo>(),
             ["vagaPeso"] = BuildPesoOptions(),
-            ["vagaPublicacaoVisibilidade"] = BuildEnumOptions<VagaPublicacaoVisibilidade>(),
-            ["vagaGeneroPreferencia"] = BuildEnumOptions<VagaGeneroPreferencia>(),
+            ["vagaPublicacaoVisibilidade"] = BuildEnumOptions<VagaPublicacaoVisibilidade>(moveZeroToEnd: true),
+            ["vagaGeneroPreferencia"] = BuildEnumOptions<VagaGeneroPreferencia>(moveZeroToEnd: true),
             ["vagaAreaFilter"] = new List<EnumOptionResponse>
             {
                 new("all", "Area: todas")
@@ -189,21 +189,207 @@ public sealed class LookupController : ControllerBase
         });
     }
 
-    private static IReadOnlyList<EnumOptionResponse> BuildEnumOptions<TEnum>() where TEnum : struct, Enum
+    [HttpGet("enums")]
+    public ActionResult<Dictionary<string, IReadOnlyList<EnumOptionResponse>>> Enums()
     {
-        return Enum.GetValues<TEnum>()
-            .Select(value =>
+        var candidatoStatus = BuildEnumOptions<CandidatoStatus>();
+        var candidatoDocumentoTipo = BuildEnumOptions<CandidatoDocumentoTipo>();
+
+        var vagaStatus = BuildEnumOptions<VagaStatus>(moveZeroToEnd: true);
+        var vagaModalidade = BuildEnumOptions<VagaModalidade>();
+        var vagaSenioridade = BuildEnumOptions<VagaSenioridade>(moveZeroToEnd: true);
+        var vagaArea = BuildEnumOptions<VagaArea>(moveZeroToEnd: true);
+        var vagaAreaTime = BuildEnumOptions<VagaAreaTime>(moveZeroToEnd: true);
+        var vagaTipoContratacao = BuildEnumOptions<VagaTipoContratacao>(moveZeroToEnd: true);
+        var vagaMotivoAbertura = BuildEnumOptions<VagaMotivoAbertura>(moveZeroToEnd: true);
+        var vagaOrcamentoAprovado = BuildEnumOptions<VagaOrcamentoAprovado>(moveZeroToEnd: true);
+        var vagaPrioridade = BuildEnumOptions<VagaPrioridade>(moveZeroToEnd: true);
+        var vagaRegimeJornada = BuildEnumOptions<VagaRegimeJornada>(moveZeroToEnd: true);
+        var vagaEscalaTrabalho = BuildEnumOptions<VagaEscalaTrabalho>(moveZeroToEnd: true);
+        var vagaMoeda = BuildEnumOptions<VagaMoeda>();
+        var vagaRemuneracaoPeriodicidade = BuildEnumOptions<VagaRemuneracaoPeriodicidade>();
+        var vagaBonusTipo = BuildEnumOptions<VagaBonusTipo>(moveZeroToEnd: true);
+        var vagaBeneficioTipo = BuildEnumOptions<VagaBeneficioTipo>();
+        var vagaBeneficioRecorrencia = BuildEnumOptions<VagaBeneficioRecorrencia>();
+        var vagaEscolaridade = BuildEnumOptions<VagaEscolaridade>(moveZeroToEnd: true);
+        var vagaFormacaoArea = BuildEnumOptions<VagaFormacaoArea>(moveZeroToEnd: true);
+        var vagaRequisitoNivel = BuildEnumOptions<VagaRequisitoNivel>();
+        var vagaRequisitoAvaliacao = BuildEnumOptions<VagaRequisitoAvaliacao>();
+        var vagaEtapaResponsavel = BuildEnumOptions<VagaEtapaResponsavel>();
+        var vagaEtapaModo = BuildEnumOptions<VagaEtapaModo>();
+        var vagaPerguntaTipo = BuildEnumOptions<VagaPerguntaTipo>();
+        var vagaPeso = BuildPesoOptions();
+        var vagaPublicacaoVisibilidade = BuildEnumOptions<VagaPublicacaoVisibilidade>(moveZeroToEnd: true);
+        var vagaGeneroPreferencia = BuildEnumOptions<VagaGeneroPreferencia>(moveZeroToEnd: true);
+
+        var result = new Dictionary<string, IReadOnlyList<EnumOptionResponse>>
+        {
+            ["selectPlaceholder"] = BuildStaticOptions(("", "Selecione...")),
+
+            ["candidatoStatus"] = candidatoStatus,
+            ["candidatoStatusFilter"] = BuildFilterOptions("Status: todos", candidatoStatus),
+            ["candidatoFonte"] = BuildEnumOptions<CandidatoFonte>(),
+            ["candidatoDocumentoTipo"] = candidatoDocumentoTipo,
+
+            ["vagaStatus"] = vagaStatus,
+            ["vagaStatusFilter"] = BuildFilterOptions("Status: todos", vagaStatus),
+            ["vagaArea"] = vagaArea,
+            ["vagaAreaFilter"] = BuildStaticOptions(("all", "Area: todas")),
+            ["vagaModalidade"] = vagaModalidade,
+            ["vagaSenioridade"] = vagaSenioridade,
+            ["vagaDepartamento"] = BuildEnumOptions<VagaDepartamento>(moveZeroToEnd: true),
+            ["vagaAreaTime"] = vagaAreaTime,
+            ["vagaTipoContratacao"] = vagaTipoContratacao,
+            ["vagaMotivoAbertura"] = vagaMotivoAbertura,
+            ["vagaOrcamentoAprovado"] = vagaOrcamentoAprovado,
+            ["vagaPrioridade"] = vagaPrioridade,
+            ["vagaRegimeJornada"] = vagaRegimeJornada,
+            ["vagaEscalaTrabalho"] = vagaEscalaTrabalho,
+            ["vagaMoeda"] = vagaMoeda,
+            ["vagaRemuneracaoPeriodicidade"] = vagaRemuneracaoPeriodicidade,
+            ["vagaBonusTipo"] = vagaBonusTipo,
+            ["vagaBeneficioTipo"] = vagaBeneficioTipo,
+            ["vagaBeneficioRecorrencia"] = vagaBeneficioRecorrencia,
+            ["vagaEscolaridade"] = vagaEscolaridade,
+            ["vagaFormacaoArea"] = vagaFormacaoArea,
+            ["vagaRequisitoNivel"] = vagaRequisitoNivel,
+            ["vagaRequisitoAvaliacao"] = vagaRequisitoAvaliacao,
+            ["vagaEtapaResponsavel"] = vagaEtapaResponsavel,
+            ["vagaEtapaModo"] = vagaEtapaModo,
+            ["vagaPerguntaTipo"] = vagaPerguntaTipo,
+            ["vagaPeso"] = vagaPeso,
+            ["vagaPublicacaoVisibilidade"] = vagaPublicacaoVisibilidade,
+            ["vagaGeneroPreferencia"] = vagaGeneroPreferencia,
+            ["vagaFilter"] = BuildStaticOptions(("all", "Vaga: todas")),
+            ["vagaFilterSimple"] = BuildStaticOptions(("all", "Todas")),
+
+            ["requisitoCategoria"] = BuildStaticOptions(
+                ("competencia", "Competencia"),
+                ("experiencia", "Experiencia"),
+                ("formacao", "Formacao"),
+                ("ferramenta_tecnologia", "Ferramenta/Tecnologia"),
+                ("idioma", "Idioma"),
+                ("certificacao", "Certificacao"),
+                ("localidade", "Localidade"),
+                ("outros", "Outros")
+            ),
+
+            ["matchingSort"] = BuildStaticOptions(
+                ("score_desc", "Ordenar: Match (maior -> menor)"),
+                ("score_asc", "Ordenar: Match (menor -> maior)"),
+                ("updated_desc", "Ordenar: Atualizacao (recente)"),
+                ("updated_asc", "Ordenar: Atualizacao (antiga)"),
+                ("name_asc", "Ordenar: Nome (A-Z)")
+            ),
+
+            ["origemFilter"] = BuildStaticOptions(
+                ("all", "Origem: todas"),
+                ("email", "Email"),
+                ("pasta", "Pasta"),
+                ("upload", "Upload")
+            ),
+            ["origemFilterSimple"] = BuildStaticOptions(
+                ("all", "Todas"),
+                ("email", "Email"),
+                ("pasta", "Pasta"),
+                ("upload", "Upload")
+            ),
+
+            ["inboxStatusFilter"] = BuildStaticOptions(
+                ("all", "Status: todos"),
+                ("novo", "Novo"),
+                ("processando", "Processando"),
+                ("processado", "Processado"),
+                ("falha", "Falha"),
+                ("descartado", "Descartado")
+            ),
+            ["inboxStatusFilterSimple"] = BuildStaticOptions(
+                ("all", "Todos"),
+                ("novo", "Novo"),
+                ("processando", "Processando"),
+                ("processado", "Processado"),
+                ("falha", "Falha"),
+                ("descartado", "Descartado")
+            ),
+
+            ["relatorioPeriodo"] = BuildStaticOptions(
+                ("7d", "Ultimos 7 dias"),
+                ("30d", "Ultimos 30 dias"),
+                ("90d", "Ultimos 90 dias"),
+                ("ytd", "Ano atual (YTD)")
+            ),
+            ["relatorioFrequencia"] = BuildStaticOptions(
+                ("daily", "Diario"),
+                ("weekly", "Semanal"),
+                ("monthly", "Mensal")
+            ),
+
+            ["usuarioStatus"] = BuildStaticOptions(
+                ("active", "Ativo"),
+                ("invited", "Convidado"),
+                ("disabled", "Desativado")
+            ),
+            ["usuarioStatusFilter"] = BuildStaticOptions(
+                ("all", "Todos"),
+                ("active", "Ativo"),
+                ("invited", "Convidado"),
+                ("disabled", "Desativado")
+            ),
+            ["usuarioMfaOption"] = BuildStaticOptions(
+                ("false", "Desabilitado"),
+                ("true", "Habilitado")
+            ),
+            ["roleFilter"] = BuildStaticOptions(("all", "Todos")),
+
+            ["triagemDecisionAction"] = BuildStaticOptions(
+                ("aprovado", "Aprovar"),
+                ("pendente", "Marcar como Pendente"),
+                ("reprovado", "Reprovar"),
+                ("triagem", "Manter em Triagem")
+            ),
+            ["triagemDecisionReason"] = BuildStaticOptions(
+                ("", "(opcional)"),
+                ("missing_mandatory", "Faltou requisito obrigatorio"),
+                ("below_threshold", "Match abaixo do minimo"),
+                ("profile_fit", "Perfil aderente"),
+                ("needs_validation", "Necessita validacao tecnica"),
+                ("low_experience", "Experiencia insuficiente"),
+                ("location_availability", "Localizacao/Disponibilidade")
+            )
+        };
+
+        return Ok(result);
+    }
+
+    private static IReadOnlyList<EnumOptionResponse> BuildEnumOptions<TEnum>(
+        bool lowerCaseCode = true,
+        bool moveZeroToEnd = false)
+        where TEnum : struct, Enum
+    {
+        var values = Enum.GetValues<TEnum>().ToList();
+
+        if (moveZeroToEnd)
+        {
+            values = values
+                .OrderBy(v => Convert.ToInt32(v) == 0 ? int.MaxValue : Convert.ToInt32(v))
+                .ToList();
+        }
+
+        return values.Select(value =>
+        {
+            var code = value.ToString();
+            var text = HumanizeEnum(code);
+            if (lowerCaseCode)
             {
-                var code = value.ToString();
-                var text = HumanizeEnum(code);
-                return new EnumOptionResponse(code, text);
-            })
-            .ToList();
+                code = code.ToLowerInvariant();
+            }
+            return new EnumOptionResponse(code, text);
+        }).ToList();
     }
 
     private static IReadOnlyList<EnumOptionResponse> BuildPesoOptions()
     {
-        var map = new Dictionary<string, string>
+        var map = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
             ["Um"] = "1",
             ["Dois"] = "2",
@@ -215,11 +401,29 @@ public sealed class LookupController : ControllerBase
         return Enum.GetValues<VagaPeso>()
             .Select(value =>
             {
-                var code = value.ToString();
-                var text = map.TryGetValue(code, out var label) ? label : HumanizeEnum(code);
+                var rawCode = value.ToString();
+                var text = map.TryGetValue(rawCode, out var label) ? label : HumanizeEnum(rawCode);
+                var code = rawCode.ToLowerInvariant();
                 return new EnumOptionResponse(code, text);
             })
             .ToList();
+    }
+
+    private static IReadOnlyList<EnumOptionResponse> BuildFilterOptions(
+        string allText,
+        IReadOnlyList<EnumOptionResponse> items)
+    {
+        var list = new List<EnumOptionResponse>
+        {
+            new("all", allText)
+        };
+        list.AddRange(items);
+        return list;
+    }
+
+    private static IReadOnlyList<EnumOptionResponse> BuildStaticOptions(params (string Code, string Text)[] items)
+    {
+        return items.Select(item => new EnumOptionResponse(item.Code, item.Text)).ToList();
     }
 
     private static string HumanizeEnum(string value)

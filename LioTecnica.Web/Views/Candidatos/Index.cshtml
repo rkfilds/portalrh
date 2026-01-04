@@ -78,25 +78,11 @@
                     <input class="form-control" id="fSearch" placeholder="Buscar por nome, email, vaga..." style="border-color:var(--lt-border);">
                   </div>
                 </div>
-                @{
-                  var statusOptions = EnumOptionsHelper.GetOptions<CandidatoStatusFilter>();
-                  var vagaFilterOptions = EnumOptionsHelper.GetOptions<VagaFilter>();
-                }
                 <div class="col-6 col-md-3">
-                  <select class="form-select" id="fStatus" style="border-color:var(--lt-border);">
-                    @foreach (var opt in statusOptions)
-                    {
-                      <option value="@opt.Code">@opt.Text</option>
-                    }
-                  </select>
+                  <select class="form-select" id="fStatus" data-enum="candidatoStatusFilter" style="border-color:var(--lt-border);"></select>
                 </div>
                 <div class="col-6 col-md-3">
-                  <select class="form-select" id="fVaga" style="border-color:var(--lt-border);">
-                    @foreach (var opt in vagaFilterOptions)
-                    {
-                      <option value="@opt.Code">@opt.Text</option>
-                    }
-                  </select>
+                  <select class="form-select" id="fVaga" style="border-color:var(--lt-border);"></select>
                 </div>
               </div>
 
