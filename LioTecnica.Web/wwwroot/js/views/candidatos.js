@@ -501,8 +501,8 @@
       });
     }
 
-    function renderDocumentList(root, c){
-      const host = root.querySelector("#docList");
+    function renderDocumentList(root, c, listSelector = "#docList"){
+      const host = root.querySelector(listSelector);
       if(!host) return;
       host.replaceChildren();
 
@@ -542,7 +542,7 @@
 
         const deleteBtn = row.querySelector('[data-doc-act="delete"]');
         if(deleteBtn){
-          deleteBtn.addEventListener("click", () => deleteDocumento(c.id, doc.id));
+          deleteBtn.addEventListener("click", () => deleteDocumento(c.id, doc.id, root, listSelector));
         }
 
         host.appendChild(row);
@@ -680,15 +680,14 @@
       });
     }
 
-    async function uploadDocumento(candId){
+    async function uploadDocumentoFromRoot(candId, root, selectors){
       const c = findCand(candId);
-      if(!c) return;
+      if(!c || !root) return;
 
-      const root = $("#detailHost");
-      const tipo = root.querySelector("#docTipo")?.value || "";
-      const descricaoInput = root.querySelector("#docDescricao");
+      const tipo = root.querySelector(selectors.tipoSelector)?.value || "";
+      const descricaoInput = root.querySelector(selectors.descricaoSelector);
       const descricao = (descricaoInput?.value || "").trim();
-      const fileInput = root.querySelector("#docArquivo");
+      const fileInput = root.querySelector(selectors.arquivoSelector);
       const file = fileInput?.files?.[0];
 
       if(!tipo){
@@ -715,7 +714,7 @@
         if(saved){
           if(!Array.isArray(c.documentos)) c.documentos = [];
           c.documentos.unshift({ ...saved });
-          renderDocumentList(root, c);
+          renderDocumentList(root, c, selectors.listSelector);
           toast("Documento enviado.");
         }
 
@@ -725,6 +724,15 @@
         console.error(err);
         toast("Falha ao enviar documento.");
       }
+    }
+
+    async function uploadDocumento(candId){
+      return uploadDocumentoFromRoot(candId, $("#detailHost"), {
+        tipoSelector: "#docTipo",
+        descricaoSelector: "#docDescricao",
+        arquivoSelector: "#docArquivo",
+        listSelector: "#docList"
+      });
     }
 
     function downloadDocumento(url){
@@ -741,9 +749,9 @@
       a.remove();
     }
 
-    async function deleteDocumento(candId, docId){
+    async function deleteDocumento(candId, docId, root, listSelector){
       const c = findCand(candId);
-      if(!c) return;
+      if(!c || !root) return;
 
       const ok = confirm("Excluir este documento?");
       if(!ok) return;
@@ -753,7 +761,7 @@
         if(Array.isArray(c.documentos)){
           c.documentos = c.documentos.filter(d => d.id !== docId);
         }
-        renderDocumentList($("#detailHost"), c);
+        renderDocumentList(root, c, listSelector);
         toast("Documento excluido.");
       }catch(err){
         console.error(err);
@@ -762,15 +770,29 @@
     }
 
     // ========= CRUD: Candidatos
-    function openCandModal(mode, id){
-      const modal = bootstrap.Modal.getOrCreateInstance($("#modalCand"));
+    async function openCandModal(mode, id){
+      const modalEl = $("#modalCand");
+      const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
       const isEdit = mode === "edit";
       $("#modalCandTitle").textContent = isEdit ? "Editar candidato" : "Novo candidato";
 
       renderVagaFilters();
 
+      const docDisabled = modalEl.querySelector("#candDocDisabled");
+      const docForm = modalEl.querySelector("#candDocForm");
+      const docList = modalEl.querySelector("#candDocList");
+      const docTipo = modalEl.querySelector("#candDocTipo");
+      const docDescricao = modalEl.querySelector("#candDocDescricao");
+      const docArquivo = modalEl.querySelector("#candDocArquivo");
+      const defaultDocTipo = getEnumOptions("candidatoDocumentoTipo")[0]?.code || "";
+
+      fillSelectFromEnum(docTipo, "candidatoDocumentoTipo", defaultDocTipo);
+      if(docDescricao) docDescricao.value = "";
+      if(docArquivo) docArquivo.value = "";
+      if(docList) docList.replaceChildren();
+
       if(isEdit){
-        const c = findCand(id);
+        let c = findCand(id);
         if(!c) return;
         $("#candId").value = c.id;
         $("#candNome").value = c.nome || "";
@@ -782,6 +804,13 @@
         $("#candStatus").value = c.status || DEFAULT_CAND_STATUS;
         $("#candVaga").value = c.vagaId || "";
         $("#candObs").value = c.obs || "";
+
+        await ensureCandidateDetails(c.id);
+        c = findCand(id) || c;
+
+        if(docDisabled) docDisabled.classList.add("d-none");
+        if(docForm) docForm.classList.remove("d-none");
+        renderDocumentList(modalEl, c, "#candDocList");
       }else{
         $("#candId").value = "";
         $("#candNome").value = "";
@@ -793,6 +822,14 @@
         $("#candStatus").value = DEFAULT_CAND_STATUS;
         $("#candVaga").value = state.vagas[0]?.id || "";
         $("#candObs").value = "";
+
+        if(docDisabled) docDisabled.classList.remove("d-none");
+        if(docForm) docForm.classList.add("d-none");
+      }
+
+      const tabTrigger = modalEl.querySelector('[data-bs-target="#candTabDados"]');
+      if(tabTrigger){
+        bootstrap.Tab.getOrCreateInstance(tabTrigger).show();
       }
 
       modal.show();
@@ -1021,6 +1058,22 @@
       $("#btnNewCand").addEventListener("click", () => openCandModal("new"));
       $("#btnSaveCand").addEventListener("click", upsertCandFromModal);
       $("#btnExportJson").addEventListener("click", exportJson);
+      const docBtn = $("#btnCandDocUpload");
+      if(docBtn){
+        docBtn.addEventListener("click", async () => {
+          const candId = $("#candId").value;
+          if(!candId){
+            toast("Salve o candidato antes de anexar documentos.");
+            return;
+          }
+          await uploadDocumentoFromRoot(candId, $("#modalCand"), {
+            tipoSelector: "#candDocTipo",
+            descricaoSelector: "#candDocDescricao",
+            arquivoSelector: "#candDocArquivo",
+            listSelector: "#candDocList"
+          });
+        });
+      }
     }
 
     function initLogo(){

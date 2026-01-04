@@ -62,6 +62,7 @@ public sealed class CandidatosApiClient
         {
             fileContent.Headers.ContentType = new MediaTypeHeaderValue(arquivo.ContentType);
         }
+        fileContent.Headers.ContentLength = arquivo.Length;
 
         content.Add(fileContent, "arquivo", arquivo.FileName);
         content.Add(new StringContent(tipo), "tipo");

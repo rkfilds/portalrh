@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using RhPortal.Api.Application.Candidatos;
 using RhPortal.Api.Application.Candidatos.Handlers;
 using RhPortal.Api.Contracts.Candidatos;
@@ -80,6 +81,8 @@ public sealed class CandidatosController : ControllerBase
     }
 
     [HttpPost("{id:guid}/documentos")]
+    [RequestSizeLimit(52_428_800)]
+    [RequestFormLimits(MultipartBodyLengthLimit = 52_428_800)]
     [Consumes("multipart/form-data")]
     [ApiExplorerSettings(IgnoreApi = true)]
     public async Task<ActionResult<CandidatoDocumentoResponse>> UploadDocumento(
@@ -105,6 +108,14 @@ public sealed class CandidatosController : ControllerBase
         catch (InvalidOperationException ex)
         {
             return BadRequest(new { message = ex.Message });
+        }
+        catch (DbUpdateException ex)
+        {
+            return Problem(statusCode: StatusCodes.Status500InternalServerError, detail: ex.InnerException?.Message ?? ex.Message);
+        }
+        catch (IOException ex)
+        {
+            return Problem(statusCode: StatusCodes.Status500InternalServerError, detail: ex.Message);
         }
     }
 

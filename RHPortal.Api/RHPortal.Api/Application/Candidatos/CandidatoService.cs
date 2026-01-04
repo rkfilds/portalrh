@@ -198,11 +198,11 @@ public sealed class CandidatoService : ICandidatoService
         if (arquivo is null || arquivo.Length == 0)
             throw new InvalidOperationException("Arquivo invalido.");
 
-        var candidato = await _db.Candidatos
-            .Include(x => x.Documentos)
-            .FirstOrDefaultAsync(x => x.Id == candidatoId, ct);
+        var exists = await _db.Candidatos
+            .AsNoTracking()
+            .AnyAsync(x => x.Id == candidatoId, ct);
 
-        if (candidato is null) return null;
+        if (!exists) return null;
 
         var originalName = NormalizeFileName(arquivo.FileName);
         var documentId = Guid.NewGuid();
@@ -229,10 +229,9 @@ public sealed class CandidatoService : ICandidatoService
             Url = null
         };
 
-        candidato.Documentos.Add(doc);
-
         try
         {
+            _db.CandidatoDocumentos.Add(doc);
             await _db.SaveChangesAsync(ct);
         }
         catch

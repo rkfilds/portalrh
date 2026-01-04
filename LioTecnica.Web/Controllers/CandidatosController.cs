@@ -66,6 +66,8 @@ public class CandidatosController : Controller
     }
 
     [HttpPost("/api/candidatos/{id:guid}/documentos")]
+    [RequestSizeLimit(52_428_800)]
+    [RequestFormLimits(MultipartBodyLengthLimit = 52_428_800)]
     public async Task<IActionResult> UploadDocumento(
         Guid id,
         [FromForm] IFormFile? arquivo,
