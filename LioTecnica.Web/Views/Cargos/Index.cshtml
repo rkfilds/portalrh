@@ -80,21 +80,18 @@
 
     <hr class="my-3 divider">
 
-    <div class="table-responsive">
-      <table class="table table-sm align-middle mb-0">
-        <thead>
-          <tr>
-            <th>Cargo</th>
-            <th>Area</th>
-            <th>Senioridade</th>
-            <th>Gestores</th>
-            <th>Status</th>
-            <th class="text-end">Acoes</th>
-          </tr>
-        </thead>
-        <tbody id="cargoTbody"></tbody>
-      </table>
-    </div>
+        <lt-grid table-class="table table-sm align-middle mb-0" body-id="cargoTbody">
+      <lt-grid-header>
+        <tr>
+          <th>Cargo</th>
+          <th>Area</th>
+          <th>Senioridade</th>
+          <th>Gestores</th>
+          <th>Status</th>
+          <th class="text-end">Acoes</th>
+        </tr>
+      </lt-grid-header>
+    </lt-grid>
 
     <div class="d-flex align-items-center justify-content-between mt-2">
       <div class="text-muted small" id="cargoHint">-</div>

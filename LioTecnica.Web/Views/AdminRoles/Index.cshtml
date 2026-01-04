@@ -15,41 +15,39 @@
 <div class="container-fluid py-3">
     <div class="card shadow-sm">
         <div class="card-body">
-            <div class="table-responsive">
-                <table class="table align-middle">
-                    <thead>
+                        <lt-grid table-class="table align-middle">
+                <lt-grid-header>
+                    <tr>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </lt-grid-header>
+                <lt-grid-body>
+                    @foreach (var role in Model.Roles)
+                    {
                         <tr>
-                            <th>Name</th>
-                            <th>Description</th>
-                            <th>Status</th>
-                            <th class="text-end">Actions</th>
+                            <td>@role.Name</td>
+                            <td>@role.Description</td>
+                            <td>
+                                <span class="badge @(role.IsActive ? "bg-success" : "bg-secondary")">
+                                    @(role.IsActive ? "Active" : "Inactive")
+                                </span>
+                            </td>
+                            <td class="text-end">
+                                <a class="btn btn-sm btn-outline-primary" href="/Admin/Roles/Edit/@role.Id">Edit</a>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var role in Model.Roles)
-                        {
-                            <tr>
-                                <td>@role.Name</td>
-                                <td>@role.Description</td>
-                                <td>
-                                    <span class="badge @(role.IsActive ? "bg-success" : "bg-secondary")">
-                                        @(role.IsActive ? "Active" : "Inactive")
-                                    </span>
-                                </td>
-                                <td class="text-end">
-                                    <a class="btn btn-sm btn-outline-primary" href="/Admin/Roles/Edit/@role.Id">Edit</a>
-                                </td>
-                            </tr>
-                        }
-                        @if (!Model.Roles.Any())
-                        {
-                            <tr>
-                                <td colspan="4" class="text-muted text-center py-4">No roles found.</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
+                    }
+                    @if (!Model.Roles.Any())
+                    {
+                        <tr>
+                            <td colspan="4" class="text-muted text-center py-4">No roles found.</td>
+                        </tr>
+                    }
+                </lt-grid-body>
+            </lt-grid>
         </div>
     </div>
 </div>

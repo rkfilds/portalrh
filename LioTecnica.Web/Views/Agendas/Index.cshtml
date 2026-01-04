@@ -1,7 +1,7 @@
-Ôªø@model PageSeedViewModel
+@model PageSeedViewModel
 @{
-    ViewData["Title"] = "Portal RH ‚Ä¢ Devcraft Studio ‚Äî Agenda";
-    ViewData["SidebarSubtitle"] = "Agenda ‚Ä¢ Entrevistas ‚Ä¢ Eventos";
+    ViewData["Title"] = "Portal RH ï Devcraft Studio ó Agenda";
+    ViewData["SidebarSubtitle"] = "Agenda ï Entrevistas ï Eventos";
 }
 
 <style>
@@ -14,7 +14,7 @@
         min-height: 640px;
         width: 100%;
         max-width: 100%;
-        overflow: hidden; /* evita scrollbar horizontal na p√°gina */
+        overflow: hidden; /* evita scrollbar horizontal na p·gina */
     }
 
     #calendar {
@@ -34,7 +34,7 @@
         width: 100%;
     }
 
-    /* mant√©m header e body sincronizados quando aparece scrollbar vertical */
+    /* mantÈm header e body sincronizados quando aparece scrollbar vertical */
     #calendarHost .fc-scroller {
         scrollbar-gutter: stable;
     }
@@ -43,10 +43,10 @@
     #calendarHost .fc table {
         border-collapse: separate !important;
         border-spacing: 0 !important;
-        /* N√ÉO use padding aqui (isso quebra o layout interno do FullCalendar) */
+        /* N√O use padding aqui (isso quebra o layout interno do FullCalendar) */
     }
 
-    /* ‚úÖ estica o ‚Äúscrollgrid‚Äù e as tabelas que definem as colunas */
+    /* ? estica o ìscrollgridî e as tabelas que definem as colunas */
     #calendarHost .fc .fc-scrollgrid,
     #calendarHost .fc .fc-scrollgrid table,
     #calendarHost .fc .fc-col-header table,
@@ -61,7 +61,7 @@
         width: 100% !important;
     }
 
-    /* ‚úÖ a largura real vem do COLGROUP (1¬™ coluna) */
+    /* ? a largura real vem do COLGROUP (1™ coluna) */
     #calendarHost .fc .fc-timegrid-slots table colgroup col:first-child,
     #calendarHost .fc .fc-timegrid-cols table colgroup col:first-child,
     #calendarHost .fc .fc-col-header table colgroup col:first-child,
@@ -69,7 +69,7 @@
         width: var(--fc-time-label-width) !important;
     }
 
-    /* refor√ßo (visual) nas c√©lulas */
+    /* reforÁo (visual) nas cÈlulas */
     #calendarHost .fc th.fc-timegrid-slot-label,
     #calendarHost .fc td.fc-timegrid-slot-label,
     #calendarHost .fc th.fc-timegrid-axis,
@@ -160,18 +160,18 @@
     }
 
         #calendarHost .fc .fc-scrollgrid {
-            border: 0 !important; /* a borda agora √© do #calendarHost */
+            border: 0 !important; /* a borda agora È do #calendarHost */
             border-radius: 0 !important;
             overflow: visible !important;
         }
 
-        /* mant√©m as bordas internas do grid */
+        /* mantÈm as bordas internas do grid */
         #calendarHost .fc-theme-standard td,
         #calendarHost .fc-theme-standard th {
             border-color: rgba(16,82,144,.14);
         }
 
-        /* opcional: garante que nada pinte por tr√°s do wrapper */
+        /* opcional: garante que nada pinte por tr·s do wrapper */
         #calendarHost .fc {
             background: transparent;
         }
@@ -247,7 +247,7 @@
 
     <div class="searchbox position-relative d-none d-md-block">
         <i class="bi bi-search"></i>
-        <input id="globalSearch" class="form-control" placeholder="Buscar eventos por t√≠tulo, candidato, vaga..." />
+        <input id="globalSearch" class="form-control" placeholder="Buscar eventos por tÌtulo, candidato, vaga..." />
     </div>
 
     <div class="d-flex align-items-center gap-2">
@@ -272,7 +272,7 @@
 <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1085;">
     <div id="appToast" class="toast align-items-center" role="alert" aria-live="assertive" aria-atomic="true">
         <div class="d-flex">
-            <div class="toast-body" id="toastMsg">‚Äî</div>
+            <div class="toast-body" id="toastMsg">ó</div>
             <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Fechar"></button>
         </div>
     </div>
@@ -286,7 +286,7 @@
     <div class="page-title">
         <div>
             <h4>Agenda</h4>
-            <div class="subtitle">Selecione um hor√°rio para criar ‚Ä¢ Arraste para mover ‚Ä¢ Puxe a borda para redimensionar ‚Ä¢ Clique para ver detalhes.</div>
+            <div class="subtitle">Selecione um hor·rio para criar ï Arraste para mover ï Puxe a borda para redimensionar ï Clique para ver detalhes.</div>
         </div>
     </div>
 
@@ -296,7 +296,7 @@
         {
     new { ColClass = "col-12 col-md-6 col-xl-3", Label = "Hoje",        ValueId = "kpiToday",      Value = "0", Hint = "eventos",                  Icon = "bi-sun" },
     new { ColClass = "col-12 col-md-6 col-xl-3", Label = "Semana",      ValueId = "kpiWeek",       Value = "0", Hint = "eventos",                  Icon = "bi-calendar-week" },
-    new { ColClass = "col-12 col-md-6 col-xl-3", Label = "Pendentes",   ValueId = "kpiPending",    Value = "0", Hint = "aguardando confirma√ß√£o",     Icon = "bi-hourglass-split" },
+    new { ColClass = "col-12 col-md-6 col-xl-3", Label = "Pendentes",   ValueId = "kpiPending",    Value = "0", Hint = "aguardando confirmaÁ„o",     Icon = "bi-hourglass-split" },
     new { ColClass = "col-12 col-md-6 col-xl-3", Label = "Entrevistas", ValueId = "kpiInterviews", Value = "0", Hint = "na semana",                 Icon = "bi-camera-video" }
     };
     }
@@ -311,13 +311,13 @@
                     <div class="d-flex align-items-center gap-2">
                         <button class="btn btn-ghost btn-sm" type="button" id="calPrev" title="Anterior"><i class="bi bi-chevron-left"></i></button>
                         <button class="btn btn-ghost btn-sm" type="button" id="calToday" title="Hoje"><i class="bi bi-bullseye me-1"></i>Hoje</button>
-                        <button class="btn btn-ghost btn-sm" type="button" id="calNext" title="Pr√≥ximo"><i class="bi bi-chevron-right"></i></button>
+                        <button class="btn btn-ghost btn-sm" type="button" id="calNext" title="PrÛximo"><i class="bi bi-chevron-right"></i></button>
                     </div>
 
-                    <div class="fw-bold" id="calTitle" style="font-size:1.05rem;">‚Äî</div>
+                    <div class="fw-bold" id="calTitle" style="font-size:1.05rem;">ó</div>
 
                     <div class="d-flex align-items-center gap-2">
-                        <div class="btn-group" role="group" aria-label="Modo de visualiza√ß√£o">
+                        <div class="btn-group" role="group" aria-label="Modo de visualizaÁ„o">
                             <button class="btn btn-ghost btn-sm" type="button" data-view="timeGridDay" id="btnViewDay">
                                 <i class="bi bi-view-stacked me-1"></i>Dia
                             </button>
@@ -344,14 +344,14 @@
             <div class="card-soft p-3 mb-3">
                 <div class="d-flex align-items-start justify-content-between gap-2 mb-2">
                     <div>
-                        <p class="mini-title mb-1">Pr√≥ximos</p>
+                        <p class="mini-title mb-1">PrÛximos</p>
                         <div class="fw-bold">Eventos em foco</div>
                         <div class="text-muted small">Lista respeita filtros + data exibida.</div>
                     </div>
                     <span class="badge-soft"><i class="bi bi-filter"></i><span id="sideCount">0</span></span>
                 </div>
 
-                <ul class="side-list" id="sideList"></ul>
+                <lt-list tag="ul" class="side-list" id="sideList"></lt-list>
 
                 <div class="text-center text-muted small py-3 d-none" id="sideEmpty">
                     Nenhum evento encontrado.
@@ -366,7 +366,7 @@
 
                 <div class="mb-2">
                     <label class="form-label small">Buscar</label>
-                    <input class="form-control" id="fSearch" placeholder="t√≠tulo, candidato, vaga..." style="border-color:var(--lt-border); background: rgba(255,255,255,.65);" />
+                    <input class="form-control" id="fSearch" placeholder="tÌtulo, candidato, vaga..." style="border-color:var(--lt-border); background: rgba(255,255,255,.65);" />
                 </div>
 
                 <div class="mb-2">
@@ -416,8 +416,8 @@
 
                 <div class="row g-2">
                     <div class="col-12 col-md-8">
-                        <label class="form-label small">T√≠tulo</label>
-                        <input class="form-control" id="evTitle" placeholder="Ex.: Entrevista ‚Ä¢ Maria Souza" style="border-color:var(--lt-border);" />
+                        <label class="form-label small">TÌtulo</label>
+                        <input class="form-control" id="evTitle" placeholder="Ex.: Entrevista ï Maria Souza" style="border-color:var(--lt-border);" />
                     </div>
                     <div class="col-12 col-md-4">
                         <label class="form-label small">Tipo</label>
@@ -425,7 +425,7 @@
                     </div>
 
                     <div class="col-12 col-md-6">
-                        <label class="form-label small">In√≠cio</label>
+                        <label class="form-label small">InÌcio</label>
                         <input type="datetime-local" class="form-control" id="evStart" style="border-color:var(--lt-border);" />
                     </div>
                     <div class="col-12 col-md-6">
@@ -446,7 +446,7 @@
                         </select>
                     </div>
                     <div class="col-12 col-md-3">
-                        <label class="form-label small">Respons√°vel</label>
+                        <label class="form-label small">Respons·vel</label>
                         <input class="form-control" id="evOwner" placeholder="Ana (RH)" style="border-color:var(--lt-border);" />
                     </div>
 
@@ -457,14 +457,14 @@
                     <div class="col-12 col-md-6">
                         <label class="form-label small">Vaga</label>
                         <div class="input-group">
-                            <input class="form-control" id="evVagaTitle" placeholder="T√≠tulo da vaga" style="border-color:var(--lt-border);" />
+                            <input class="form-control" id="evVagaTitle" placeholder="TÌtulo da vaga" style="border-color:var(--lt-border);" />
                             <span class="input-group-text mono" style="border-color:var(--lt-border); background: rgba(255,255,255,.65);">CODE</span>
                             <input class="form-control mono" id="evVagaCode" placeholder="DEVNET-001" style="border-color:var(--lt-border);" />
                         </div>
                     </div>
 
                     <div class="col-12">
-                        <label class="form-label small">Observa√ß√µes</label>
+                        <label class="form-label small">ObservaÁıes</label>
                         <textarea class="form-control" id="evNotes" rows="3" placeholder="Roteiro, links, feedback..." style="border-color:var(--lt-border);"></textarea>
                     </div>
                 </div>
@@ -487,14 +487,14 @@
                     <div class="d-flex align-items-center justify-content-between gap-2 flex-wrap">
                         <div>
                             <div class="mini-title mb-1">Detalhes do evento</div>
-                            <div class="fw-bold" style="font-size:1.08rem;" id="viewTitle">‚Äî</div>
+                            <div class="fw-bold" style="font-size:1.08rem;" id="viewTitle">ó</div>
                         </div>
                         <div class="d-flex gap-2 flex-wrap">
-                            <span class="badge-soft" id="viewType">‚Äî</span>
-                            <span class="badge-soft" id="viewStatus">‚Äî</span>
+                            <span class="badge-soft" id="viewType">ó</span>
+                            <span class="badge-soft" id="viewStatus">ó</span>
                         </div>
                     </div>
-                    <div class="text-muted small mt-1" id="viewWhen">‚Äî</div>
+                    <div class="text-muted small mt-1" id="viewWhen">ó</div>
                 </div>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
             </div>
@@ -506,32 +506,32 @@
                     <div class="col-12 col-md-6">
                         <div class="card-soft p-2" style="box-shadow:none;">
                             <div class="small text-muted">Candidato</div>
-                            <div class="fw-semibold" id="viewCandidate">‚Äî</div>
+                            <div class="fw-semibold" id="viewCandidate">ó</div>
                         </div>
                     </div>
                     <div class="col-12 col-md-6">
                         <div class="card-soft p-2" style="box-shadow:none;">
                             <div class="small text-muted">Vaga</div>
-                            <div class="fw-semibold" id="viewVaga">‚Äî</div>
-                            <div class="text-muted small mono" id="viewVagaCode">‚Äî</div>
+                            <div class="fw-semibold" id="viewVaga">ó</div>
+                            <div class="text-muted small mono" id="viewVagaCode">ó</div>
                         </div>
                     </div>
                     <div class="col-12 col-md-6">
                         <div class="card-soft p-2" style="box-shadow:none;">
                             <div class="small text-muted">Local</div>
-                            <div class="fw-semibold" id="viewLocation">‚Äî</div>
+                            <div class="fw-semibold" id="viewLocation">ó</div>
                         </div>
                     </div>
                     <div class="col-12 col-md-6">
                         <div class="card-soft p-2" style="box-shadow:none;">
-                            <div class="small text-muted">Respons√°vel</div>
-                            <div class="fw-semibold" id="viewOwner">‚Äî</div>
+                            <div class="small text-muted">Respons·vel</div>
+                            <div class="fw-semibold" id="viewOwner">ó</div>
                         </div>
                     </div>
                     <div class="col-12">
                         <div class="card-soft p-2" style="box-shadow:none;">
-                            <div class="small text-muted">Observa√ß√µes</div>
-                            <div class="text-muted" id="viewNotes" style="white-space:pre-wrap;">‚Äî</div>
+                            <div class="small text-muted">ObservaÁıes</div>
+                            <div class="text-muted" id="viewNotes" style="white-space:pre-wrap;">ó</div>
                         </div>
                     </div>
                 </div>
@@ -566,16 +566,16 @@
         {"code":"all","label":"Todos","icon":"bi-grid-3x3-gap","color":"#6c757d"},
         {"code":"entrevista","label":"Entrevista","icon":"bi-camera-video","color":"#0d6efd"},
         {"code":"triagem","label":"Triagem","icon":"bi-funnel","color":"#0dcaf0"},
-        {"code":"reuniao","label":"Reuni√£o","icon":"bi-people","color":"#198754"},
+        {"code":"reuniao","label":"Reuni„o","icon":"bi-people","color":"#198754"},
         {"code":"feedback","label":"Feedback","icon":"bi-chat-left-dots","color":"#6f42c1"},
         {"code":"onboarding","label":"Onboarding","icon":"bi-person-check","color":"#fd7e14"}
       ],
       "eventsTemplate":[
-        {"id":"E-1001","title":"Entrevista ‚Ä¢ Jo√£o Silva","type":"entrevista","status":"confirmado","dayOffset":1,"start":"09:00","end":"10:00","location":"Google Meet","candidate":{"name":"Jo√£o Silva"},"vaga":{"title":"Dev .NET","code":"DEVNET-001"},"owner":"Ana (RH)","notes":"Foco em .NET 8, Razor e boas pr√°ticas."},
-        {"id":"E-1002","title":"Triagem ‚Ä¢ Curr√≠culos (batch)","type":"triagem","status":"pendente","dayOffset":1,"start":"10:30","end":"11:15","location":"Portal RH","candidate":{"name":"‚Äî"},"vaga":{"title":"Est√°gio RH","code":"ESTRH-004"},"owner":"Bruno (RH)","notes":"Separar por tags + atualizar status."},
-        {"id":"E-1003","title":"Reuni√£o ‚Ä¢ Alinhamento com gestor","type":"reuniao","status":"confirmado","dayOffset":2,"start":"14:00","end":"14:45","location":"Sala 2","candidate":{"name":"‚Äî"},"vaga":{"title":"Dev .NET","code":"DEVNET-001"},"owner":"Ana (RH)","notes":"Definir etapa t√©cnica + perguntas de triagem."},
-        {"id":"E-1004","title":"Feedback ‚Ä¢ Maria Souza","type":"feedback","status":"confirmado","dayOffset":3,"start":"16:00","end":"16:30","location":"Google Meet","candidate":{"name":"Maria Souza"},"vaga":{"title":"Analista Suporte","code":"SUP-002"},"owner":"Ana (RH)","notes":"Retorno da entrevista e pr√≥ximos passos."},
-        {"id":"E-1005","title":"Onboarding ‚Ä¢ Boas-vindas (mock)","type":"onboarding","status":"pendente","dayOffset":4,"start":"09:30","end":"10:15","location":"Presencial","candidate":{"name":"Carlos Lima"},"vaga":{"title":"Aux. Adm.","code":"ADM-003"},"owner":"Bruno (RH)","notes":"Checklist: docs + acesso + agenda do 1¬∫ dia."}
+        {"id":"E-1001","title":"Entrevista ï Jo„o Silva","type":"entrevista","status":"confirmado","dayOffset":1,"start":"09:00","end":"10:00","location":"Google Meet","candidate":{"name":"Jo„o Silva"},"vaga":{"title":"Dev .NET","code":"DEVNET-001"},"owner":"Ana (RH)","notes":"Foco em .NET 8, Razor e boas pr·ticas."},
+        {"id":"E-1002","title":"Triagem ï CurrÌculos (batch)","type":"triagem","status":"pendente","dayOffset":1,"start":"10:30","end":"11:15","location":"Portal RH","candidate":{"name":"ó"},"vaga":{"title":"Est·gio RH","code":"ESTRH-004"},"owner":"Bruno (RH)","notes":"Separar por tags + atualizar status."},
+        {"id":"E-1003","title":"Reuni„o ï Alinhamento com gestor","type":"reuniao","status":"confirmado","dayOffset":2,"start":"14:00","end":"14:45","location":"Sala 2","candidate":{"name":"ó"},"vaga":{"title":"Dev .NET","code":"DEVNET-001"},"owner":"Ana (RH)","notes":"Definir etapa tÈcnica + perguntas de triagem."},
+        {"id":"E-1004","title":"Feedback ï Maria Souza","type":"feedback","status":"confirmado","dayOffset":3,"start":"16:00","end":"16:30","location":"Google Meet","candidate":{"name":"Maria Souza"},"vaga":{"title":"Analista Suporte","code":"SUP-002"},"owner":"Ana (RH)","notes":"Retorno da entrevista e prÛximos passos."},
+        {"id":"E-1005","title":"Onboarding ï Boas-vindas (mock)","type":"onboarding","status":"pendente","dayOffset":4,"start":"09:30","end":"10:15","location":"Presencial","candidate":{"name":"Carlos Lima"},"vaga":{"title":"Aux. Adm.","code":"ADM-003"},"owner":"Bruno (RH)","notes":"Checklist: docs + acesso + agenda do 1∫ dia."}
       ]
     }
 </script>
@@ -702,7 +702,7 @@
             if (!raw) return defaultState();
             const st = JSON.parse(raw);
             if (!st || !Array.isArray(st.events)) return defaultState();
-            // se n√£o tiver types, reaproveita do seed
+            // se n„o tiver types, reaproveita do seed
             if (!Array.isArray(st.types) || st.types.length === 0) {
               st.types = defaultState().types;
             }
@@ -815,11 +815,11 @@
 
         // ---- Sidebar list (based on current view range)
         function fmtTimeRange(start, end) {
-          if (!start) return "‚Äî";
+          if (!start) return "ó";
           const s = start.toLocaleString("pt-BR", { weekday:"short", day:"2-digit", month:"2-digit", hour:"2-digit", minute:"2-digit" });
           if (!end) return s;
           const e = end.toLocaleTimeString("pt-BR", { hour:"2-digit", minute:"2-digit" });
-          return `${s} ‚Üí ${e}`;
+          return `${s} ? ${e}`;
         }
 
         function refreshSideList() {
@@ -836,7 +836,7 @@
             });
           }
 
-          // ordena por in√≠cio
+          // ordena por inÌcio
           inRange.sort((a,b) => (a.start || "").localeCompare(b.start || ""));
 
           ui("sideCount").textContent = inRange.length;
@@ -863,8 +863,8 @@
                 <div class="evt-title">${escapeHtml(ev.title || "Evento")}</div>
                 <div class="evt-meta">${escapeHtml(fmtTimeRange(start, end))}</div>
                 <div class="evt-badges">
-                  <span class="tag"><i class="bi ${escapeHtml(p.icon || "bi-calendar")}"></i>${escapeHtml((p.type || "‚Äî"))}</span>
-                  <span class="tag"><i class="bi bi-flag"></i>${escapeHtml((p.status || "‚Äî"))}</span>
+                  <span class="tag"><i class="bi ${escapeHtml(p.icon || "bi-calendar")}"></i>${escapeHtml((p.type || "ó"))}</span>
+                  <span class="tag"><i class="bi bi-flag"></i>${escapeHtml((p.status || "ó"))}</span>
                   ${p.candidate ? `<span class="tag"><i class="bi bi-person"></i>${escapeHtml(p.candidate)}</span>` : ``}
                 </div>
               </div>
@@ -882,7 +882,7 @@
 
         // ---- Calendar header
         function refreshCalendarTitle() {
-          ui("calTitle").textContent = calendar ? calendar.view.title : "‚Äî";
+          ui("calTitle").textContent = calendar ? calendar.view.title : "ó";
           const v = calendar ? calendar.view.type : state.settings.view;
           const dayBtn = ui("btnViewDay");
           const weekBtn = ui("btnViewWeek");
@@ -994,27 +994,27 @@
           const p = ev.extendedProps || {};
           ui("viewId").value = ev.id || "";
 
-          ui("viewTitle").textContent = ev.title || "‚Äî";
-          ui("viewType").innerHTML = `<i class="bi ${p.icon || "bi-calendar"} me-1"></i>${p.type || "‚Äî"}`;
-          ui("viewStatus").innerHTML = `<i class="bi bi-flag me-1"></i>${p.status || "‚Äî"}`;
+          ui("viewTitle").textContent = ev.title || "ó";
+          ui("viewType").innerHTML = `<i class="bi ${p.icon || "bi-calendar"} me-1"></i>${p.type || "ó"}`;
+          ui("viewStatus").innerHTML = `<i class="bi bi-flag me-1"></i>${p.status || "ó"}`;
 
           const s = parseLocalIso(ev.start);
           const e = parseLocalIso(ev.end);
           ui("viewWhen").textContent = fmtTimeRange(s, e);
 
-          ui("viewCandidate").textContent = p.candidate || "‚Äî";
-          ui("viewVaga").textContent = p.vagaTitle || "‚Äî";
-          ui("viewVagaCode").textContent = p.vagaCode || "‚Äî";
-          ui("viewLocation").textContent = p.location || "‚Äî";
-          ui("viewOwner").textContent = p.owner || "‚Äî";
-          ui("viewNotes").textContent = p.notes || "‚Äî";
+          ui("viewCandidate").textContent = p.candidate || "ó";
+          ui("viewVaga").textContent = p.vagaTitle || "ó";
+          ui("viewVagaCode").textContent = p.vagaCode || "ó";
+          ui("viewLocation").textContent = p.location || "ó";
+          ui("viewOwner").textContent = p.owner || "ó";
+          ui("viewNotes").textContent = p.notes || "ó";
 
           modalView.show();
         }
 
         // ---- Calendar integration
         function eventsForCalendar() {
-          // FullCalendar l√™ start/end como strings e interpreta local (sem Z)
+          // FullCalendar lÍ start/end como strings e interpreta local (sem Z)
           return getFilteredEvents().map(ev => ({
             ...ev,
             // garante extendedProps no event, pro click/drop
@@ -1045,7 +1045,7 @@
           ev.end = fcEvent.end ? toLocalIso(fcEvent.end) : ev.end;
           ev.allDay = !!fcEvent.allDay;
 
-          // mant√©m cores / props
+          // mantÈm cores / props
           const p = ev.extendedProps || {};
           const p2 = fcEvent.extendedProps || {};
           ev.extendedProps = { ...p, ...p2 };
@@ -1069,10 +1069,10 @@
           let parsed = null;
           try { parsed = JSON.parse(text); } catch { parsed = null; }
           if (!parsed || !Array.isArray(parsed.events)) {
-            toast("JSON inv√°lido (esperado: { events: [...] }).");
+            toast("JSON inv·lido (esperado: { events: [...] }).");
             return;
           }
-          // mant√©m types se vierem, sen√£o usa seed
+          // mantÈm types se vierem, sen„o usa seed
           if (!Array.isArray(parsed.types) || parsed.types.length === 0) {
             parsed.types = state.types;
           }
@@ -1125,7 +1125,7 @@
             events: eventsForCalendar(),
 
             select: function(info) {
-              // criar evento pela sele√ß√£o
+              // criar evento pela seleÁ„o
               openCreateModal(info.start, info.end);
               calendar.unselect();
             },
@@ -1144,13 +1144,13 @@
             eventResize: function(info) {
               updateStoredFromFcEvent(info.event);
               rebuildCalendar();
-              toast("Dura√ß√£o atualizada.");
+              toast("DuraÁ„o atualizada.");
             }
           });
 
           calendar.render();
 
-          // for√ßa rec√°lculo ap√≥s o layout ‚Äúassentar‚Äù
+          // forÁa rec·lculo apÛs o layout ìassentarî
           requestAnimationFrame(() => calendar.updateSize());
           setTimeout(() => calendar.updateSize(), 50);
           
@@ -1212,7 +1212,7 @@
             deleteEventById(id);
             rebuildCalendar();
             modalView.hide();
-            toast("Evento exclu√≠do.");
+            toast("Evento excluÌdo.");
           });
 
           ui("btnDuplicate").addEventListener("click", () => {
@@ -1227,7 +1227,7 @@
 
             const copy = JSON.parse(JSON.stringify(src));
             copy.id = uid("E");
-            copy.title = (copy.title || "Evento") + " (c√≥pia)";
+            copy.title = (copy.title || "Evento") + " (cÛpia)";
             copy.start = toLocalIso(plus7s);
             copy.end = toLocalIso(plus7e);
 

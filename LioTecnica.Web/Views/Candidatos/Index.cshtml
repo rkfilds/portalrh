@@ -86,20 +86,17 @@
                 </div>
               </div>
 
-              <div class="table-responsive">
-                <table class="table align-middle mb-0">
-                  <thead>
-                    <tr>
-                      <th style="min-width: 260px;">Candidato</th>
-                      <th style="min-width: 220px;">Vaga</th>
-                      <th style="min-width: 150px;">Status</th>
-                      <th style="min-width: 170px;">Match</th>
-                      <th class="text-end" style="min-width: 230px;">Ações</th>
-                    </tr>
-                  </thead>
-                  <tbody id="tblCands"></tbody>
-                </table>
-              </div>
+                            <lt-grid table-class="table align-middle mb-0" body-id="tblCands">
+                <lt-grid-header>
+                  <tr>
+                    <th style="min-width: 260px;">Candidato</th>
+                    <th style="min-width: 220px;">Vaga</th>
+                    <th style="min-width: 150px;">Status</th>
+                    <th style="min-width: 170px;">Match</th>
+                    <th class="text-end" style="min-width: 230px;">Acoes</th>
+                  </tr>
+                </lt-grid-header>
+              </lt-grid>
             </div>
           </div>
 

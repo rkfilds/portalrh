@@ -61,7 +61,7 @@
 
 				<hr class="my-3 divider">
 
-				<div class="d-grid gap-2" id="reportList"></div>
+				<lt-list class="d-grid gap-2" id="reportList"></lt-list>
 			</div>
 
 			<div class="card-soft p-3">
@@ -139,14 +139,11 @@
 					</div>
 				</div>
 
-				<div class="table-responsive mt-2">
-					<table class="table table-sm align-middle mb-0" id="resultTable">
-						<thead>
-							<tr id="theadRow"></tr>
-						</thead>
-						<tbody id="tbodyRows"></tbody>
-					</table>
-				</div>
+				<lt-grid wrapper-class="table-responsive mt-2" table-class="table table-sm align-middle mb-0" table-id="resultTable" body-id="tbodyRows">
+					<lt-grid-header>
+						<tr id="theadRow"></tr>
+					</lt-grid-header>
+				</lt-grid>
 
 				<div class="text-muted small mt-3" id="resultHint"></div>
 			</div>

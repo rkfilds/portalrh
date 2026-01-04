@@ -15,43 +15,41 @@
 <div class="container-fluid py-3">
     <div class="card shadow-sm">
         <div class="card-body">
-            <div class="table-responsive">
-                <table class="table align-middle">
-                    <thead>
+            <lt-grid table-class="table align-middle">
+                <lt-grid-header>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Roles</th>
+                        <th>Status</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </lt-grid-header>
+                <lt-grid-body>
+                    @foreach (var user in Model.Users)
+                    {
                         <tr>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Roles</th>
-                            <th>Status</th>
-                            <th class="text-end">Actions</th>
+                            <td>@user.FullName</td>
+                            <td>@user.Email</td>
+                            <td>@string.Join(", ", user.Roles)</td>
+                            <td>
+                                <span class="badge @(user.IsActive ? "bg-success" : "bg-secondary")">
+                                    @(user.IsActive ? "Active" : "Inactive")
+                                </span>
+                            </td>
+                            <td class="text-end">
+                                <a class="btn btn-sm btn-outline-primary" href="/Admin/Users/Edit/@user.Id">Edit</a>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var user in Model.Users)
-                        {
-                            <tr>
-                                <td>@user.FullName</td>
-                                <td>@user.Email</td>
-                                <td>@string.Join(", ", user.Roles)</td>
-                                <td>
-                                    <span class="badge @(user.IsActive ? "bg-success" : "bg-secondary")">
-                                        @(user.IsActive ? "Active" : "Inactive")
-                                    </span>
-                                </td>
-                                <td class="text-end">
-                                    <a class="btn btn-sm btn-outline-primary" href="/Admin/Users/Edit/@user.Id">Edit</a>
-                                </td>
-                            </tr>
-                        }
-                        @if (!Model.Users.Any())
-                        {
-                            <tr>
-                                <td colspan="5" class="text-muted text-center py-4">No users found.</td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-            </div>
+                    }
+                    @if (!Model.Users.Any())
+                    {
+                        <tr>
+                            <td colspan="5" class="text-muted text-center py-4">No users found.</td>
+                        </tr>
+                    }
+                </lt-grid-body>
+            </lt-grid>
         </div>
     </div>
 </div>
