@@ -31,7 +31,9 @@
       vagas: [],
       candidatos: [],
       selectedId: null,
-      filters: { q:"", status:"all", vagaId:"all" }
+      filters: { q:"", status:"all", vagaId:"all" },
+      pendingDocs: [],
+      pendingDocsCandidateId: null
     };
     const detailLoads = new Set();
 
@@ -45,6 +47,16 @@
       if(mb < 1024) return `${mb.toFixed(1)} MB`;
       const gb = mb / 1024;
       return `${gb.toFixed(2)} GB`;
+    }
+
+    function createPendingId(){
+      const rand = Math.random().toString(16).slice(2);
+      return `pending-${Date.now()}-${rand}`;
+    }
+
+    function resetPendingDocs(){
+      state.pendingDocs = [];
+      state.pendingDocsCandidateId = null;
     }
 
     function setText(root, role, value, fallback = EMPTY_TEXT){
@@ -549,6 +561,150 @@
       });
     }
 
+    function renderPendingDocs(root, candidateId){
+      const wrap = root.querySelector("#candDocPendingWrap");
+      const host = root.querySelector("#candDocPendingList");
+      if(!wrap || !host) return;
+
+      host.replaceChildren();
+      if(!state.pendingDocs.length){
+        wrap.classList.add("d-none");
+        return;
+      }
+
+      wrap.classList.remove("d-none");
+      state.pendingDocs.forEach(doc => {
+        const row = cloneTemplate("tpl-cand-doc-pending");
+        if(!row) return;
+
+        const typeCode = (doc.tipo || "").toString().toLowerCase();
+        const typeText = getEnumText("candidatoDocumentoTipo", typeCode, doc.tipo || "");
+        setText(row, "doc-type", typeText || EMPTY_TEXT);
+        setText(row, "doc-name", doc.nomeArquivo || EMPTY_TEXT);
+        setText(row, "doc-desc", doc.descricao || "Sem descricao");
+
+        const hasSize = doc.tamanhoBytes !== null && doc.tamanhoBytes !== undefined;
+        setText(row, "doc-size", hasSize ? formatFileSize(doc.tamanhoBytes) : EMPTY_TEXT);
+        toggleRole(row, "doc-size-sep", hasSize);
+
+        const statusEl = row.querySelector('[data-role="doc-status"]');
+        if(statusEl){
+          const failed = doc.status === "failed";
+          statusEl.textContent = failed ? "Falhou" : "Pendente";
+          statusEl.classList.toggle("text-danger", failed);
+          statusEl.classList.toggle("text-warning", !failed);
+        }
+
+        const retryBtn = row.querySelector('[data-doc-act="retry"]');
+        if(retryBtn){
+          retryBtn.classList.toggle("d-none", !candidateId);
+          retryBtn.disabled = !candidateId;
+          retryBtn.addEventListener("click", () => uploadPendingDoc(candidateId, doc, root));
+        }
+
+        const removeBtn = row.querySelector('[data-doc-act="remove"]');
+        if(removeBtn){
+          removeBtn.addEventListener("click", () => {
+            state.pendingDocs = state.pendingDocs.filter(p => p.tempId !== doc.tempId);
+            renderPendingDocs(root, candidateId);
+          });
+        }
+
+        host.appendChild(row);
+      });
+    }
+
+    function queueDocumentoFromRoot(root){
+      const tipo = root.querySelector("#candDocTipo")?.value || "";
+      const descricaoInput = root.querySelector("#candDocDescricao");
+      const descricao = (descricaoInput?.value || "").trim();
+      const fileInput = root.querySelector("#candDocArquivo");
+      const file = fileInput?.files?.[0];
+
+      if(!tipo){
+        toast("Selecione o tipo do documento.");
+        return;
+      }
+
+      if(!file){
+        toast("Selecione um arquivo para adicionar.");
+        return;
+      }
+
+      state.pendingDocs.push({
+        tempId: createPendingId(),
+        tipo,
+        descricao,
+        nomeArquivo: file.name,
+        tamanhoBytes: file.size,
+        file,
+        status: "pending"
+      });
+      if(!state.pendingDocsCandidateId){
+        state.pendingDocsCandidateId = "draft";
+      }
+
+      if(fileInput) fileInput.value = "";
+      if(descricaoInput) descricaoInput.value = "";
+
+      renderPendingDocs(root, null);
+      toast("Documento adicionado. Ele sera enviado ao salvar.");
+    }
+
+    async function uploadPendingDoc(candidateId, doc, root, silent){
+      if(!candidateId || !doc?.file) return null;
+      if(!state.pendingDocsCandidateId)
+        state.pendingDocsCandidateId = candidateId;
+
+      const form = new FormData();
+      form.append("arquivo", doc.file, doc.nomeArquivo);
+      form.append("tipo", doc.tipo);
+      if(doc.descricao) form.append("descricao", doc.descricao);
+
+      try{
+        const saved = await apiFetchJson(`${CANDIDATOS_API_URL}/${candidateId}/documentos`, {
+          method: "POST",
+          body: form
+        });
+
+        state.pendingDocs = state.pendingDocs.filter(p => p.tempId !== doc.tempId);
+        const c = findCand(candidateId);
+        if(c){
+          if(!Array.isArray(c.documentos)) c.documentos = [];
+          c.documentos.unshift({ ...saved });
+        }
+
+        if(root && c){
+          renderDocumentList(root, c, "#candDocList");
+          renderPendingDocs(root, candidateId);
+        }
+
+        if(!silent) toast("Documento enviado.");
+        return saved;
+      }catch(err){
+        doc.status = "failed";
+        if(root){
+          renderPendingDocs(root, candidateId);
+        }
+        if(!silent) toast("Falha ao enviar documento.");
+        return null;
+      }
+    }
+
+    async function uploadPendingDocs(candidateId, root){
+      const docs = [...state.pendingDocs];
+      let successCount = 0;
+      let failedCount = 0;
+
+      for(const doc of docs){
+        const saved = await uploadPendingDoc(candidateId, doc, root, true);
+        if(saved) successCount++;
+        else failedCount++;
+      }
+
+      return { successCount, failedCount };
+    }
+
     function renderDetail(){
       const host = $("#detailHost");
       host.replaceChildren();
@@ -811,6 +967,10 @@
         if(docDisabled) docDisabled.classList.add("d-none");
         if(docForm) docForm.classList.remove("d-none");
         renderDocumentList(modalEl, c, "#candDocList");
+        if(state.pendingDocsCandidateId !== c.id){
+          resetPendingDocs();
+        }
+        renderPendingDocs(modalEl, c.id);
       }else{
         $("#candId").value = "";
         $("#candNome").value = "";
@@ -824,7 +984,10 @@
         $("#candObs").value = "";
 
         if(docDisabled) docDisabled.classList.remove("d-none");
-        if(docForm) docForm.classList.add("d-none");
+        if(docForm) docForm.classList.remove("d-none");
+        resetPendingDocs();
+        state.pendingDocsCandidateId = "draft";
+        renderPendingDocs(modalEl, null);
       }
 
       const tabTrigger = modalEl.querySelector('[data-bs-target="#candTabDados"]');
@@ -891,6 +1054,33 @@
         renderVagaFilters();
         renderList();
         renderDetail();
+
+        if(!id && state.pendingDocs.length){
+          const modalEl = $("#modalCand");
+          state.pendingDocsCandidateId = mapped.id;
+          const result = await uploadPendingDocs(mapped.id, modalEl);
+          if(result.failedCount > 0){
+            $("#modalCandTitle").textContent = "Editar candidato";
+            $("#candId").value = mapped.id;
+            const docDisabled = modalEl.querySelector("#candDocDisabled");
+            const docForm = modalEl.querySelector("#candDocForm");
+            if(docDisabled) docDisabled.classList.add("d-none");
+            if(docForm) docForm.classList.remove("d-none");
+            renderDocumentList(modalEl, findCand(mapped.id) || mapped, "#candDocList");
+            renderPendingDocs(modalEl, mapped.id);
+            const tabTrigger = modalEl.querySelector('[data-bs-target="#candTabDocs"]');
+            if(tabTrigger){
+              bootstrap.Tab.getOrCreateInstance(tabTrigger).show();
+            }
+            toast(`Candidato salvo, mas ${result.failedCount} documento(s) falharam.`);
+            return;
+          }
+          resetPendingDocs();
+        }
+        if(!id && state.pendingDocs.length === 0 && state.pendingDocsCandidateId === "draft"){
+          resetPendingDocs();
+        }
+
         bootstrap.Modal.getOrCreateInstance($("#modalCand")).hide();
       }catch(err){
         console.error(err);
@@ -1063,7 +1253,7 @@
         docBtn.addEventListener("click", async () => {
           const candId = $("#candId").value;
           if(!candId){
-            toast("Salve o candidato antes de anexar documentos.");
+            queueDocumentoFromRoot($("#modalCand"));
             return;
           }
           await uploadDocumentoFromRoot(candId, $("#modalCand"), {
