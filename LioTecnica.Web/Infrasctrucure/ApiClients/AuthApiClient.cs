@@ -43,4 +43,14 @@ public sealed class AuthApiClient
 
         return await response.Content.ReadFromJsonAsync<CurrentUserResponse>(JsonOptions, ct);
     }
+
+    public async Task<CurrentUserResponse?> UpdateProfileAsync(string fullName, CancellationToken ct)
+    {
+        var request = new { FullName = fullName };
+        using var response = await _http.PutAsJsonAsync("api/auth/me", request, JsonOptions, ct);
+        if (!response.IsSuccessStatusCode)
+            return null;
+
+        return await response.Content.ReadFromJsonAsync<CurrentUserResponse>(JsonOptions, ct);
+    }
 }

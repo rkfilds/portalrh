@@ -96,6 +96,23 @@ public sealed class AuthenticationService
         );
     }
 
+    public async Task<CurrentUserResponse?> UpdateProfileAsync(Guid userId, UpdateProfileRequest request, CancellationToken ct)
+    {
+        var user = await _userManager.Users.FirstOrDefaultAsync(x => x.Id == userId, ct);
+        if (user is null) return null;
+
+        var fullName = request.FullName.Trim();
+        if (string.IsNullOrWhiteSpace(fullName))
+            throw new InvalidOperationException("Full name is required.");
+
+        user.FullName = fullName;
+        var result = await _userManager.UpdateAsync(user);
+        if (!result.Succeeded)
+            throw new InvalidOperationException(string.Join("; ", result.Errors.Select(x => x.Description)));
+
+        return await GetCurrentUserAsync(userId, ct);
+    }
+
     private string CreateJwtToken(ApplicationUser user, IEnumerable<string> roleNames, IEnumerable<string> permissions)
     {
         var claims = new List<Claim>

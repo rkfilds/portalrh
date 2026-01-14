@@ -86,19 +86,18 @@ public sealed class AccountController : Controller
     [HttpGet("/Account/Profile")]
     public async Task<IActionResult> Profile(CancellationToken ct)
     {
-        var userId = GetCurrentUserId();
-        if (userId is null)
-            return RedirectToAction(nameof(Login));
-
-        var user = await _usersApi.GetByIdAsync(userId.Value, ct);
-        if (user is null)
-            return NotFound();
+        var current = await _authApi.GetCurrentUserAsync(ct);
+        if (current is null)
+        {
+            ViewData["ErrorMessage"] = "Nao foi possivel carregar o perfil. Verifique a conexao com a API.";
+            return View(BuildFallbackProfile());
+        }
 
         return View(new ProfileViewModel
         {
-            FullName = user.FullName,
-            Email = user.Email,
-            TenantId = User.FindFirst("tenant")?.Value ?? string.Empty
+            FullName = current.FullName,
+            Email = current.Email,
+            TenantId = current.TenantId
         });
     }
 
@@ -112,20 +111,11 @@ public sealed class AccountController : Controller
         if (!ModelState.IsValid)
             return View(model);
 
-        var current = await _usersApi.GetByIdAsync(userId.Value, ct);
-        if (current is null)
-            return NotFound();
-
-        var updateRequest = new UsersApiClient.UserUpdateRequest(
-            current.Email,
-            model.FullName.Trim(),
-            current.IsActive);
-
-        var updated = await _usersApi.UpdateAsync(userId.Value, updateRequest, ct);
+        var updated = await _authApi.UpdateProfileAsync(model.FullName.Trim(), ct);
         if (updated is null)
         {
-            ModelState.AddModelError(string.Empty, "Nao foi possivel atualizar o perfil.");
-            return View(model);
+            ViewData["ErrorMessage"] = "Nao foi possivel atualizar o perfil. Verifique a conexao com a API.";
+            return View(BuildFallbackProfile(model));
         }
 
         await RefreshUserClaimsAsync(updated.FullName, updated.Email);
@@ -135,7 +125,7 @@ public sealed class AccountController : Controller
         {
             FullName = updated.FullName,
             Email = updated.Email,
-            TenantId = User.FindFirst("tenant")?.Value ?? string.Empty
+            TenantId = updated.TenantId
         });
     }
 
@@ -162,5 +152,15 @@ public sealed class AccountController : Controller
             CookieAuthenticationDefaults.AuthenticationScheme,
             new ClaimsPrincipal(identity),
             new AuthenticationProperties { IsPersistent = false });
+    }
+
+    private ProfileViewModel BuildFallbackProfile(ProfileViewModel? source = null)
+    {
+        return new ProfileViewModel
+        {
+            FullName = source?.FullName ?? (User?.Identity?.Name ?? string.Empty),
+            Email = source?.Email ?? (User.FindFirst(ClaimTypes.Email)?.Value ?? string.Empty),
+            TenantId = source?.TenantId ?? (User.FindFirst("tenant")?.Value ?? string.Empty)
+        };
     }
 }

@@ -22,6 +22,10 @@
             {
                 <div class="alert alert-success">Perfil atualizado.</div>
             }
+            @if (ViewData["ErrorMessage"] is string errorMessage && !string.IsNullOrWhiteSpace(errorMessage))
+            {
+                <div class="alert alert-danger">@errorMessage</div>
+            }
             <form method="post" action="/Account/Profile">
                 <div class="row g-3">
                     <div class="col-md-4">

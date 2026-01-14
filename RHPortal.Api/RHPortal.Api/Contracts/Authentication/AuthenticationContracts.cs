@@ -26,3 +26,7 @@ public sealed record CurrentUserResponse(
     IReadOnlyList<string> Roles,
     IReadOnlyList<string> Permissions
 );
+
+public sealed record UpdateProfileRequest(
+    [Required, MaxLength(180)] string FullName
+);
