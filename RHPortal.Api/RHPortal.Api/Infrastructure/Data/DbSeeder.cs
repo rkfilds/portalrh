@@ -1336,6 +1336,39 @@ BuildDemoRequisitos(string areaCode)
         string emailDomain,
         string adminPassword)
     {
+        static async Task EnsureUserWithRoleAsync(
+            UserManager<ApplicationUser> userManager,
+            string email,
+            string fullName,
+            string password,
+            string roleName)
+        {
+            var user = await userManager.Users.FirstOrDefaultAsync(x => x.Email == email);
+            if (user is null)
+            {
+                user = new ApplicationUser
+                {
+                    Id = Guid.NewGuid(),
+                    Email = email,
+                    UserName = email,
+                    FullName = fullName,
+                    IsActive = true
+                };
+
+                var userResult = await userManager.CreateAsync(user, password);
+                if (!userResult.Succeeded)
+                    throw new InvalidOperationException(string.Join("; ", userResult.Errors.Select(x => x.Description)));
+            }
+
+            var inRole = await userManager.IsInRoleAsync(user, roleName);
+            if (!inRole)
+            {
+                var addToRole = await userManager.AddToRoleAsync(user, roleName);
+                if (!addToRole.Succeeded)
+                    throw new InvalidOperationException(string.Join("; ", addToRole.Errors.Select(x => x.Description)));
+            }
+        }
+
         var adminRole = await roleManager.Roles.FirstOrDefaultAsync(x => x.Name == "Admin");
         if (adminRole is null)
         {
@@ -1353,29 +1386,28 @@ BuildDemoRequisitos(string areaCode)
         }
 
         var adminEmail = $"admin@{emailDomain}";
-        var adminUser = await userManager.Users.FirstOrDefaultAsync(x => x.Email == adminEmail);
-        if (adminUser is null)
-        {
-            adminUser = new ApplicationUser
-            {
-                Id = Guid.NewGuid(),
-                Email = adminEmail,
-                UserName = adminEmail,
-                FullName = $"{tenantId.ToUpperInvariant()} Admin",
-                IsActive = true
-            };
+        await EnsureUserWithRoleAsync(
+            userManager,
+            adminEmail,
+            $"{tenantId.ToUpperInvariant()} Admin",
+            adminPassword,
+            "Admin");
 
-            var userResult = await userManager.CreateAsync(adminUser, adminPassword);
-            if (!userResult.Succeeded)
-                throw new InvalidOperationException(string.Join("; ", userResult.Errors.Select(x => x.Description)));
-        }
-
-        var isInRole = await userManager.IsInRoleAsync(adminUser, "Admin");
-        if (!isInRole)
+        if (tenantId.Equals("dev", StringComparison.OrdinalIgnoreCase))
         {
-            var addToRole = await userManager.AddToRoleAsync(adminUser, "Admin");
-            if (!addToRole.Succeeded)
-                throw new InvalidOperationException(string.Join("; ", addToRole.Errors.Select(x => x.Description)));
+            await EnsureUserWithRoleAsync(
+                userManager,
+                "ti@lio.local",
+                "TI",
+                "123@Mudar",
+                "Admin");
+
+            await EnsureUserWithRoleAsync(
+                userManager,
+                "rh@lio.local",
+                "RH",
+                "1234@Mudar",
+                "Admin");
         }
 
         var menus = BuildDefaultMenus();
