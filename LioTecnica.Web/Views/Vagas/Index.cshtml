@@ -348,6 +348,41 @@
 
 				<hr class="my-3">
 
+				<div class="d-flex align-items-center justify-content-between gap-2">
+					<div>
+						<div class="fw-semibold">Candidatos indicados</div>
+						<div class="text-muted small">Busca por palavras-chave e valida o match minimo da vaga.</div>
+					</div>
+					<button class="btn btn-brand btn-sm" type="button" data-dact="findCandidates">
+						<i class="bi bi-search me-1"></i>Candidatos Indicados
+					</button>
+				</div>
+
+				<div class="card-soft p-2 mt-2" style="box-shadow:none;">
+					<div class="d-flex align-items-center justify-content-between mb-2">
+						<div class="fw-semibold">Em Triagem</div>
+						<span class="badge-soft" data-role="cand-indicados-count">0</span>
+					</div>
+					<div class="text-muted small mb-2" data-role="cand-indicados-hint">
+						Clique em Candidatos Indicados para listar candidatos aderentes.
+					</div>
+					<div class="table-responsive">
+						<table class="table align-middle mb-0">
+							<thead>
+								<tr>
+									<th style="min-width: 220px;">Candidato</th>
+									<th style="min-width: 180px;">Email</th>
+									<th style="min-width: 120px;">Match</th>
+									<th style="min-width: 130px;">Status</th>
+								</tr>
+							</thead>
+							<tbody id="candIndicadosBody"></tbody>
+						</table>
+					</div>
+				</div>
+
+				<hr class="my-3">
+
 				<div class="fw-semibold mb-1">Simulador rapido</div>
 				<div class="text-muted small mb-2">Cole um texto (curriculo em texto) e veja o match estimado por palavras-chave.</div>
 				<textarea class="form-control mb-2" id="simText" rows="5" placeholder="Cole aqui o texto do CV (extraido do PDF/DOCX)..."></textarea>
@@ -364,6 +399,38 @@
 			</div>
 		</div>
 	</div>
+</template>
+
+<template id="tpl-vaga-indicados-loading">
+	<tr>
+		<td colspan="4" class="text-center text-muted py-3">
+			<div class="d-flex align-items-center justify-content-center gap-2">
+				<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+				<span>Buscando candidatos...</span>
+			</div>
+		</td>
+	</tr>
+</template>
+
+<template id="tpl-vaga-indicados-empty-row">
+	<tr>
+		<td colspan="4" class="text-center text-muted py-3">Nenhum candidato encontrado para este match.</td>
+	</tr>
+</template>
+
+<template id="tpl-vaga-indicados-row">
+	<tr>
+		<td>
+			<div class="fw-semibold" data-role="cand-name"></div>
+		</td>
+		<td class="text-muted small" data-role="cand-email"></td>
+		<td>
+			<span class="badge-soft" data-role="cand-match"></span>
+		</td>
+		<td>
+			<span class="status-tag triagem">Em triagem</span>
+		</td>
+	</tr>
 </template>
 
 <template id="tpl-vaga-req-empty-row">

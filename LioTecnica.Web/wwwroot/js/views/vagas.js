@@ -3,6 +3,7 @@
 const VAGAS_API_URL = window.__vagasApiUrl || "/api/vagas";
 const AREAS_API_URL = window.__areasApiUrl || "/api/lookup/areas";
 const DEPARTMENTS_API_URL = window.__departmentsApiUrl || "/api/lookup/departments";
+const CANDIDATOS_API_URL = window.__candidatosApiUrl || "/api/candidatos";
 const NORMALIZE_ENUM = (value) => (value ?? "").toString().trim().toLowerCase();
 
     const LOGO_DATA_URI = "data:image/webp;base64,UklGRngUAABXRUJQVlA4IGwUAAAQYwCdASpbAVsBPlEokUajoqGhIpNoyHAK7AQYJjYQmG9Dtu/6p6QZ4lQd6lPde+Jk3i3kG2EoP+QW0c0h8Oe3jW2C5zE0o9jzZ1x2fX9cZlX0d7rW8r0vQ9p3d2nJ1bqzQfQZxVwTt7mJvU8j1GqF4oJc8Qb+gq+oQyHcQyYc2b9u2fYf0Rj9x9hRZp2Y2xK0yVQ8Hj4p6w8B1K2cKk2mY9m2r8kz3a4m7xG4xg9m5VjzP3E4RjQH8fYkC4mB8g0vR3c5h1D0yE8Qzv7t7gQj0Z9yKk3cWZgVnq3l1kq6rE8oWc4z6oZk8k0b1o9m8p2m+QJ3nJm6GgA=";
@@ -519,6 +520,136 @@ function fmtStatus(s){
       return map[s] || s;
     }
 
+    async function fetchCandidatesForMatch(){
+      const res = await fetch(CANDIDATOS_API_URL, { headers: { "Accept": "application/json" } });
+      if(!res.ok) throw new Error(`Falha ao buscar candidatos: ${res.status}`);
+      const list = await res.json();
+      return Array.isArray(list) ? list.map(mapCandidateForMatch).filter(Boolean) : [];
+    }
+
+    function mapCandidateForMatch(api){
+      if(!api) return null;
+      return {
+        id: api.id,
+        nome: api.nome ?? "",
+        email: api.email ?? "",
+        cvText: api.cvText ?? ""
+      };
+    }
+
+    function calcMatchForVagaCandidate(vaga, cand){
+      const text = normalizeText(cand.cvText || "");
+      const reqs = (vaga?.requisitos || []);
+      if(!text || !reqs.length){
+        const thr = clamp(parseInt(vaga?.threshold ?? 0, 10) || 0, 0, 100);
+        return { score: 0, pass: 0 >= thr, missMandatory: reqs.filter(r => !!r.obrigatorio), threshold: thr };
+      }
+
+      const totalPeso = reqs.reduce((acc, r) => acc + clamp(pesoToNumber(r.peso) || 0, 0, 10), 0) || 1;
+      let hitPeso = 0;
+      const missMandatory = [];
+
+      reqs.forEach(r => {
+        const termo = normalizeText(r.termo || "");
+        const syns = (r.sinonimos || []).map(normalizeText).filter(Boolean);
+        const bag = [termo, ...syns].filter(Boolean);
+
+        const found = bag.some(t => t && text.includes(t));
+        const p = clamp(pesoToNumber(r.peso) || 0, 0, 10);
+
+        if(found){
+          hitPeso += p;
+        }else if(r.obrigatorio){
+          missMandatory.push(r);
+        }
+      });
+
+      let score = Math.round((hitPeso / totalPeso) * 100);
+      if(missMandatory.length){
+        score = Math.max(0, score - Math.min(40, missMandatory.length * 15));
+      }
+
+      const thr = clamp(parseInt(vaga?.threshold ?? 0, 10) || 0, 0, 100);
+      const pass = score >= thr && missMandatory.length === 0;
+
+      return { score, pass, missMandatory, threshold: thr };
+    }
+
+    function setIndicadosHint(text){
+      const hint = $("#detailHost [data-role=\"cand-indicados-hint\"]");
+      if(hint) hint.textContent = text || "";
+    }
+
+    function setIndicadosCount(value){
+      const count = $("#detailHost [data-role=\"cand-indicados-count\"]");
+      if(count) count.textContent = value ?? "0";
+    }
+
+    function renderIndicadosLoading(){
+      const tbody = $("#detailHost #candIndicadosBody");
+      if(!tbody) return;
+      tbody.replaceChildren();
+      const row = cloneTemplate("tpl-vaga-indicados-loading");
+      if(row) tbody.appendChild(row);
+      setIndicadosCount("0");
+      setIndicadosHint("Buscando candidatos aderentes...");
+    }
+
+    function renderIndicadosEmpty(){
+      const tbody = $("#detailHost #candIndicadosBody");
+      if(!tbody) return;
+      tbody.replaceChildren();
+      const row = cloneTemplate("tpl-vaga-indicados-empty-row");
+      if(row) tbody.appendChild(row);
+      setIndicadosCount("0");
+      setIndicadosHint("Nenhum candidato atendeu ao match minimo e aos requisitos obrigatorios.");
+    }
+
+    function renderIndicadosList(items){
+      const tbody = $("#detailHost #candIndicadosBody");
+      if(!tbody) return;
+      tbody.replaceChildren();
+
+      if(!items.length){
+        renderIndicadosEmpty();
+        return;
+      }
+
+      items.forEach(item => {
+        const tr = cloneTemplate("tpl-vaga-indicados-row");
+        if(!tr) return;
+        setText(tr, "cand-name", item.nome);
+        setText(tr, "cand-email", item.email);
+        setText(tr, "cand-match", `${item.score}%`);
+        tbody.appendChild(tr);
+      });
+
+      setIndicadosCount(String(items.length));
+      setIndicadosHint(`Exibindo ${items.length} candidato(s) com match acima do minimo.`);
+    }
+
+    async function findCandidatesForVaga(vaga){
+      if(!vaga) return;
+      renderIndicadosLoading();
+
+      try{
+        const list = await fetchCandidatesForMatch();
+        const matched = list
+          .map(c => {
+            const m = calcMatchForVagaCandidate(vaga, c);
+            return { ...c, score: m.score, pass: m.pass, threshold: m.threshold };
+          })
+          .filter(c => c.pass)
+          .sort((a,b) => b.score - a.score);
+
+        renderIndicadosList(matched);
+      }catch(err){
+        console.error(err);
+        renderIndicadosEmpty();
+        setIndicadosHint("Falha ao buscar candidatos. Verifique a conexao com a API.");
+      }
+    }
+
     function buildStatusBadge(s){
       const map = {
         aberta: "success",
@@ -776,6 +907,7 @@ function fmtStatus(s){
       // bind detail actions + render req table + bind sliders
       bindDetailActions(v);
       renderReqTable(v);
+      renderIndicadosEmpty();
     }
 
     function bindDetailActions(v){
@@ -792,6 +924,7 @@ function fmtStatus(s){
           if(act === "saveWeights") saveWeightsFromDetail(v.id);
           if(act === "simulate") simulateMatch(v.id);
           if(act === "simClear") clearSimulation();
+          if(act === "findCandidates") void findCandidatesForVaga(v);
         });
       });
 
