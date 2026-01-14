@@ -35,4 +35,4 @@ services:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
       - key: Endpoints__RhApi
-        value: http://portalrh-api:10000/
+        value: https://portalrh-api.onrender.com/
