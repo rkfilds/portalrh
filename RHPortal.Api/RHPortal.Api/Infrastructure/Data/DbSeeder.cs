@@ -728,6 +728,7 @@ BuildDemoRequisitos(string areaCode)
         };
 
         var candidatos = new List<Candidato>();
+        var historicos = new List<CandidatoHistorico>();
 
         for (var i = 0; i < 50; i++)
         {
@@ -794,9 +795,41 @@ BuildDemoRequisitos(string areaCode)
             }
 
             candidatos.Add(candidato);
+
+            historicos.Add(new CandidatoHistorico
+            {
+                Id = Guid.NewGuid(),
+                CandidatoId = candidato.Id,
+                VagaId = vaga.Id,
+                AppliedAtUtc = createdAt,
+                LastContactAtUtc = updatedAt,
+                Interviewed = rng.NextDouble() > 0.6,
+                InterviewAtUtc = rng.NextDouble() > 0.6 ? updatedAt.AddDays(-rng.Next(1, 12)) : null,
+                Notes = rng.NextDouble() > 0.7 ? "Contato via telefone/WhatsApp para alinhamento." : null
+            });
+
+            if (vagas.Count > 1 && rng.NextDouble() > 0.7)
+            {
+                var other = vagas[rng.Next(vagas.Count)];
+                if (other.Id != vaga.Id)
+                {
+                    historicos.Add(new CandidatoHistorico
+                    {
+                        Id = Guid.NewGuid(),
+                        CandidatoId = candidato.Id,
+                        VagaId = other.Id,
+                        AppliedAtUtc = createdAt.AddDays(-rng.Next(5, 40)),
+                        LastContactAtUtc = createdAt.AddDays(-rng.Next(1, 5)),
+                        Interviewed = rng.NextDouble() > 0.7,
+                        InterviewAtUtc = rng.NextDouble() > 0.7 ? createdAt.AddDays(-rng.Next(1, 5)) : null,
+                        Notes = "Candidatura anterior."
+                    });
+                }
+            }
         }
 
         db.Candidatos.AddRange(candidatos);
+        db.CandidatoHistoricos.AddRange(historicos);
         await db.SaveChangesAsync();
     }
 

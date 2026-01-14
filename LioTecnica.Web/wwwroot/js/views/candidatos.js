@@ -26,13 +26,20 @@
       return text || DEFAULT_CAND_STATUS;
     }
 
+    function formatTriagemReason(code){
+      if(!code) return "";
+      return getEnumText("triagemDecisionReason", code, code);
+    }
+
     const state = {
       vagas: [],
       candidatos: [],
       selectedId: null,
       filters: { q:"", status:"all", vagaId:"all" },
       pendingDocs: [],
-      pendingDocsCandidateId: null
+      pendingDocsCandidateId: null,
+      historicos: {},
+      triagemHistoricos: {}
     };
     const detailLoads = new Set();
 
@@ -46,6 +53,35 @@
       if(mb < 1024) return `${mb.toFixed(1)} MB`;
       const gb = mb / 1024;
       return `${gb.toFixed(2)} GB`;
+    }
+
+    function formatDate(iso){
+      if(!iso) return EMPTY_TEXT;
+      const d = new Date(iso);
+      if(Number.isNaN(d.getTime())) return EMPTY_TEXT;
+      return d.toLocaleDateString("pt-BR");
+    }
+
+    function formatDateTime(iso){
+      if(!iso) return EMPTY_TEXT;
+      const d = new Date(iso);
+      if(Number.isNaN(d.getTime())) return EMPTY_TEXT;
+      return d.toLocaleString("pt-BR", { day:"2-digit", month:"2-digit", year:"numeric", hour:"2-digit", minute:"2-digit" });
+    }
+
+    function toDateInputValue(iso){
+      if(!iso) return "";
+      const d = new Date(iso);
+      if(Number.isNaN(d.getTime())) return "";
+      const pad = (n) => String(n).padStart(2, "0");
+      return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+    }
+
+    function fromDateInputValue(value){
+      if(!value) return null;
+      const d = new Date(`${value}T00:00:00Z`);
+      if(Number.isNaN(d.getTime())) return null;
+      return d.toISOString();
     }
 
     function createPendingId(){
@@ -185,6 +221,33 @@
       };
     }
 
+    function mapHistoricoFromApi(api){
+      if(!api) return null;
+      return {
+        id: api.id,
+        vagaId: api.vagaId,
+        vagaCodigo: api.vagaCodigo || "",
+        vagaTitulo: api.vagaTitulo || "",
+        appliedAt: api.appliedAtUtc || null,
+        lastContactAt: api.lastContactAtUtc || null,
+        interviewed: !!api.interviewed,
+        interviewAt: api.interviewAtUtc || null,
+        notes: api.notes || ""
+      };
+    }
+
+    function mapTriagemHistoricoFromApi(api){
+      if(!api) return null;
+      return {
+        id: api.id,
+        from: toUiStatus(api.fromStatus),
+        to: toUiStatus(api.toStatus),
+        reason: api.reason || "",
+        notes: api.notes || "",
+        occurredAt: api.occurredAtUtc || api.createdAtUtc || null
+      };
+    }
+
     function buildCandidatePayload(c, includeDocumentos = false){
       const documentos = includeDocumentos && Array.isArray(c.documentos) ? c.documentos : null;
       return {
@@ -251,6 +314,20 @@
         ? list.map(mapCandidateFromApi).filter(Boolean)
         : [];
       state.selectedId = state.candidatos[0]?.id || null;
+    }
+
+    async function fetchHistorico(candId){
+      const list = await apiFetchJson(`${CANDIDATOS_API_URL}/${candId}/historico`, { method: "GET" });
+      const mapped = Array.isArray(list) ? list.map(mapHistoricoFromApi).filter(Boolean) : [];
+      state.historicos[candId] = mapped;
+      return mapped;
+    }
+
+    async function fetchTriagemHistorico(candId){
+      const list = await apiFetchJson(`${CANDIDATOS_API_URL}/${candId}/triagem-historico`, { method: "GET" });
+      const mapped = Array.isArray(list) ? list.map(mapTriagemHistoricoFromApi).filter(Boolean) : [];
+      state.triagemHistoricos[candId] = mapped;
+      return mapped;
     }
 
     function findVaga(id){
@@ -567,6 +644,183 @@
       });
     }
 
+    function clearHistoricoForm(root, candidate){
+      if(!root) return;
+      const histId = root.querySelector("#histId");
+      const vagaSel = root.querySelector("#histVaga");
+      const applied = root.querySelector("#histAppliedAt");
+      const lastContact = root.querySelector("#histLastContactAt");
+      const interviewed = root.querySelector("#histInterviewed");
+      const interviewAt = root.querySelector("#histInterviewAt");
+      const notes = root.querySelector("#histNotes");
+
+      if(histId) histId.value = "";
+      fillVagaSelect(vagaSel, candidate?.vagaId || "", true);
+      if(applied) applied.value = toDateInputValue(candidate?.createdAt);
+      if(lastContact) lastContact.value = "";
+      if(interviewed) interviewed.checked = false;
+      if(interviewAt) interviewAt.value = "";
+      if(notes) notes.value = "";
+    }
+
+    function fillHistoricoForm(root, entry){
+      if(!root || !entry) return;
+      const histId = root.querySelector("#histId");
+      const vagaSel = root.querySelector("#histVaga");
+      const applied = root.querySelector("#histAppliedAt");
+      const lastContact = root.querySelector("#histLastContactAt");
+      const interviewed = root.querySelector("#histInterviewed");
+      const interviewAt = root.querySelector("#histInterviewAt");
+      const notes = root.querySelector("#histNotes");
+
+      if(histId) histId.value = entry.id || "";
+      fillVagaSelect(vagaSel, entry.vagaId || "", true);
+      if(applied) applied.value = toDateInputValue(entry.appliedAt);
+      if(lastContact) lastContact.value = toDateInputValue(entry.lastContactAt);
+      if(interviewed) interviewed.checked = !!entry.interviewed;
+      if(interviewAt) interviewAt.value = toDateInputValue(entry.interviewAt);
+      if(notes) notes.value = entry.notes || "";
+    }
+
+    function renderHistorico(root, candidate){
+      const host = root.querySelector("#histTableBody");
+      if(!host || !candidate) return;
+      host.replaceChildren();
+
+      const list = state.historicos[candidate.id];
+      if(list === undefined){
+        const loading = cloneTemplate("tpl-cand-hist-loading");
+        if(loading) host.appendChild(loading);
+        fetchHistorico(candidate.id).then(() => {
+          if(state.selectedId === candidate.id){
+            renderHistorico(root, candidate);
+          }
+        }).catch(err => console.error(err));
+        return;
+      }
+
+      if(!list.length){
+        const empty = cloneTemplate("tpl-cand-hist-empty");
+        if(empty) host.appendChild(empty);
+        return;
+      }
+
+      list.forEach(entry => {
+        const row = cloneTemplate("tpl-cand-hist-row");
+        if(!row) return;
+        setText(row, "hist-vaga-title", entry.vagaTitulo || EMPTY_TEXT);
+        setText(row, "hist-vaga-code", entry.vagaCodigo || EMPTY_TEXT);
+        setText(row, "hist-applied", formatDate(entry.appliedAt));
+        setText(row, "hist-last", formatDate(entry.lastContactAt));
+
+        const interviewText = entry.interviewed ? `Sim${entry.interviewAt ? ` (${formatDate(entry.interviewAt)})` : ""}` : "Nao";
+        setText(row, "hist-interview", interviewText);
+        setText(row, "hist-notes", entry.notes || EMPTY_TEXT);
+
+        const editBtn = row.querySelector('[data-hact="edit"]');
+        if(editBtn){
+          editBtn.addEventListener("click", () => fillHistoricoForm(root, entry));
+        }
+
+        host.appendChild(row);
+      });
+    }
+
+    function renderTriagemHistorico(root, candidate){
+      const host = root.querySelector("#triHistTableBody");
+      if(!host || !candidate) return;
+      host.replaceChildren();
+
+      const list = state.triagemHistoricos[candidate.id];
+      if(list === undefined){
+        const loading = cloneTemplate("tpl-cand-tri-loading");
+        if(loading) host.appendChild(loading);
+        fetchTriagemHistorico(candidate.id).then(() => {
+          if(state.selectedId === candidate.id){
+            renderTriagemHistorico(root, candidate);
+          }
+        }).catch(err => {
+          console.error(err);
+          state.triagemHistoricos[candidate.id] = [];
+          if(state.selectedId === candidate.id){
+            renderTriagemHistorico(root, candidate);
+          }
+        });
+        return;
+      }
+
+      if(!list.length){
+        const empty = cloneTemplate("tpl-cand-tri-empty");
+        if(empty) host.appendChild(empty);
+        return;
+      }
+
+      list.forEach(entry => {
+        const row = cloneTemplate("tpl-cand-tri-row");
+        if(!row) return;
+        setText(row, "tri-date", formatDateTime(entry.occurredAt));
+        setText(row, "tri-from", getEnumText("candidatoStatus", entry.from, entry.from));
+        setText(row, "tri-to", getEnumText("candidatoStatus", entry.to, entry.to));
+        const reasonTxt = formatTriagemReason(entry.reason);
+        setText(row, "tri-reason", reasonTxt || EMPTY_TEXT);
+        setText(row, "tri-note", entry.notes || EMPTY_TEXT);
+        host.appendChild(row);
+      });
+    }
+
+    async function saveHistorico(candidate, root){
+      if(!candidate || !root) return;
+      const histId = root.querySelector("#histId")?.value || "";
+      const vagaId = root.querySelector("#histVaga")?.value || "";
+      const appliedRaw = root.querySelector("#histAppliedAt")?.value || "";
+      const lastRaw = root.querySelector("#histLastContactAt")?.value || "";
+      const interviewed = !!root.querySelector("#histInterviewed")?.checked;
+      const interviewRaw = root.querySelector("#histInterviewAt")?.value || "";
+      const notes = (root.querySelector("#histNotes")?.value || "").trim();
+
+      if(!vagaId || vagaId === SELECT_PLACEHOLDER){
+        toast("Selecione uma vaga para o historico.");
+        return;
+      }
+
+      const payload = {
+        vagaId,
+        appliedAtUtc: fromDateInputValue(appliedRaw) || new Date().toISOString(),
+        lastContactAtUtc: fromDateInputValue(lastRaw),
+        interviewed,
+        interviewAtUtc: fromDateInputValue(interviewRaw),
+        notes: notes || null
+      };
+
+      try{
+        const url = histId
+          ? `${CANDIDATOS_API_URL}/${candidate.id}/historico/${histId}`
+          : `${CANDIDATOS_API_URL}/${candidate.id}/historico`;
+        const method = histId ? "PUT" : "POST";
+        const saved = await apiFetchJson(url, { method, body: JSON.stringify(payload) });
+        const mapped = mapHistoricoFromApi(saved);
+        if(!mapped) throw new Error("Historico invalido.");
+
+        const list = Array.isArray(state.historicos[candidate.id]) ? state.historicos[candidate.id] : [];
+        if(histId){
+          state.historicos[candidate.id] = list.map(x => x.id === mapped.id ? mapped : x);
+        }else{
+          state.historicos[candidate.id] = [mapped, ...list];
+        }
+
+        state.historicos[candidate.id] = state.historicos[candidate.id]
+          .slice()
+          .sort((a,b) => new Date(b.appliedAt || 0) - new Date(a.appliedAt || 0));
+
+        renderHistorico(root, candidate);
+        clearHistoricoForm(root, candidate);
+        toast("Historico atualizado.");
+      }catch(err){
+        console.error(err);
+        toast("Falha ao salvar historico.");
+      }
+    }
+
     function renderPendingDocs(root, candidateId){
       const wrap = root.querySelector("#candDocPendingWrap");
       const host = root.querySelector("#candDocPendingList");
@@ -772,6 +1026,9 @@
       fillSelectFromEnum(docTipo, "candidatoDocumentoTipo", getEnumOptions("candidatoDocumentoTipo")[0]?.code || "");
 
       renderDocumentList(root, c);
+      clearHistoricoForm(root, c);
+      renderHistorico(root, c);
+      renderTriagemHistorico(root, c);
 
       const m = calcMatchForCand(c);
       const thr = m.threshold ?? (v ? v.threshold : 0);
@@ -838,6 +1095,15 @@
           if(act === "saveMeta") saveMeta(c.id, false);
           if(act === "uploadDoc") uploadDocumento(c.id);
           if(act === "openVaga") toast("Placeholder: aqui abriria a tela de Vagas filtrada na vaga.");
+        });
+      });
+
+      $$("#detailHost [data-hact]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const act = btn.dataset.hact;
+          const root = $("#detailHost");
+          if(act === "save") saveHistorico(c, root);
+          if(act === "clear") clearHistoricoForm(root, c);
         });
       });
     }

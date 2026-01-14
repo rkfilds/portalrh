@@ -1,0 +1,38 @@
+services:
+  - type: web
+    name: portalrh-api
+    runtime: dotnet
+    rootDir: RHPortal.Api/RHPortal.Api
+    buildCommand: dotnet publish -c Release -o out
+    startCommand: dotnet out/RHPortal.Api.dll
+    envVars:
+      - key: ASPNETCORE_URLS
+        value: http://0.0.0.0:$PORT
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ConnectionStrings__Default
+        value: Data Source=/var/data/rhportal.db
+      - key: Seed__ResetDatabase
+        value: "false"
+      - key: Seed__AdminPassword
+        value: ChangeThisPassword123!
+      - key: Jwt__SigningKey
+        value: ChangeThisSigningKeyToAStrongValue1234567890
+    disk:
+      name: rhportal-data
+      mountPath: /var/data
+      sizeGB: 1
+
+  - type: web
+    name: portalrh-web
+    runtime: dotnet
+    rootDir: LioTecnica.Web
+    buildCommand: dotnet publish -c Release -o out
+    startCommand: dotnet out/LioTecnica.Web.dll
+    envVars:
+      - key: ASPNETCORE_URLS
+        value: http://0.0.0.0:$PORT
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: Endpoints__RhApi
+        value: http://portalrh-api:10000/

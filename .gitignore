@@ -6,3 +6,7 @@
 .vs/
 **/bin/
 **/obj/
+**/App_Data/*.db
+**/App_Data/*.db-*
+**/App_Data/*.sqlite*
+**/App_Data/uploads/

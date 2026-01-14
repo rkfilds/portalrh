@@ -113,3 +113,45 @@ public sealed record CandidatoDocumentoResponse(
     DateTimeOffset CreatedAtUtc,
     DateTimeOffset UpdatedAtUtc
 );
+
+public sealed record CandidatoHistoricoRequest(
+    [Required] Guid VagaId,
+    DateTimeOffset AppliedAtUtc,
+    DateTimeOffset? LastContactAtUtc,
+    bool Interviewed,
+    DateTimeOffset? InterviewAtUtc,
+    [MaxLength(800)] string? Notes
+);
+
+public sealed record CandidatoHistoricoResponse(
+    Guid Id,
+    Guid VagaId,
+    string? VagaCodigo,
+    string? VagaTitulo,
+    DateTimeOffset AppliedAtUtc,
+    DateTimeOffset? LastContactAtUtc,
+    bool Interviewed,
+    DateTimeOffset? InterviewAtUtc,
+    string? Notes,
+    DateTimeOffset CreatedAtUtc,
+    DateTimeOffset UpdatedAtUtc
+);
+
+public sealed record CandidatoTriagemHistoricoRequest(
+    [Required] CandidatoStatus FromStatus,
+    [Required] CandidatoStatus ToStatus,
+    [MaxLength(160)] string? Reason,
+    [MaxLength(800)] string? Notes,
+    DateTimeOffset? OccurredAtUtc
+);
+
+public sealed record CandidatoTriagemHistoricoResponse(
+    Guid Id,
+    CandidatoStatus FromStatus,
+    CandidatoStatus ToStatus,
+    string? Reason,
+    string? Notes,
+    DateTimeOffset OccurredAtUtc,
+    DateTimeOffset CreatedAtUtc,
+    DateTimeOffset UpdatedAtUtc
+);

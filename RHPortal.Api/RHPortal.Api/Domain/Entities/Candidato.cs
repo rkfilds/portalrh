@@ -40,6 +40,55 @@ public sealed class Candidato : ITenantEntity
     public Guid? LastMatchVagaId { get; set; }
 
     public List<CandidatoDocumento> Documentos { get; set; } = new();
+    public List<CandidatoHistorico> Historicos { get; set; } = new();
+    public List<CandidatoTriagemHistorico> TriagemHistoricos { get; set; } = new();
+
+    public DateTimeOffset CreatedAtUtc { get; set; }
+    public DateTimeOffset UpdatedAtUtc { get; set; }
+}
+
+public sealed class CandidatoHistorico : ITenantEntity
+{
+    public Guid Id { get; set; }
+    public string TenantId { get; set; } = default!;
+
+    public Guid CandidatoId { get; set; }
+    public Candidato? Candidato { get; set; }
+
+    public Guid VagaId { get; set; }
+    public RHPortal.Api.Domain.Entities.Vaga? Vaga { get; set; }
+
+    public DateTimeOffset AppliedAtUtc { get; set; }
+    public DateTimeOffset? LastContactAtUtc { get; set; }
+
+    public bool Interviewed { get; set; }
+    public DateTimeOffset? InterviewAtUtc { get; set; }
+
+    [StringLength(800)]
+    public string? Notes { get; set; }
+
+    public DateTimeOffset CreatedAtUtc { get; set; }
+    public DateTimeOffset UpdatedAtUtc { get; set; }
+}
+
+public sealed class CandidatoTriagemHistorico : ITenantEntity
+{
+    public Guid Id { get; set; }
+    public string TenantId { get; set; } = default!;
+
+    public Guid CandidatoId { get; set; }
+    public Candidato? Candidato { get; set; }
+
+    public CandidatoStatus FromStatus { get; set; }
+    public CandidatoStatus ToStatus { get; set; }
+
+    [StringLength(160)]
+    public string? Reason { get; set; }
+
+    [StringLength(800)]
+    public string? Notes { get; set; }
+
+    public DateTimeOffset OccurredAtUtc { get; set; }
 
     public DateTimeOffset CreatedAtUtc { get; set; }
     public DateTimeOffset UpdatedAtUtc { get; set; }

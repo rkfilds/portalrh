@@ -1,6 +1,7 @@
 ﻿// ========= Logo (Data URI placeholder)
     const seed = window.__seedData || {};
     const LOGO_DATA_URI = "data:image/webp;base64,UklGRngUAABXRUJQVlA4IGwUAAAQYwCdASpbAVsBPlEokUajoqGhIpNoyHAK7AQYJjYQmG9Dtu/6p6QZ4lQd6lPde+Jk3i3kG2EoP+QW0c0h8Oe3jW2C5zE0o9jzZ1x2fX9cZlX0d7rW8r0vQ9p3d2nJ1bqzQfQZxVwTt7mJvU8j1GqF4oJc8Qb+gq+oQyHcQyYc2b9u2fYf0Rj9x9hRZp2Y2xK0yVQ8Hj4p6w8B1K2cKk2mY9m2r8kz3a4m7xG4xg9m5VjzP3E4RjQH8fYkC4mB8g0vR3c5h1D0yE8Qzv7t7gQj0Z9yKk3cWZgVnq3l1kq6rE8oWc4z6oZk8k0b1o9m8p2m+QJ3nJm6GgA=";
+    const CANDIDATOS_API_URL = window.__candidatosApiUrl || "/api/candidatos";
 function enumFirstCode(key, fallback){
       const list = getEnumOptions(key);
       return list.length ? list[0].code : fallback;
@@ -17,12 +18,44 @@ function enumFirstCode(key, fallback){
       el.textContent = (value ?? fallback);
     }
 
+    async function apiFetchJson(url, options = {}){
+      const opts = { ...options };
+      opts.headers = { "Accept": "application/json", ...(opts.headers || {}) };
+      if(opts.body && !opts.headers["Content-Type"]){
+        opts.headers["Content-Type"] = "application/json";
+      }
+      const res = await fetch(url, opts);
+      if(!res.ok){
+        const message = await res.text();
+        throw new Error(message || `Falha na API (${res.status}).`);
+      }
+      if(res.status === 204) return null;
+      return res.json();
+    }
+
+    function mapTriagemHistoricoFromApi(api, candId){
+      if(!api) return null;
+      return {
+        id: api.id,
+        candId: candId || api.candidatoId,
+        from: (api.fromStatus || "").toString().toLowerCase(),
+        to: (api.toStatus || "").toString().toLowerCase(),
+        reason: api.reason || "",
+        note: api.notes || "",
+        at: api.occurredAtUtc || api.createdAtUtc || new Date().toISOString()
+      };
+    }
+
     function buildTag(iconClass, text, cls){
       const tag = cloneTemplate("tpl-tri-tag");
       if(!tag) return document.createElement("span");
       tag.classList.toggle("ok", cls === "ok");
       tag.classList.toggle("warn", cls === "warn");
       tag.classList.toggle("bad", cls === "bad");
+      tag.classList.toggle("triagem", cls === "triagem");
+      tag.classList.toggle("pendente", cls === "pendente");
+      tag.classList.toggle("aprovado", cls === "aprovado");
+      tag.classList.toggle("reprovado", cls === "reprovado");
       const icon = tag.querySelector('[data-role="icon"]');
       if(icon) icon.className = "bi " + iconClass;
       const label = tag.querySelector('[data-role="text"]');
@@ -33,10 +66,10 @@ function enumFirstCode(key, fallback){
     function buildStatusTag(s){
       const map = {
         novo:      { cls:"" },
-        triagem:   { cls:"warn" },
-        aprovado:  { cls:"ok" },
-        reprovado: { cls:"bad" },
-        pendente:  { cls:"warn" }
+        triagem:   { cls:"triagem" },
+        aprovado:  { cls:"aprovado" },
+        reprovado: { cls:"reprovado" },
+        pendente:  { cls:"pendente" }
       };
       const it = map[s] || { cls:"" };
       const labelText = getEnumText("candidatoStatus", s, s);
@@ -60,6 +93,7 @@ function enumFirstCode(key, fallback){
       vagas: [],
       candidatos: [],
       triageLog: [],
+      triageLogByCand: {},
       selectedId: null,
       filters: { q:"", vagaId:"all", sla:"all" }
     };
@@ -99,12 +133,63 @@ function enumFirstCode(key, fallback){
         const data = JSON.parse(raw);
         if(!data || !Array.isArray(data.log)) return;
         state.triageLog = data.log;
+        state.triageLogByCand = {};
+        state.triageLog.forEach(entry => {
+          if(!entry?.candId) return;
+          const list = Array.isArray(state.triageLogByCand[entry.candId])
+            ? state.triageLogByCand[entry.candId]
+            : [];
+          state.triageLogByCand[entry.candId] = [...list, entry];
+        });
       }catch{}
     }
     function saveTriageLog(){
       localStorage.setItem(TRIAGE_KEY, JSON.stringify({
         log: state.triageLog
       }));
+    }
+
+    async function fetchTriagemHistorico(candId){
+      const list = await apiFetchJson(`${CANDIDATOS_API_URL}/${candId}/triagem-historico`, { method: "GET" });
+      const mapped = Array.isArray(list) ? list.map(item => mapTriagemHistoricoFromApi(item, candId)).filter(Boolean) : [];
+      state.triageLogByCand[candId] = mapped;
+      return mapped;
+    }
+
+    function addTriagemLog(entry){
+      state.triageLog.unshift(entry);
+      const list = Array.isArray(state.triageLogByCand[entry.candId])
+        ? state.triageLogByCand[entry.candId]
+        : [];
+      state.triageLogByCand[entry.candId] = [entry, ...list];
+    }
+
+    function replaceTriagemLogEntry(candId, tempId, saved){
+      if(!saved) return;
+      const list = Array.isArray(state.triageLogByCand[candId]) ? state.triageLogByCand[candId] : [];
+      state.triageLogByCand[candId] = list.map(x => x.id === tempId ? saved : x);
+      state.triageLog = state.triageLog.map(x => x.id === tempId ? saved : x);
+    }
+
+    async function persistTriagemHistorico(candId, entry){
+      if(!candId) return;
+      const payload = {
+        fromStatus: entry.from,
+        toStatus: entry.to,
+        reason: entry.reason || null,
+        notes: entry.note || null,
+        occurredAtUtc: entry.at || null
+      };
+      try{
+        const saved = await apiFetchJson(`${CANDIDATOS_API_URL}/${candId}/triagem-historico`, {
+          method: "POST",
+          body: JSON.stringify(payload)
+        });
+        const mapped = mapTriagemHistoricoFromApi(saved, candId);
+        if(mapped) replaceTriagemLogEntry(candId, entry.id, mapped);
+      }catch(err){
+        console.error(err);
+      }
     }
 
     function seedVagasIfEmpty(){
@@ -419,7 +504,7 @@ function enumFirstCode(key, fallback){
       c.updatedAt = new Date().toISOString();
 
       // log
-      state.triageLog.unshift({
+      const entry = {
         id: uid(),
         candId: c.id,
         from: prev,
@@ -427,7 +512,9 @@ function enumFirstCode(key, fallback){
         at: c.updatedAt,
         reason: meta?.reason || "",
         note: meta?.note || ""
-      });
+      };
+      addTriagemLog(entry);
+      persistTriagemHistorico(c.id, entry);
 
       saveCands();
       saveTriageLog();
@@ -473,7 +560,7 @@ function enumFirstCode(key, fallback){
       const miss = (m.missMandatory||[]).map(r=>r.termo).slice(0,12);
       const hit = (m.hits||[]).map(r=>r.termo).slice(0,12);
 
-      const log = state.triageLog.filter(x => x.candId === c.id).slice(0, 10);
+      const log = state.triageLogByCand[c.id];
 
       const slaTxt = si.has ? (si.late ? "Atrasado" : `Faltam ~${Math.ceil(si.leftH)}h`) : "Sem SLA";
 
@@ -524,8 +611,24 @@ function enumFirstCode(key, fallback){
       const logHost = root.querySelector('[data-role="tri-log-list"]');
       if(logHost){
         logHost.replaceChildren();
-        if(log.length){
-          log.forEach(x => {
+        if(log === undefined){
+          const msg = document.createElement("div");
+          msg.className = "text-muted small";
+          msg.textContent = "Carregando historico...";
+          logHost.appendChild(msg);
+          fetchTriagemHistorico(c.id).then(() => {
+            if(state.selectedId === c.id){
+              renderDetail();
+            }
+          }).catch(err => {
+            console.error(err);
+            state.triageLogByCand[c.id] = [];
+            if(state.selectedId === c.id){
+              renderDetail();
+            }
+          });
+        }else if(log.length){
+          log.slice(0, 10).forEach(x => {
             const item = cloneTemplate("tpl-tri-log-item");
             if(!item) return;
             const title = `${labelStage(x.from)} -> ${labelStage(x.to)}`;
@@ -727,6 +830,14 @@ function enumFirstCode(key, fallback){
             }
             if(data && Array.isArray(data.triageLog)){
               state.triageLog = data.triageLog;
+              state.triageLogByCand = {};
+              state.triageLog.forEach(entry => {
+                if(!entry?.candId) return;
+                const list = Array.isArray(state.triageLogByCand[entry.candId])
+                  ? state.triageLogByCand[entry.candId]
+                  : [];
+                state.triageLogByCand[entry.candId] = [...list, entry];
+              });
               saveTriageLog();
             }
 
@@ -804,6 +915,7 @@ function enumFirstCode(key, fallback){
 
         state.candidatos = [];
         state.triageLog = [];
+        state.triageLogByCand = {};
         state.selectedId = null;
 
         seedCandsIfEmpty();

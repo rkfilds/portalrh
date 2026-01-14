@@ -80,6 +80,42 @@ public sealed class CandidatosApiClient
         return SendAsync(req, ct);
     }
 
+    public Task<ApiRawResponse> GetHistoricoRawAsync(string tenantId, Guid candidatoId, CancellationToken ct)
+    {
+        var req = BuildRequest(HttpMethod.Get, $"api/candidatos/{candidatoId}/historico", tenantId);
+        return SendAsync(req, ct);
+    }
+
+    public Task<ApiRawResponse> CreateHistoricoRawAsync(string tenantId, Guid candidatoId, JsonElement payload, CancellationToken ct)
+    {
+        var json = JsonSerializer.Serialize(payload, JsonOpts);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        var req = BuildRequest(HttpMethod.Post, $"api/candidatos/{candidatoId}/historico", tenantId, content);
+        return SendAsync(req, ct);
+    }
+
+    public Task<ApiRawResponse> UpdateHistoricoRawAsync(string tenantId, Guid candidatoId, Guid historicoId, JsonElement payload, CancellationToken ct)
+    {
+        var json = JsonSerializer.Serialize(payload, JsonOpts);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        var req = BuildRequest(HttpMethod.Put, $"api/candidatos/{candidatoId}/historico/{historicoId}", tenantId, content);
+        return SendAsync(req, ct);
+    }
+
+    public Task<ApiRawResponse> GetTriagemHistoricoRawAsync(string tenantId, Guid candidatoId, CancellationToken ct)
+    {
+        var req = BuildRequest(HttpMethod.Get, $"api/candidatos/{candidatoId}/triagem-historico", tenantId);
+        return SendAsync(req, ct);
+    }
+
+    public Task<ApiRawResponse> CreateTriagemHistoricoRawAsync(string tenantId, Guid candidatoId, JsonElement payload, CancellationToken ct)
+    {
+        var json = JsonSerializer.Serialize(payload, JsonOpts);
+        var content = new StringContent(json, Encoding.UTF8, "application/json");
+        var req = BuildRequest(HttpMethod.Post, $"api/candidatos/{candidatoId}/triagem-historico", tenantId, content);
+        return SendAsync(req, ct);
+    }
+
     public async Task<ApiFileResponse> DownloadDocumentoAsync(string tenantId, Guid candidatoId, Guid documentoId, CancellationToken ct)
     {
         var req = BuildRequest(HttpMethod.Get, $"api/candidatos/{candidatoId}/documentos/{documentoId}/download", tenantId, accept: "*/*");

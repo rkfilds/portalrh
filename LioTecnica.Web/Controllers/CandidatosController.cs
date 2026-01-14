@@ -111,6 +111,46 @@ public class CandidatosController : Controller
         return ToContentResult(resp);
     }
 
+    [HttpGet("/api/candidatos/{id:guid}/historico")]
+    public async Task<IActionResult> GetHistorico(Guid id, CancellationToken ct)
+    {
+        var tenantId = _tenantContext.TenantId;
+        var resp = await _candidatosApi.GetHistoricoRawAsync(tenantId, id, ct);
+        return ToContentResult(resp);
+    }
+
+    [HttpPost("/api/candidatos/{id:guid}/historico")]
+    public async Task<IActionResult> CreateHistorico(Guid id, [FromBody] JsonElement payload, CancellationToken ct)
+    {
+        var tenantId = _tenantContext.TenantId;
+        var resp = await _candidatosApi.CreateHistoricoRawAsync(tenantId, id, payload, ct);
+        return ToContentResult(resp);
+    }
+
+    [HttpPut("/api/candidatos/{id:guid}/historico/{historicoId:guid}")]
+    public async Task<IActionResult> UpdateHistorico(Guid id, Guid historicoId, [FromBody] JsonElement payload, CancellationToken ct)
+    {
+        var tenantId = _tenantContext.TenantId;
+        var resp = await _candidatosApi.UpdateHistoricoRawAsync(tenantId, id, historicoId, payload, ct);
+        return ToContentResult(resp);
+    }
+
+    [HttpGet("/api/candidatos/{id:guid}/triagem-historico")]
+    public async Task<IActionResult> GetTriagemHistorico(Guid id, CancellationToken ct)
+    {
+        var tenantId = _tenantContext.TenantId;
+        var resp = await _candidatosApi.GetTriagemHistoricoRawAsync(tenantId, id, ct);
+        return ToContentResult(resp);
+    }
+
+    [HttpPost("/api/candidatos/{id:guid}/triagem-historico")]
+    public async Task<IActionResult> CreateTriagemHistorico(Guid id, [FromBody] JsonElement payload, CancellationToken ct)
+    {
+        var tenantId = _tenantContext.TenantId;
+        var resp = await _candidatosApi.CreateTriagemHistoricoRawAsync(tenantId, id, payload, ct);
+        return ToContentResult(resp);
+    }
+
     private static IActionResult ToContentResult(ApiRawResponse resp)
     {
         if (string.IsNullOrWhiteSpace(resp.Content))

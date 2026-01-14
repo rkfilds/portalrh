@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RhPortal.Api.Infrastructure.Data;
 
@@ -10,9 +11,11 @@ using RhPortal.Api.Infrastructure.Data;
 namespace RHPortal.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260112190045_AddCandidatoHistorico")]
+    partial class AddCandidatoHistorico
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.11");
@@ -970,52 +973,6 @@ namespace RHPortal.Api.Migrations
                     b.ToTable("CandidatoHistoricos", (string)null);
                 });
 
-            modelBuilder.Entity("RhPortal.Api.Domain.Entities.CandidatoTriagemHistorico", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("CandidatoId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTimeOffset>("CreatedAtUtc")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("FromStatus")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Notes")
-                        .HasMaxLength(800)
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTimeOffset>("OccurredAtUtc")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Reason")
-                        .HasMaxLength(160)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("TenantId")
-                        .IsRequired()
-                        .HasMaxLength(64)
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("ToStatus")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTimeOffset>("UpdatedAtUtc")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CandidatoId");
-
-                    b.HasIndex("TenantId", "CandidatoId");
-
-                    b.ToTable("CandidatoTriagemHistoricos", (string)null);
-                });
-
             modelBuilder.Entity("RhPortal.Api.Domain.Entities.Department", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1558,17 +1515,6 @@ namespace RHPortal.Api.Migrations
                     b.Navigation("Vaga");
                 });
 
-            modelBuilder.Entity("RhPortal.Api.Domain.Entities.CandidatoTriagemHistorico", b =>
-                {
-                    b.HasOne("RhPortal.Api.Domain.Entities.Candidato", "Candidato")
-                        .WithMany("TriagemHistoricos")
-                        .HasForeignKey("CandidatoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Candidato");
-                });
-
             modelBuilder.Entity("RhPortal.Api.Domain.Entities.Department", b =>
                 {
                     b.HasOne("RhPortal.Api.Domain.Entities.Area", "Area")
@@ -1652,8 +1598,6 @@ namespace RHPortal.Api.Migrations
                     b.Navigation("Documentos");
 
                     b.Navigation("Historicos");
-
-                    b.Navigation("TriagemHistoricos");
                 });
 #pragma warning restore 612, 618
         }

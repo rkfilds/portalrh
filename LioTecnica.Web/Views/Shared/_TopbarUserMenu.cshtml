@@ -3,19 +3,30 @@
   var label = string.IsNullOrWhiteSpace(Model) ? "RH" : Model;
 }
 
-<div class="dropdown">
-  <button class="btn btn-ghost dropdown-toggle" data-bs-toggle="dropdown">
-    <i class="bi bi-person-circle me-1"></i><span class="d-none d-sm-inline">@label</span>
-  </button>
-  <ul class="dropdown-menu dropdown-menu-end">
-    <li><a class="dropdown-item" href="#"><i class="bi bi-person-gear me-2"></i>Meu perfil</a></li>
-        <li>
-      <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#modalNotifications">
-        <i class="bi bi-bell me-2"></i>Notificacoes
-      </a>
-    </li>
-    <li><hr class="dropdown-divider"></li>
-    <li><a class="dropdown-item text-danger" href="#"><i class="bi bi-box-arrow-right me-2"></i>Sair</a></li>
-  </ul>
+<div class="topbar-actions d-flex align-items-center gap-2">
+  <div class="btn-group theme-toggle-group" role="group" aria-label="Tema">
+    <button type="button" class="btn btn-ghost theme-toggle" data-theme="clean" aria-pressed="false">
+      <i class="bi bi-brightness-high"></i><span class="d-none d-sm-inline">Clean</span>
+    </button>
+    <button type="button" class="btn btn-ghost theme-toggle" data-theme="dark" aria-pressed="false">
+      <i class="bi bi-moon-stars"></i><span class="d-none d-sm-inline">Dark</span>
+    </button>
+  </div>
+
+  <div class="dropdown">
+    <button class="btn btn-ghost dropdown-toggle" data-bs-toggle="dropdown">
+      <i class="bi bi-person-circle me-1"></i><span class="d-none d-sm-inline">@label</span>
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end">
+      <li><a class="dropdown-item" href="#"><i class="bi bi-person-gear me-2"></i>Meu perfil</a></li>
+          <li>
+        <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#modalNotifications">
+          <i class="bi bi-bell me-2"></i>Notificacoes
+        </a>
+      </li>
+      <li><hr class="dropdown-divider"></li>
+      <li><a class="dropdown-item text-danger" href="#"><i class="bi bi-box-arrow-right me-2"></i>Sair</a></li>
+    </ul>
+  </div>
 </div>
 

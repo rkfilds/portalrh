@@ -19,6 +19,11 @@ public interface ICandidatoService
     Task<CandidatoDocumentoResponse?> AddDocumentoAsync(Guid candidatoId, CandidatoDocumentoTipo tipo, string? descricao, IFormFile arquivo, CancellationToken ct);
     Task<CandidatoDocumentoFileResult?> GetDocumentoFileAsync(Guid candidatoId, Guid documentoId, CancellationToken ct);
     Task<bool> DeleteDocumentoAsync(Guid candidatoId, Guid documentoId, CancellationToken ct);
+    Task<IReadOnlyList<CandidatoHistoricoResponse>> ListHistoricoAsync(Guid candidatoId, CancellationToken ct);
+    Task<CandidatoHistoricoResponse> AddHistoricoAsync(Guid candidatoId, CandidatoHistoricoRequest request, CancellationToken ct);
+    Task<CandidatoHistoricoResponse?> UpdateHistoricoAsync(Guid candidatoId, Guid historicoId, CandidatoHistoricoRequest request, CancellationToken ct);
+    Task<IReadOnlyList<CandidatoTriagemHistoricoResponse>> ListTriagemHistoricoAsync(Guid candidatoId, CancellationToken ct);
+    Task<CandidatoTriagemHistoricoResponse> AddTriagemHistoricoAsync(Guid candidatoId, CandidatoTriagemHistoricoRequest request, CancellationToken ct);
 }
 
 public sealed record CandidatoDocumentoFileResult(string FilePath, string? ContentType, string FileName);
@@ -111,6 +116,7 @@ public sealed class CandidatoService : ICandidatoService
     {
         await EnsureVagaAsync(request.VagaId, ct);
 
+        var now = DateTimeOffset.UtcNow;
         var entity = new Candidato
         {
             Id = Guid.NewGuid(),
@@ -131,6 +137,13 @@ public sealed class CandidatoService : ICandidatoService
         ApplyLastMatch(entity, request.LastMatch);
 
         _db.Candidatos.Add(entity);
+        _db.CandidatoHistoricos.Add(new CandidatoHistorico
+        {
+            Id = Guid.NewGuid(),
+            CandidatoId = entity.Id,
+            VagaId = entity.VagaId,
+            AppliedAtUtc = now
+        });
         await _db.SaveChangesAsync(ct);
 
         return (await GetByIdAsync(entity.Id, ct))!;
@@ -146,6 +159,7 @@ public sealed class CandidatoService : ICandidatoService
 
         await EnsureVagaAsync(request.VagaId, ct);
 
+        var previousVagaId = entity.VagaId;
         entity.Nome = (request.Nome ?? string.Empty).Trim();
         entity.Email = NormalizeEmail(request.Email);
         entity.Fone = TrimOrNull(request.Fone);
@@ -165,6 +179,17 @@ public sealed class CandidatoService : ICandidatoService
                 _db.CandidatoDocumentos.RemoveRange(entity.Documentos);
 
             entity.Documentos = BuildDocumentos(request.Documentos, entity.Id);
+        }
+
+        if (previousVagaId != entity.VagaId)
+        {
+            _db.CandidatoHistoricos.Add(new CandidatoHistorico
+            {
+                Id = Guid.NewGuid(),
+                CandidatoId = entity.Id,
+                VagaId = entity.VagaId,
+                AppliedAtUtc = DateTimeOffset.UtcNow
+            });
         }
 
         await _db.SaveChangesAsync(ct);
@@ -280,6 +305,110 @@ public sealed class CandidatoService : ICandidatoService
         return true;
     }
 
+    public async Task<IReadOnlyList<CandidatoHistoricoResponse>> ListHistoricoAsync(Guid candidatoId, CancellationToken ct)
+    {
+        var exists = await _db.Candidatos.AnyAsync(x => x.Id == candidatoId, ct);
+        if (!exists) return Array.Empty<CandidatoHistoricoResponse>();
+
+        var rows = await _db.CandidatoHistoricos
+            .AsNoTracking()
+            .Include(x => x.Vaga)
+            .Where(x => x.CandidatoId == candidatoId)
+            .OrderByDescending(x => x.AppliedAtUtc)
+            .ToListAsync(ct);
+
+        return rows.Select(MapHistorico).ToList();
+    }
+
+    public async Task<CandidatoHistoricoResponse> AddHistoricoAsync(Guid candidatoId, CandidatoHistoricoRequest request, CancellationToken ct)
+    {
+        var exists = await _db.Candidatos.AnyAsync(x => x.Id == candidatoId, ct);
+        if (!exists)
+            throw new InvalidOperationException("Candidato nao encontrado.");
+
+        await EnsureVagaAsync(request.VagaId, ct);
+
+        var appliedAt = request.AppliedAtUtc == default ? DateTimeOffset.UtcNow : request.AppliedAtUtc;
+        var entity = new CandidatoHistorico
+        {
+            Id = Guid.NewGuid(),
+            CandidatoId = candidatoId,
+            VagaId = request.VagaId,
+            AppliedAtUtc = appliedAt,
+            LastContactAtUtc = request.LastContactAtUtc,
+            Interviewed = request.Interviewed,
+            InterviewAtUtc = request.InterviewAtUtc,
+            Notes = TrimOrNull(request.Notes)
+        };
+
+        _db.CandidatoHistoricos.Add(entity);
+        await _db.SaveChangesAsync(ct);
+
+        await _db.Entry(entity).Reference(x => x.Vaga).LoadAsync(ct);
+        return MapHistorico(entity);
+    }
+
+    public async Task<CandidatoHistoricoResponse?> UpdateHistoricoAsync(Guid candidatoId, Guid historicoId, CandidatoHistoricoRequest request, CancellationToken ct)
+    {
+        var entity = await _db.CandidatoHistoricos
+            .Include(x => x.Vaga)
+            .FirstOrDefaultAsync(x => x.Id == historicoId && x.CandidatoId == candidatoId, ct);
+
+        if (entity is null) return null;
+
+        await EnsureVagaAsync(request.VagaId, ct);
+
+        entity.VagaId = request.VagaId;
+        if (request.AppliedAtUtc != default)
+            entity.AppliedAtUtc = request.AppliedAtUtc;
+        entity.LastContactAtUtc = request.LastContactAtUtc;
+        entity.Interviewed = request.Interviewed;
+        entity.InterviewAtUtc = request.InterviewAtUtc;
+        entity.Notes = TrimOrNull(request.Notes);
+
+        await _db.SaveChangesAsync(ct);
+        await _db.Entry(entity).Reference(x => x.Vaga).LoadAsync(ct);
+        return MapHistorico(entity);
+    }
+
+    public async Task<IReadOnlyList<CandidatoTriagemHistoricoResponse>> ListTriagemHistoricoAsync(Guid candidatoId, CancellationToken ct)
+    {
+        var exists = await _db.Candidatos.AnyAsync(x => x.Id == candidatoId, ct);
+        if (!exists) return Array.Empty<CandidatoTriagemHistoricoResponse>();
+
+        var rows = await _db.CandidatoTriagemHistoricos
+            .AsNoTracking()
+            .Where(x => x.CandidatoId == candidatoId)
+            .OrderByDescending(x => x.OccurredAtUtc)
+            .ThenByDescending(x => x.CreatedAtUtc)
+            .ToListAsync(ct);
+
+        return rows.Select(MapTriagemHistorico).ToList();
+    }
+
+    public async Task<CandidatoTriagemHistoricoResponse> AddTriagemHistoricoAsync(Guid candidatoId, CandidatoTriagemHistoricoRequest request, CancellationToken ct)
+    {
+        var exists = await _db.Candidatos.AnyAsync(x => x.Id == candidatoId, ct);
+        if (!exists)
+            throw new InvalidOperationException("Candidato nao encontrado.");
+
+        var occurredAt = request.OccurredAtUtc ?? DateTimeOffset.UtcNow;
+        var entity = new CandidatoTriagemHistorico
+        {
+            Id = Guid.NewGuid(),
+            CandidatoId = candidatoId,
+            FromStatus = request.FromStatus,
+            ToStatus = request.ToStatus,
+            Reason = TrimOrNull(request.Reason),
+            Notes = TrimOrNull(request.Notes),
+            OccurredAtUtc = occurredAt
+        };
+
+        _db.CandidatoTriagemHistoricos.Add(entity);
+        await _db.SaveChangesAsync(ct);
+        return MapTriagemHistorico(entity);
+    }
+
     private async Task EnsureVagaAsync(Guid vagaId, CancellationToken ct)
     {
         var exists = await _db.Vagas.AnyAsync(v => v.Id == vagaId, ct);
@@ -325,6 +454,37 @@ public sealed class CandidatoService : ICandidatoService
             url,
             d.CreatedAtUtc,
             d.UpdatedAtUtc
+        );
+    }
+
+    private static CandidatoHistoricoResponse MapHistorico(CandidatoHistorico h)
+    {
+        return new CandidatoHistoricoResponse(
+            h.Id,
+            h.VagaId,
+            h.Vaga?.Codigo,
+            h.Vaga?.Titulo,
+            h.AppliedAtUtc,
+            h.LastContactAtUtc,
+            h.Interviewed,
+            h.InterviewAtUtc,
+            h.Notes,
+            h.CreatedAtUtc,
+            h.UpdatedAtUtc
+        );
+    }
+
+    private static CandidatoTriagemHistoricoResponse MapTriagemHistorico(CandidatoTriagemHistorico h)
+    {
+        return new CandidatoTriagemHistoricoResponse(
+            h.Id,
+            h.FromStatus,
+            h.ToStatus,
+            h.Reason,
+            h.Notes,
+            h.OccurredAtUtc,
+            h.CreatedAtUtc,
+            h.UpdatedAtUtc
         );
     }
 

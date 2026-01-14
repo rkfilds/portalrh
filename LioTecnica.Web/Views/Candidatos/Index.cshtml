@@ -1,6 +1,6 @@
 @model PageSeedViewModel
 @{
-    ViewData["Title"] = "Portal RH • Devcraft Studio — Candidatos";
+    ViewData["Title"] = "Portal RH • Ambiente DEV — Candidatos";
     ViewData["SidebarSubtitle"] = "Candidatos • CV • Match";
 }
 
@@ -218,6 +218,10 @@
               <button class="nav-link rounded-pill" data-bs-toggle="pill" data-bs-target="#tabDocs" type="button">
                 <i class="bi bi-paperclip me-1"></i>Documentos
               </button>
+            </li>            <li class="nav-item">
+              <button class="nav-link rounded-pill" data-bs-toggle="pill" data-bs-target="#tabHistorico" type="button">
+                <i class="bi bi-clock-history me-1"></i>Historico
+              </button>
             </li>
             <li class="nav-item">
               <button class="nav-link rounded-pill" data-bs-toggle="pill" data-bs-target="#tabMatch" type="button">
@@ -301,6 +305,82 @@
               </div>
               <div class="mt-3" id="docList"></div>
             </div>
+            <div class="tab-pane fade" id="tabHistorico">
+              <div class="fw-semibold mb-1">Historico de vagas</div>
+              <div class="text-muted small mb-2">Registre vagas que o candidato concorreu, data de cadastro, ultimo contato e entrevista.</div>
+
+              <input type="hidden" id="histId" />
+              <div class="row g-2 align-items-end">
+                <div class="col-12 col-lg-4">
+                  <label class="form-label small">Vaga</label>
+                  <select class="form-select form-select-sm" id="histVaga"></select>
+                </div>
+                <div class="col-6 col-lg-2">
+                  <label class="form-label small">Data cadastro</label>
+                  <input class="form-control form-control-sm" id="histAppliedAt" type="date" />
+                </div>
+                <div class="col-6 col-lg-2">
+                  <label class="form-label small">Ultimo contato</label>
+                  <input class="form-control form-control-sm" id="histLastContactAt" type="date" />
+                </div>
+                <div class="col-6 col-lg-2">
+                  <label class="form-label small">Entrevista</label>
+                  <div class="d-flex align-items-center gap-2">
+                    <input class="form-check-input" id="histInterviewed" type="checkbox" />
+                    <input class="form-control form-control-sm" id="histInterviewAt" type="date" />
+                  </div>
+                </div>
+                <div class="col-6 col-lg-2">
+                  <label class="form-label small">Notas</label>
+                  <input class="form-control form-control-sm" id="histNotes" placeholder="Ex.: retorno RH" />
+                </div>
+              </div>
+              <div class="d-flex flex-wrap gap-2 mt-2">
+                <button class="btn btn-ghost btn-sm" type="button" data-hact="save">
+                  <i class="bi bi-check2 me-1"></i>Salvar historico
+                </button>
+                <button class="btn btn-ghost btn-sm" type="button" data-hact="clear">
+                  <i class="bi bi-eraser me-1"></i>Limpar
+                </button>
+              </div>
+
+              <div class="mt-3">
+                <div class="table-responsive">
+                  <table class="table align-middle mb-0">
+                    <thead>
+                      <tr>
+                        <th style="min-width:220px;">Vaga</th>
+                        <th style="min-width:120px;">Data cadastro</th>
+                        <th style="min-width:120px;">Ultimo contato</th>
+                        <th style="min-width:140px;">Entrevista</th>
+                        <th>Notas</th>
+                        <th class="text-end" style="min-width:90px;">Acoes</th>
+                      </tr>
+                    </thead>
+                    <tbody id="histTableBody"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+              <div class="mt-4">
+                <div class="fw-semibold mb-1">Historico de triagem</div>
+                <div class="text-muted small mb-2">Movimentacoes registradas na triagem.</div>
+                <div class="table-responsive">
+                  <table class="table align-middle mb-0">
+                    <thead>
+                      <tr>
+                        <th style="min-width:160px;">Data</th>
+                        <th style="min-width:140px;">De</th>
+                        <th style="min-width:140px;">Para</th>
+                        <th style="min-width:220px;">Motivo</th>
+                        <th>Observacao</th>
+                      </tr>
+                    </thead>
+                    <tbody id="triHistTableBody"></tbody>
+                  </table>
+                </div>
+              </div>
 
             <div class="tab-pane fade" id="tabMatch">
               <div data-role="match-has-vaga">
@@ -405,6 +485,57 @@
             </button>
           </div>
         </div>
+      </template>
+      <template id="tpl-cand-hist-loading">
+        <tr>
+          <td colspan="6" class="text-center text-muted py-3">Carregando historico...</td>
+        </tr>
+      </template>
+
+      <template id="tpl-cand-hist-empty">
+        <tr>
+          <td colspan="6" class="text-center text-muted py-3">Nenhum historico cadastrado.</td>
+        </tr>
+      </template>
+
+      <template id="tpl-cand-hist-row">
+        <tr>
+          <td>
+            <div class="fw-semibold" data-role="hist-vaga-title"></div>
+            <div class="text-muted small mono" data-role="hist-vaga-code"></div>
+          </td>
+          <td class="nowrap" data-role="hist-applied"></td>
+          <td class="nowrap" data-role="hist-last"></td>
+          <td class="nowrap" data-role="hist-interview"></td>
+          <td class="small" data-role="hist-notes"></td>
+          <td class="text-end nowrap">
+            <button class="btn btn-ghost btn-sm" type="button" data-hact="edit">
+              <i class="bi bi-pencil"></i>
+            </button>
+          </td>
+        </tr>
+      </template>
+
+      <template id="tpl-cand-tri-loading">
+        <tr>
+          <td colspan="5" class="text-center text-muted py-3">Carregando historico de triagem...</td>
+        </tr>
+      </template>
+
+      <template id="tpl-cand-tri-empty">
+        <tr>
+          <td colspan="5" class="text-center text-muted py-3">Nenhum historico de triagem registrado.</td>
+        </tr>
+      </template>
+
+      <template id="tpl-cand-tri-row">
+        <tr>
+          <td class="nowrap" data-role="tri-date"></td>
+          <td class="nowrap" data-role="tri-from"></td>
+          <td class="nowrap" data-role="tri-to"></td>
+          <td class="small" data-role="tri-reason"></td>
+          <td class="small" data-role="tri-note"></td>
+        </tr>
       </template>
 
             @section Footer {

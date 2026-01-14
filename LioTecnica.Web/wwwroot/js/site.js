@@ -184,6 +184,37 @@
 })();
 
 (() => {
+  const THEME_KEY = "lt_theme";
+  const themeButtons = () => Array.from(document.querySelectorAll(".theme-toggle"));
+  const isValid = (value) => value === "clean" || value === "dark";
+
+  const applyTheme = (theme, persist = true) => {
+    const active = isValid(theme) ? theme : "clean";
+    document.body?.setAttribute("data-theme", active);
+    themeButtons().forEach(btn => {
+      const isActive = btn.dataset.theme === active;
+      btn.classList.toggle("is-active", isActive);
+      btn.setAttribute("aria-pressed", isActive ? "true" : "false");
+    });
+    if (persist) localStorage.setItem(THEME_KEY, active);
+  };
+
+  const init = () => {
+    const stored = localStorage.getItem(THEME_KEY);
+    applyTheme(isValid(stored) ? stored : "clean", false);
+    themeButtons().forEach(btn => {
+      btn.addEventListener("click", () => applyTheme(btn.dataset.theme));
+    });
+  };
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", init, { once: true });
+  } else {
+    init();
+  }
+})();
+
+(() => {
   const overlay = document.getElementById("globalLoading");
   if (!overlay) return;
 

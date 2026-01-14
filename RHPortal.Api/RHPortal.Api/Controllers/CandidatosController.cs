@@ -146,4 +146,79 @@ public sealed class CandidatosController : ControllerBase
         var deleted = await service.DeleteDocumentoAsync(id, documentoId, ct);
         return deleted ? NoContent() : NotFound();
     }
+
+    [HttpGet("{id:guid}/historico")]
+    public async Task<ActionResult<IReadOnlyList<CandidatoHistoricoResponse>>> ListHistorico(
+        [FromRoute] Guid id,
+        [FromServices] ICandidatoService service,
+        CancellationToken ct)
+    {
+        var rows = await service.ListHistoricoAsync(id, ct);
+        return Ok(rows);
+    }
+
+    [HttpPost("{id:guid}/historico")]
+    public async Task<ActionResult<CandidatoHistoricoResponse>> AddHistorico(
+        [FromRoute] Guid id,
+        [FromBody] CandidatoHistoricoRequest request,
+        [FromServices] ICandidatoService service,
+        CancellationToken ct)
+    {
+        try
+        {
+            var created = await service.AddHistoricoAsync(id, request, ct);
+            return Ok(created);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(new { message = ex.Message });
+        }
+    }
+
+    [HttpPut("{id:guid}/historico/{historicoId:guid}")]
+    public async Task<ActionResult<CandidatoHistoricoResponse>> UpdateHistorico(
+        [FromRoute] Guid id,
+        [FromRoute] Guid historicoId,
+        [FromBody] CandidatoHistoricoRequest request,
+        [FromServices] ICandidatoService service,
+        CancellationToken ct)
+    {
+        try
+        {
+            var updated = await service.UpdateHistoricoAsync(id, historicoId, request, ct);
+            return updated is null ? NotFound() : Ok(updated);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(new { message = ex.Message });
+        }
+    }
+
+    [HttpGet("{id:guid}/triagem-historico")]
+    public async Task<ActionResult<IReadOnlyList<CandidatoTriagemHistoricoResponse>>> ListTriagemHistorico(
+        [FromRoute] Guid id,
+        [FromServices] ICandidatoService service,
+        CancellationToken ct)
+    {
+        var rows = await service.ListTriagemHistoricoAsync(id, ct);
+        return Ok(rows);
+    }
+
+    [HttpPost("{id:guid}/triagem-historico")]
+    public async Task<ActionResult<CandidatoTriagemHistoricoResponse>> AddTriagemHistorico(
+        [FromRoute] Guid id,
+        [FromBody] CandidatoTriagemHistoricoRequest request,
+        [FromServices] ICandidatoService service,
+        CancellationToken ct)
+    {
+        try
+        {
+            var created = await service.AddTriagemHistoricoAsync(id, request, ct);
+            return Ok(created);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(new { message = ex.Message });
+        }
+    }
 }
