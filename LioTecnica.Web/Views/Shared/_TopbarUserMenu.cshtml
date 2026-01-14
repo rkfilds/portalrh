@@ -1,6 +1,9 @@
 @model string
 @{
-  var label = string.IsNullOrWhiteSpace(Model) ? "RH" : Model;
+  var userName = User?.Identity?.Name;
+  var label = string.IsNullOrWhiteSpace(userName)
+    ? (string.IsNullOrWhiteSpace(Model) ? "RH" : Model)
+    : userName;
 }
 
 <div class="topbar-actions d-flex align-items-center gap-2">
@@ -18,7 +21,7 @@
       <i class="bi bi-person-circle me-1"></i><span class="d-none d-sm-inline">@label</span>
     </button>
     <ul class="dropdown-menu dropdown-menu-end">
-      <li><a class="dropdown-item" href="#"><i class="bi bi-person-gear me-2"></i>Meu perfil</a></li>
+      <li><a class="dropdown-item" href="/Account/Profile"><i class="bi bi-person-gear me-2"></i>Meu perfil</a></li>
           <li>
         <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#modalNotifications">
           <i class="bi bi-bell me-2"></i>Notificacoes

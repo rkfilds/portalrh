@@ -1,0 +1,47 @@
+@model LioTecnica.Web.ViewModels.Authentication.ProfileViewModel
+@{
+    ViewData["Title"] = "Perfil";
+}
+
+@section Topbar {
+    <div class="d-flex align-items-center justify-content-between w-100">
+        <div>
+            <div class="h5 mb-0">Meu perfil</div>
+            <div class="text-muted small">Atualize seu nome de exibicao.</div>
+        </div>
+        <div>
+            @await Html.PartialAsync("_TopbarUserMenu", "RH")
+        </div>
+    </div>
+}
+
+<div class="container-fluid py-3">
+    <div class="card shadow-sm">
+        <div class="card-body">
+            @if (ViewData["Saved"] is true)
+            {
+                <div class="alert alert-success">Perfil atualizado.</div>
+            }
+            <form method="post" action="/Account/Profile">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <label class="form-label" for="TenantId">Tenant</label>
+                        <input class="form-control" id="TenantId" name="TenantId" value="@Model.TenantId" readonly />
+                    </div>
+                    <div class="col-md-8">
+                        <label class="form-label" for="Email">Email</label>
+                        <input class="form-control" id="Email" name="Email" value="@Model.Email" readonly />
+                    </div>
+                    <div class="col-12">
+                        <label class="form-label" for="FullName">Nome</label>
+                        <input class="form-control" id="FullName" name="FullName" value="@Model.FullName" />
+                        <span class="text-danger small">@Html.ValidationMessage("FullName")</span>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <button type="submit" class="btn btn-primary">Salvar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
