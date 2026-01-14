@@ -1,4 +1,4 @@
-﻿// ========= Logo (embutido em Data URI - auto contido)
+// ========= Logo (embutido em Data URI - auto contido)
     // Observação: o arquivo fornecido veio como WebP (mesmo com nome .png).
 const VAGAS_API_URL = window.__vagasApiUrl || "/api/vagas";
 const AREAS_API_URL = window.__areasApiUrl || "/api/lookup/areas";

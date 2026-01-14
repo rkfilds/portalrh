@@ -1,4 +1,4 @@
-﻿// =====================
+// =====================
 // Centro de Custo (demo/localStorage) — no mesmo padrão do JS de Áreas
 // =====================
 

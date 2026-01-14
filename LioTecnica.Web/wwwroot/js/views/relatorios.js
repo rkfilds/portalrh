@@ -1,4 +1,4 @@
-﻿// ========= Logo (Data URI placeholder)
+// ========= Logo (Data URI placeholder)
     const seed = window.__seedData || {};
     const LOGO_DATA_URI = "data:image/webp;base64,UklGRngUAABXRUJQVlA4IGwUAAAQYwCdASpbAVsBPlEokUajoqGhIpNoyHAK7AQYJjYQmG9Dtu/6p6QZ4lQd6lPde+Jk3i3kG2EoP+QW0c0h8Oe3jW2C5zE0o9jzZ1x2fX9cZlX0d7rW8r0vQ9p3d2nJ1bqzQfQZxVwTt7mJvU8j1GqF4oJc8Qb+gq+oQyHcQyYc2b9u2fYf0Rj9x9hRZp2Y2xK0yVQ8Hj4p6w8B1K2cKk2mY9m2r8kz3a4m7xG4xg9m5VjzP3E4RjQH8fYkC4mB8g0vR3c5h1D0yE8Qzv7t7gQj0Z9yKk3cWZgVnq3l1kq6rE8oWc4z6oZk8k0b1o9m8p2m+QJ3nJm6GgA=";
 function enumFirstCode(key, fallback){
@@ -34,7 +34,7 @@ function enumFirstCode(key, fallback){
       el.appendChild(icon);
       el.appendChild(document.createTextNode(text ?? ""));
     }
-// ========= Storage keys (compatÃ­vel com telas anteriores)
+// ========= Storage keys (compatível com telas anteriores)
     const VAGAS_KEY = "lt_rh_vagas_v1";
     const CANDS_KEY = "lt_rh_candidatos_v1";
     const INBOX_KEY = "lt_rh_inbox_v1";
@@ -637,7 +637,7 @@ function loadAll(){
       $("#btnExport").addEventListener("click", exportCurrentCsv);
 
       $("#btnSeedReset").addEventListener("click", () => {
-        const ok = confirm("Restaurar demo? Isso recria seeds mÃ­nimas (Vagas/Candidatos/Inbox).");
+        const ok = confirm("Restaurar demo? Isso recria seeds mínimas (Vagas/Candidatos/Inbox).");
         if(!ok) return;
         localStorage.removeItem(VAGAS_KEY);
         localStorage.removeItem(CANDS_KEY);

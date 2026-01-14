@@ -1,4 +1,4 @@
-﻿const seed = window.__seedData || {};
+const seed = window.__seedData || {};
 const STORE_KEY = "lt_rh_unidades_v1";
 const VAGAS_STORE_KEY = "lt_rh_vagas_v1";
 const GESTORES_STORE_KEY = "lt_rh_gestores_v1";

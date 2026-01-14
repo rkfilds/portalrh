@@ -1,4 +1,4 @@
-﻿(() => {
+(() => {
   const g = window;
 
   g.$ = (sel, root = document) => root.querySelector(sel);

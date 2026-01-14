@@ -1,4 +1,4 @@
-﻿const seed = window.__seedData || {};
+const seed = window.__seedData || {};
 const EMPTY_TEXT = "-";
 const AREAS_STORE_KEY = "lt_rh_areas_v1";
 
@@ -60,7 +60,7 @@ const AREAS_STORE_KEY = "lt_rh_areas_v1";
       const map = {
         "Recebido": "secondary",
         "Triagem": "primary",
-        "Em anÃ¡lise": "info",
+        "Em análise": "info",
         "Entrevista": "warning",
         "Aprovado": "success",
         "Reprovado": "danger"
@@ -251,7 +251,7 @@ const AREAS_STORE_KEY = "lt_rh_areas_v1";
       vagas: { title: "Vagas", sub: "Criação, requisitos, pesos e controle total do funil." },
       candidatos: { title: "Candidatos", sub: "Base de currí­culos e histórico por candidato." },
       triagem: { title: "Triagem", sub: "Aprovar/reprovar e mover etapas com auditoria." },
-      matching: { title: "Matching", sub: "Ajustes de palavras-chave, pesos e critÃ©rios obrigatórios." },
+      matching: { title: "Matching", sub: "Ajustes de palavras-chave, pesos e critérios obrigatórios." },
       entrada: { title: "Entrada (Email/Pasta)", sub: "Monitoramento de anexos e ingestão automática." },
       rm: { title: "RM Labore", sub: "Integração (fase 2): sincronizar vagas e requisitos." },
       relatorios: { title: "Relatórios", sub: "KPIs, produtividade do RH e exportações." },
